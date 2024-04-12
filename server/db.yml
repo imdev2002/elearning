@@ -1,0 +1,54 @@
+version: '3.7'
+
+services:
+  redis:
+    image: redis:alpine
+    command: [ "redis-server", "--appendonly", "yes", "--requirepass", "RsCS5RhcxG" ]
+    volumes:
+      - redis:/data
+    networks:
+      - databases
+    restart: always
+
+  postgres:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-khangpv}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-khangpv_hamsa}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - databases
+    restart: unless-stopped
+  
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-khangpv@hamsa.co}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-khangpv_hamsa}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - databases
+    restart: unless-stopped
+
+networks:
+  databases:
+    name: databases
+
+volumes:
+  redis:
+  postgres:
+  pgadmin:
+

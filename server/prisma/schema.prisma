@@ -1,0 +1,211 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-arm64-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x", "linux-musl", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  email        String     @unique
+  username     String?
+  firstName    String?
+  lastName     String?
+  gender       String?
+  password     String?
+  salt         String?
+  roles        UserRole[]
+  phone        String?
+  avatar       String?
+  birthday     DateTime?
+  platform     Platform
+  refreshToken String?
+  firstTime    Boolean    @default(true) // false if sent first time public profile email
+  isNewUser    Boolean    @default(true) // new user flag
+
+  timestamp DateTime @default(now())
+
+  videos       Video[]
+  comments     Comment[]
+  emojis       Emoji[]
+  hearts       Heart[]
+  certificates Certificate[]
+}
+
+model Role {
+  id          Int        @id @default(autoincrement())
+  name        RoleEnum   @unique
+  description String
+  userRole    UserRole[]
+}
+
+enum RoleEnum {
+  USER
+  ADMIN
+  AUTHOR
+}
+
+enum Platform {
+  GOOGLE
+  LOCAL
+}
+
+enum VideoStatus {
+  UPLOADING
+  UPLOADED
+  UPLOADING_TO_YOUTUBE
+  PENDING
+  APPROVED
+}
+
+model UserRole {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+
+  role   Role @relation(fields: [roleId], references: [id])
+  roleId Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model Video {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+
+  status      VideoStatus
+  localPath   String?
+  youtubePath String?
+  thumbnail   String?
+  filename    String?
+
+  user   User    @relation(fields: [userId], references: [id])
+  userId Int
+  lesson Lesson?
+}
+
+model Lesson {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+
+  lessonName    String
+  lessonNumber  Int
+  partNumber    Int?
+  trialAllowed  Boolean @default(false)
+  descriptionMD String?
+
+  video    Video  @relation(fields: [videoId], references: [id])
+  videoId  Int    @unique
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+
+  comments Comment[]
+  emojis   Emoji[]
+  hearts   Heart[]
+}
+
+model Certificate {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+
+  name        String
+  description String?
+  image       String?
+  issuedAt    DateTime?
+  isPublic    Boolean   @default(false)
+
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+}
+
+model Course {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+
+  totalLesson     Int
+  totalPart       Int
+  courseName      String
+  totalDuration   BigInt
+  knowledgeGained String[]
+  isPublic        Boolean  @default(false)
+
+  descriptionMD String?
+
+  lessons      Lesson[]
+  comments     Comment[]
+  emojis       Emoji[]
+  hearts       Heart[]
+  parts        Part[]
+  certificates Certificate[]
+}
+
+model Part {
+  id          Int      @id @default(autoincrement())
+  timestamp   DateTime @default(now())
+  partNumber  Int
+  partName    String
+  description String?
+
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  timestamp DateTime @default(now())
+
+  lesson   Lesson @relation(fields: [lessonId], references: [id])
+  lessonId Int
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  level    Int       @default(0)
+  parentId Int?
+  parent   Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
+  children Comment[] @relation("CommentToComment")
+}
+
+model Emoji {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+
+  emoji   EmojiIcon @relation(fields: [emojiId], references: [id])
+  emojiId Int
+  user    User      @relation(fields: [userId], references: [id])
+  userId  Int
+
+  lesson   Lesson @relation(fields: [lessonId], references: [id])
+  lessonId Int
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+}
+
+model EmojiIcon {
+  id          Int     @id @default(autoincrement())
+  name        String
+  emojiHandle String
+  emojis      Emoji[]
+}
+
+model Heart {
+  id Int @id @default(autoincrement())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  lesson   Lesson @relation(fields: [lessonId], references: [id])
+  lessonId Int
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+}
