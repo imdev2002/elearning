@@ -50,7 +50,8 @@ export default class FileController extends BaseController {
         !(
           reqUser.id === lesson.userId ||
           reqUser.roles.find((_) => _.role.name === RoleEnum.ADMIN) ||
-          user?.coursedPaid.find((_) => _.courseId === lesson.courseId)
+          user?.coursedPaid.find((_) => _.courseId === lesson.courseId) ||
+          lesson.trialAllowed
         )
       ) {
         throw new HttpException(403, 'Forbidden');

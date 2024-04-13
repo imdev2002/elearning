@@ -8,6 +8,8 @@ import EmojiController from './modules/emoji/emoji.controller';
 import CourseController from './modules/course/course.controller';
 import LessonController from './modules/lesson/lesson.controller';
 import FileController from './modules/file/file.controller';
+import PublicCourseController from './modules/public/course/course.controller';
+import PublicLessonController from './modules/public/lesson/lesson.controller';
 
 const controllers = [
   new UserController(),
@@ -16,6 +18,8 @@ const controllers = [
   new CourseController(),
   new LessonController(),
   new FileController(),
+  new PublicCourseController(),
+  new PublicLessonController(),
 ];
 
 class App {

@@ -121,6 +121,24 @@ export type Certificate = {
   courseId: number;
 };
 
+export enum CourseCategory {
+  DEVELOPMENT = 'DEVELOPMENT',
+  BUSINESS = 'BUSINESS',
+  DESIGN = 'DESIGN',
+  MARKETING = 'MARKETING',
+  IT = 'IT',
+  PERSONAL_DEVELOPMENT = 'PERSONAL_DEVELOPMENT',
+  PHOTOGRAPHY = 'PHOTOGRAPHY',
+  MUSIC = 'MUSIC',
+  HEALTH = 'HEALTH',
+  FITNESS = 'FITNESS',
+  LIFESTYLE = 'LIFESTYLE',
+  TEACHING = 'TEACHING',
+  ACADEMICS = 'ACADEMICS',
+  LANGUAGE = 'LANGUAGE',
+  OTHER = 'OTHER',
+}
+
 export type Course = {
   id: number;
   timestamp: Date;
@@ -137,6 +155,8 @@ export type Course = {
   currency: Currency;
   priceId: string;
   productId: string;
+
+  category: CourseCategory;
 
   lessons?: Lesson[];
   comments?: Comment[];

@@ -133,6 +133,24 @@ enum Currency {
   EUR
 }
 
+enum CourseCategory {
+  DEVELOPMENT
+  BUSINESS
+  DESIGN
+  MARKETING
+  IT
+  PERSONAL_DEVELOPMENT
+  PHOTOGRAPHY
+  MUSIC
+  HEALTH
+  FITNESS
+  LIFESTYLE
+  TEACHING
+  ACADEMICS
+  LANGUAGE
+  OTHER
+}
+
 model Course {
   id        Int      @id @default(autoincrement())
   timestamp DateTime @default(now())
@@ -144,6 +162,8 @@ model Course {
   knowledgeGained String[]
   isPublic        Boolean      @default(false)
   status          CourseStatus @default(DRAFT)
+
+  category CourseCategory
 
   priceAmount Float    @default(0)
   currency    Currency @default(USD)
@@ -165,11 +185,21 @@ model Course {
   coursedPaid CoursedPaid[]
 }
 
+enum CoursedPaidStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  EXPIRED
+}
+
 model CoursedPaid {
   course   Course @relation(fields: [courseId], references: [id])
   courseId Int
   user     User   @relation(fields: [userId], references: [id])
   userId   Int
+
+  checkoutSessionId String?
+  status            CoursedPaidStatus @default(PENDING)
 
   @@id([courseId, userId])
 }
