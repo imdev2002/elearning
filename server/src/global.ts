@@ -223,4 +223,14 @@ export type CoursedPaid = {
   courseId: number;
   user: User;
   userId: number;
+
+  checkoutSessionId: string;
+  status: CoursedPaidStatus;
 };
+
+export enum CoursedPaidStatus {
+  PENDING = 'PENDING',
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+  EXPIRED = 'EXPIRED',
+}

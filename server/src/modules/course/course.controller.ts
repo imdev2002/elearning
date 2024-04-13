@@ -5,6 +5,7 @@ import {
   CourseCategory,
   CourseStatus,
   Currency,
+  LessonStatus,
   ReqUser,
   RoleEnum,
 } from '../../global';
@@ -14,6 +15,7 @@ import commonUtil from '../../util/common.util';
 import courseUtil from '../../util/course.util';
 import partUtil from '../../util/part.util';
 import xtripe from '../../configs/xtripe';
+import checkRoleMiddleware from '../../middlewares/checkRole.middleware';
 
 export default class CourseController extends BaseController {
   public path = '/api/v1/courses';
@@ -73,6 +75,12 @@ export default class CourseController extends BaseController {
       `${this.path}/:id/parts/:partId`,
       passport.authenticate('jwt', { session: false }),
       this.deletePart,
+    );
+    this.router.patch(
+      `${this.path}/:id/actions/approve`,
+      passport.authenticate('jwt', { session: false }),
+      checkRoleMiddleware([RoleEnum.ADMIN]),
+      this.approveCourse,
     );
   }
 
@@ -457,6 +465,66 @@ export default class CourseController extends BaseController {
       return res
         .status(e.status || 500)
         .json({ estatus: e.status, message: e.message });
+    }
+  };
+  approveCourse = async (req: Request, res: Response) => {
+    try {
+      const id = Number(req.params.id);
+      let course = await this.prisma.course.findFirst({
+        where: { id },
+        include: {
+          lessons: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                  firstName: true,
+                  lastName: true,
+                  avatar: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      if (!course) {
+        throw new NotFoundException('course', id);
+      }
+      for (const lesson of course.lessons) {
+        await this.prisma.lesson.update({
+          where: { id: lesson.id },
+          data: { status: LessonStatus.APPROVED },
+        });
+      }
+      await this.prisma.course.update({
+        where: { id },
+        data: { status: CourseStatus.APPROVED },
+      });
+      course = await this.prisma.course.findFirst({
+        where: { id },
+        include: {
+          lessons: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                  firstName: true,
+                  lastName: true,
+                  avatar: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      return res.status(200).json(course);
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
     }
   };
 }

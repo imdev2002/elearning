@@ -6,6 +6,7 @@ import path from 'path';
 import { createReadStream, statSync } from 'fs';
 import HttpException from '../../exceptions/http-exception';
 import passport from '../../configs/passport';
+import { CoursedPaidStatus } from '@prisma/client';
 
 export default class FileController extends BaseController {
   public path = '/api/v1/files';
@@ -50,7 +51,11 @@ export default class FileController extends BaseController {
         !(
           reqUser.id === lesson.userId ||
           reqUser.roles.find((_) => _.role.name === RoleEnum.ADMIN) ||
-          user?.coursedPaid.find((_) => _.courseId === lesson.courseId) ||
+          user?.coursedPaid.find(
+            (_) =>
+              _.courseId === lesson.courseId &&
+              _.status === CoursedPaidStatus.SUCCESS,
+          ) ||
           lesson.trialAllowed
         )
       ) {

@@ -4,10 +4,12 @@ import { videoUpload } from '../../configs/multer';
 import NotFoundException from '../../exceptions/not-found';
 import passport from '../../configs/passport';
 import HttpException from '../../exceptions/http-exception';
-import { LessonStatus, ReqUser } from '../../global';
+import { LessonStatus, ReqUser, RoleEnum } from '../../global';
 import path from 'path';
 import { createReadStream, statSync } from 'fs';
 import lessonUtil from '../../util/lesson.util';
+import checkRoleMiddleware from '../../middlewares/checkRole.middleware';
+import courseUtil from '../../util/course.util';
 
 export default class LessonController extends BaseController {
   public path = '/api/v1/lessons';
@@ -50,6 +52,12 @@ export default class LessonController extends BaseController {
       `${this.path}/:id`,
       passport.authenticate('jwt', { session: false }),
       this.deleteLesson,
+    );
+    this.router.patch(
+      `${this.path}/:id/actions/approve`,
+      passport.authenticate('jwt', { session: false }),
+      checkRoleMiddleware([RoleEnum.ADMIN]),
+      this.approveLesson,
     );
   }
 
@@ -196,6 +204,41 @@ export default class LessonController extends BaseController {
         throw new NotFoundException('lesson', id);
       }
       return res.status(200).json(lesson);
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
+  approveLesson = async (req: Request, res: Response) => {
+    try {
+      const id = Number(req.params.id);
+      const lesson = await this.prisma.lesson.findFirst({
+        where: { id },
+      });
+      if (!lesson) {
+        throw new NotFoundException('lesson', id);
+      }
+      await this.prisma.lesson.update({
+        where: { id },
+        data: {
+          status: LessonStatus.APPROVED,
+        },
+      });
+      const lessons = await this.prisma.lesson.findMany({
+        where: { courseId: lesson.courseId },
+      });
+      for (const lesson of lessons) {
+        if (lesson.status !== LessonStatus.APPROVED) {
+          return res.status(200).json(lesson);
+        }
+      }
+      await this.prisma.course.update({
+        where: { id: lesson.courseId },
+        data: { status: LessonStatus.APPROVED },
+      });
+      return res.status(200).json(lessons);
     } catch (e: any) {
       console.log(e);
       return res
