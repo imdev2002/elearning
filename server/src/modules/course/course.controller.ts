@@ -147,6 +147,7 @@ export default class CourseController extends BaseController {
         reqUser.id,
         limit,
         offset,
+        !!reqUser.roles.find((role) => role.role.name === RoleEnum.ADMIN),
       );
       return res.status(200).json(courses);
     } catch (e: any) {
@@ -160,7 +161,12 @@ export default class CourseController extends BaseController {
     try {
       const reqUser = req.user as ReqUser;
       const id = Number(req.params.id);
-      const course = await courseUtil.getCourse(this.prisma, id, reqUser.id);
+      const course = await courseUtil.getCourse(
+        this.prisma,
+        id,
+        reqUser.id,
+        !!reqUser.roles.find((role) => role.role.name === RoleEnum.ADMIN),
+      );
       if (!course) {
         throw new NotFoundException('course', id);
       }
