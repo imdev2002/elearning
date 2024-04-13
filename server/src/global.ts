@@ -15,10 +15,16 @@ export enum Platform {
   LOCAL = 'LOCAL',
 }
 
-export enum VideoStatus {
+export enum LessonStatus {
   UPLOADING = 'UPLOADING',
   UPLOADED = 'UPLOADED',
   UPLOADING_TO_YOUTUBE = 'UPLOADING_TO_YOUTUBE',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+}
+
+export enum CourseStatus {
+  DRAFT = 'DRAFT',
   PENDING = 'PENDING',
   APPROVED = 'APPROVED',
 }
@@ -29,6 +35,10 @@ export type EmojiIcon = {
   emojiHandle: string;
   emojis: Emoji[];
 };
+export enum Currency {
+  USD = 'USD',
+  EUR = 'EUR',
+}
 
 export type User = {
   id: number;
@@ -45,14 +55,18 @@ export type User = {
   birthday?: Date;
   platform: Platform;
   refreshToken?: string;
+  isVerified: boolean;
+  verifyCode?: string;
   firstTime: boolean;
   isNewUser: boolean;
   timestamp: Date;
-  videos?: Video[];
   comments?: Comment[];
   emojis?: Emoji[];
   hearts?: Heart[];
   certificates?: Certificate[];
+  lessons: Lesson[];
+  course: Course[];
+  coursedPaid: CoursedPaid[];
 };
 
 export type Role = {
@@ -71,19 +85,6 @@ export type UserRole = {
   userId: number;
 };
 
-export type Video = {
-  id: number;
-  timestamp: Date;
-  status: VideoStatus;
-  localPath?: string;
-  youtubePath?: string;
-  thumbnail?: string;
-  filename?: string;
-  user: User;
-  userId: number;
-  lesson?: Lesson;
-};
-
 export type Lesson = {
   id: number;
   timestamp: Date;
@@ -92,13 +93,18 @@ export type Lesson = {
   partNumber?: number;
   trialAllowed: boolean;
   descriptionMD?: string;
-  video?: Video;
-  videoId: number;
+  status: LessonStatus;
+  localPath?: string;
+  youtubePath?: string;
+  thumbnailPath?: string;
+  filename?: string;
   course: Course;
   courseId: number;
   comments?: Comment[];
   emojis?: Emoji[];
   hearts?: Heart[];
+  user: User;
+  userId: number;
 };
 
 export type Certificate = {
@@ -106,11 +112,11 @@ export type Certificate = {
   timestamp: Date;
   name: string;
   description?: string;
-  image?: string;
   issuedAt?: Date;
   isPublic: boolean;
-  user: User;
-  userId: number;
+  certificateNumber: number;
+  student: User;
+  studentId: number;
   course: Course;
   courseId: number;
 };
@@ -121,16 +127,27 @@ export type Course = {
   totalLesson: number;
   totalPart: number;
   courseName: string;
-  totalDuration: bigint;
+  totalDuration: number;
   knowledgeGained: string[];
   isPublic: boolean;
+  status: CourseStatus;
   descriptionMD?: string;
+
+  priceAmount: number;
+  currency: Currency;
+  priceId: string;
+  productId: string;
+
   lessons?: Lesson[];
   comments?: Comment[];
   emojis?: Emoji[];
   hearts?: Heart[];
   parts?: Part[];
   certificates?: Certificate[];
+  user: User;
+  userId: number;
+
+  coursedPaid: CoursedPaid[];
 };
 
 export type Part = {
@@ -180,4 +197,10 @@ export type Heart = {
   lessonId?: number;
   course?: Course;
   courseId?: number;
+};
+export type CoursedPaid = {
+  course: Course;
+  courseId: number;
+  user: User;
+  userId: number;
 };

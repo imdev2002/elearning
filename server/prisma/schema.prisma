@@ -24,6 +24,8 @@ model User {
   phone        String?
   avatar       String?
   birthday     DateTime?
+  isVerified   Boolean    @default(false)
+  verifyCode   String?
   platform     Platform
   refreshToken String?
   firstTime    Boolean    @default(true) // false if sent first time public profile email
@@ -31,11 +33,14 @@ model User {
 
   timestamp DateTime @default(now())
 
-  videos       Video[]
   comments     Comment[]
   emojis       Emoji[]
   hearts       Heart[]
   certificates Certificate[]
+  lessons      Lesson[]
+  courses      Course[]
+
+  coursedPaid CoursedPaid[]
 }
 
 model Role {
@@ -56,10 +61,16 @@ enum Platform {
   LOCAL
 }
 
-enum VideoStatus {
+enum LessonStatus {
   UPLOADING
   UPLOADED
   UPLOADING_TO_YOUTUBE
+  PENDING
+  APPROVED
+}
+
+enum CourseStatus {
+  DRAFT
   PENDING
   APPROVED
 }
@@ -74,21 +85,6 @@ model UserRole {
   userId Int
 }
 
-model Video {
-  id        Int      @id @default(autoincrement())
-  timestamp DateTime @default(now())
-
-  status      VideoStatus
-  localPath   String?
-  youtubePath String?
-  thumbnail   String?
-  filename    String?
-
-  user   User    @relation(fields: [userId], references: [id])
-  userId Int
-  lesson Lesson?
-}
-
 model Lesson {
   id        Int      @id @default(autoincrement())
   timestamp DateTime @default(now())
@@ -99,10 +95,16 @@ model Lesson {
   trialAllowed  Boolean @default(false)
   descriptionMD String?
 
-  video    Video  @relation(fields: [videoId], references: [id])
-  videoId  Int    @unique
+  status LessonStatus
+
+  localPath     String?
+  thumbnailPath String?
+  filename      String?
+
   course   Course @relation(fields: [courseId], references: [id])
   courseId Int
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
 
   comments Comment[]
   emojis   Emoji[]
@@ -113,16 +115,22 @@ model Certificate {
   id        Int      @id @default(autoincrement())
   timestamp DateTime @default(now())
 
-  name        String
-  description String?
-  image       String?
-  issuedAt    DateTime?
-  isPublic    Boolean   @default(false)
+  name              String
+  description       String?
+  issuedAt          DateTime?
+  isPublic          Boolean   @default(false)
+  certificateNumber BigInt
 
-  user     User   @relation(fields: [userId], references: [id])
-  userId   Int
+  student   User @relation(fields: [studentId], references: [id])
+  studentId Int
+
   course   Course @relation(fields: [courseId], references: [id])
   courseId Int
+}
+
+enum Currency {
+  USD
+  EUR
 }
 
 model Course {
@@ -132,11 +140,20 @@ model Course {
   totalLesson     Int
   totalPart       Int
   courseName      String
-  totalDuration   BigInt
+  totalDuration   Int
   knowledgeGained String[]
-  isPublic        Boolean  @default(false)
+  isPublic        Boolean      @default(false)
+  status          CourseStatus @default(DRAFT)
+
+  priceAmount Float    @default(0)
+  currency    Currency @default(USD)
+  priceId     String?
+  productId   String?
 
   descriptionMD String?
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
 
   lessons      Lesson[]
   comments     Comment[]
@@ -144,6 +161,17 @@ model Course {
   hearts       Heart[]
   parts        Part[]
   certificates Certificate[]
+
+  coursedPaid CoursedPaid[]
+}
+
+model CoursedPaid {
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+
+  @@id([courseId, userId])
 }
 
 model Part {
@@ -162,10 +190,10 @@ model Comment {
   content   String
   timestamp DateTime @default(now())
 
-  lesson   Lesson @relation(fields: [lessonId], references: [id])
-  lessonId Int
-  course   Course @relation(fields: [courseId], references: [id])
-  courseId Int
+  lesson   Lesson? @relation(fields: [lessonId], references: [id])
+  lessonId Int?
+  course   Course? @relation(fields: [courseId], references: [id])
+  courseId Int?
 
   user   User @relation(fields: [userId], references: [id])
   userId Int
@@ -185,10 +213,10 @@ model Emoji {
   user    User      @relation(fields: [userId], references: [id])
   userId  Int
 
-  lesson   Lesson @relation(fields: [lessonId], references: [id])
-  lessonId Int
-  course   Course @relation(fields: [courseId], references: [id])
-  courseId Int
+  lesson   Lesson? @relation(fields: [lessonId], references: [id])
+  lessonId Int?
+  course   Course? @relation(fields: [courseId], references: [id])
+  courseId Int?
 }
 
 model EmojiIcon {
@@ -204,8 +232,8 @@ model Heart {
   user   User @relation(fields: [userId], references: [id])
   userId Int
 
-  lesson   Lesson @relation(fields: [lessonId], references: [id])
-  lessonId Int
-  course   Course @relation(fields: [courseId], references: [id])
-  courseId Int
+  lesson   Lesson? @relation(fields: [lessonId], references: [id])
+  lessonId Int?
+  course   Course? @relation(fields: [courseId], references: [id])
+  courseId Int?
 }

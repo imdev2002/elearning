@@ -10,6 +10,7 @@ import axios from 'axios';
 import bcrypt from 'bcryptjs';
 import HttpException from '../../exceptions/http-exception';
 import { Platform, ReqUser, RoleEnum, UserRole } from '../../global';
+import commonUtil from '../../util/common.util';
 
 export default class AuthController extends BaseController {
   public path = '/api/v1/auth';
@@ -79,6 +80,7 @@ export default class AuthController extends BaseController {
             },
           },
           platform: Platform.GOOGLE,
+          isVerified: true,
         },
       });
       const emailHtml = render(
@@ -283,6 +285,8 @@ export default class AuthController extends BaseController {
           salt,
           roles: { create: { role: { connect: { name: RoleEnum.USER } } } },
           platform: Platform.LOCAL,
+          isVerified: false,
+          verifyCode: commonUtil.generateRandomString(10),
         },
       });
 

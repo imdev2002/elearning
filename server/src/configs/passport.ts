@@ -6,7 +6,6 @@ import {
 import { PrismaClient } from '@prisma/client';
 import passport from 'passport';
 import { render } from '@react-email/render';
-import sendEmail from '../email/process';
 import MaloloWelcomeEmail from '../email/templates/welcome';
 import { Platform, RoleEnum } from '../global';
 
@@ -41,7 +40,7 @@ const googleStrategy = new GoogleStrategy(
         const emailHtml = render(
           MaloloWelcomeEmail({ userFirstName: profile._json.given_name || '' }),
         );
-        await sendEmail(emailHtml, email, 'Your Adventure Begins with Malolo!');
+        // await sendEmail(emailHtml, email, 'Your Adventure Begins with Malolo!');
       }
       const user = await User.findFirst({
         where: { email },

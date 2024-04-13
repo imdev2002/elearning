@@ -3,9 +3,9 @@ import passport from '../../configs/passport';
 import CheckRoleMiddleware from '../../middlewares/checkRole.middleware';
 import { RoleEnum } from '../../global';
 import { Request, Response } from 'express';
-import upload from '../../configs/multer';
+import { upload } from '../../configs/multer';
 import NotFoundException from '../../exceptions/not-found';
-import { unlinkSync, writeFileSync } from 'fs';
+import { unlinkSync } from 'fs';
 import sharp from 'sharp';
 import commonUtil from '../../util/common.util';
 

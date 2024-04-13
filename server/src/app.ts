@@ -5,11 +5,17 @@ import errorMiddleware from './middlewares/error.middleware';
 import AuthController from './modules/auth/auth.controller';
 import cors from 'cors';
 import EmojiController from './modules/emoji/emoji.controller';
+import CourseController from './modules/course/course.controller';
+import LessonController from './modules/lesson/lesson.controller';
+import FileController from './modules/file/file.controller';
 
 const controllers = [
   new UserController(),
   new AuthController(),
   new EmojiController(),
+  new CourseController(),
+  new LessonController(),
+  new FileController(),
 ];
 
 class App {

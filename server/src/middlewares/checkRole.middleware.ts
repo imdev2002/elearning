@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ReqUser, RoleEnum } from '../global';
+import HttpException from '../exceptions/http-exception';
 
 function checkRoleMiddleware(roles: RoleEnum[]) {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -17,7 +18,7 @@ function checkRoleMiddleware(roles: RoleEnum[]) {
       );
 
       if (!authorized) {
-        return next(new Error('Access denied'));
+        return next(new HttpException(401, 'Access denied'));
       }
 
       return next();
