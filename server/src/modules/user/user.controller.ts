@@ -5,6 +5,7 @@ import HttpException from '../../exceptions/http-exception';
 import NotFoundException from '../../exceptions/not-found';
 import { ReqUser, RoleEnum } from '../../global';
 import { Platform } from '@prisma/client';
+import { videoUpload } from '../../configs/multer';
 
 export default class UserController extends BaseController {
   public path = '/api/v1/users';
@@ -54,6 +55,17 @@ export default class UserController extends BaseController {
       `${this.path}/users/profile`,
       passport.authenticate('jwt', { session: false }),
       this.getProfile,
+    );
+    this.router.post(`${this.path}/verify`, this.verifyUser);
+    this.router.post(
+      `${this.path}/author/verify`,
+      passport.authenticate('jwt', { session: false }),
+      videoUpload.fields([
+        { name: 'frontIdCard', maxCount: 1 },
+        { name: 'backIdCard', maxCount: 1 },
+        { name: 'selfie', maxCount: 1 },
+      ]),
+      this.authorVerify,
     );
   }
 
@@ -240,6 +252,60 @@ export default class UserController extends BaseController {
         where: { id: user.id },
       });
       return res.status(200).send(newUser);
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
+
+  verifyUser = async (req: Request, res: Response) => {
+    try {
+      const { verifyCode } = req.body;
+      const user = await this.prisma.user.findFirst({ where: { verifyCode } });
+      if (!user) {
+        throw new NotFoundException('user', verifyCode);
+      }
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { verifyCode: '', isVerified: true },
+      });
+      user.verifyCode = '';
+      user.isVerified = true;
+      return res.status(200).send(user);
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
+  authorVerify = async (req: Request, res: Response) => {
+    try {
+      const reqUser = req.user as ReqUser;
+      if (!req.files) {
+        throw new HttpException(400, 'Please upload files');
+      }
+      let { frontIdCard, backIdCard, selfie } = req.files as any;
+      frontIdCard = frontIdCard[0].filename;
+      backIdCard = backIdCard[0].filename;
+      selfie = selfie[0].filename;
+      const { real_firstName, real_lastName } = req.body;
+      if (!real_firstName || !real_lastName) {
+        throw new HttpException(400, 'Please provide your real name');
+      }
+      const submitForm = await this.prisma.submitForm.create({
+        data: {
+          user: { connect: { id: reqUser.id } },
+          real_firstName,
+          real_lastName,
+          frontIdCard: frontIdCard.path,
+          backIdCard: backIdCard.path,
+          selfie: selfie.path,
+        },
+      });
+      return res.status(200).json(submitForm);
     } catch (e: any) {
       console.log(e);
       return res

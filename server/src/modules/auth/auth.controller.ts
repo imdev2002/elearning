@@ -11,6 +11,7 @@ import bcrypt from 'bcryptjs';
 import HttpException from '../../exceptions/http-exception';
 import { Platform, ReqUser, RoleEnum, UserRole } from '../../global';
 import commonUtil from '../../util/common.util';
+import VerifyEmail from '../../email/templates/verify';
 
 export default class AuthController extends BaseController {
   public path = '/api/v1/auth';
@@ -86,7 +87,7 @@ export default class AuthController extends BaseController {
       const emailHtml = render(
         MaloloWelcomeEmail({ userFirstName: given_name || '' }),
       );
-      await sendEmail(emailHtml, email, 'Your Adventure Begins with Malolo!');
+      await sendEmail(emailHtml, email, 'Your Adventure Begins with DKE!');
     } else {
       await this.prisma.user.update({
         where: { email },
@@ -278,6 +279,10 @@ export default class AuthController extends BaseController {
       }
       const salt = bcrypt.genSaltSync(10);
       const newPassword = bcrypt.hashSync(password, salt);
+      let verifyCode = commonUtil.generateRandomString(10);
+      while (await this.prisma.user.findFirst({ where: { verifyCode } })) {
+        verifyCode = commonUtil.generateRandomString(10);
+      }
       await this.prisma.user.create({
         data: {
           email,
@@ -286,10 +291,13 @@ export default class AuthController extends BaseController {
           roles: { create: { role: { connect: { name: RoleEnum.USER } } } },
           platform: Platform.LOCAL,
           isVerified: false,
-          verifyCode: commonUtil.generateRandomString(10),
+          verifyCode,
         },
       });
-
+      const emailHtml = render(
+        VerifyEmail({ userFirstName: email.split('@')[0], verifyCode }),
+      );
+      await sendEmail(emailHtml, email, 'Let verify your email address');
       return res.status(200).json({ email });
     } catch (e: any) {
       console.log(e);

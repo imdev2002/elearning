@@ -41,6 +41,7 @@ model User {
   courses      Course[]
 
   coursedPaid CoursedPaid[]
+  submitForms SubmitForm[]
 }
 
 model Role {
@@ -266,4 +267,28 @@ model Heart {
   lessonId Int?
   course   Course? @relation(fields: [courseId], references: [id])
   courseId Int?
+}
+
+enum FormStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model SubmitForm {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  real_firstName String
+  real_lastName  String
+
+  selfie String?
+
+  frontIdCard String?
+  backIdCard  String?
+
+  status FormStatus @default(PENDING)
 }

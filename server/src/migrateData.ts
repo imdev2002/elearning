@@ -24,6 +24,17 @@ const runner = async () => {
       },
     });
   }
+  const user = await prisma.user.findFirst({
+    where: { email: 'nguyendangkhai20@gmail.com' },
+  });
+  if (user) {
+    await prisma.userRole.create({
+      data: {
+        user: { connect: { id: user.id } },
+        role: { connect: { name: RoleEnum.ADMIN } },
+      },
+    });
+  }
 };
 
 export default runner;

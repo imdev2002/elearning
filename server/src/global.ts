@@ -29,15 +29,40 @@ export enum CourseStatus {
   APPROVED = 'APPROVED',
 }
 
-export type EmojiIcon = {
-  id: number;
-  name: string;
-  emojiHandle: string;
-  emojis: Emoji[];
-};
 export enum Currency {
   USD = 'USD',
   EUR = 'EUR',
+}
+
+export enum CourseCategory {
+  DEVELOPMENT = 'DEVELOPMENT',
+  BUSINESS = 'BUSINESS',
+  DESIGN = 'DESIGN',
+  MARKETING = 'MARKETING',
+  IT = 'IT',
+  PERSONAL_DEVELOPMENT = 'PERSONAL_DEVELOPMENT',
+  PHOTOGRAPHY = 'PHOTOGRAPHY',
+  MUSIC = 'MUSIC',
+  HEALTH = 'HEALTH',
+  FITNESS = 'FITNESS',
+  LIFESTYLE = 'LIFESTYLE',
+  TEACHING = 'TEACHING',
+  ACADEMICS = 'ACADEMICS',
+  LANGUAGE = 'LANGUAGE',
+  OTHER = 'OTHER',
+}
+
+export enum CoursedPaidStatus {
+  PENDING = 'PENDING',
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+  EXPIRED = 'EXPIRED',
+}
+
+export enum FormStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
 }
 
 export type User = {
@@ -53,20 +78,21 @@ export type User = {
   phone?: string;
   avatar?: string;
   birthday?: Date;
-  platform: Platform;
-  refreshToken?: string;
   isVerified: boolean;
   verifyCode?: string;
+  platform: Platform;
+  refreshToken?: string;
   firstTime: boolean;
   isNewUser: boolean;
   timestamp: Date;
-  comments?: Comment[];
-  emojis?: Emoji[];
-  hearts?: Heart[];
-  certificates?: Certificate[];
+  comments: Comment[];
+  emojis: Emoji[];
+  hearts: Heart[];
+  certificates: Certificate[];
   lessons: Lesson[];
-  course: Course[];
+  courses: Course[];
   coursedPaid: CoursedPaid[];
+  submitForms: SubmitForm[];
 };
 
 export type Role = {
@@ -95,16 +121,15 @@ export type Lesson = {
   descriptionMD?: string;
   status: LessonStatus;
   localPath?: string;
-  youtubePath?: string;
   thumbnailPath?: string;
   filename?: string;
   course: Course;
   courseId: number;
-  comments?: Comment[];
-  emojis?: Emoji[];
-  hearts?: Heart[];
   user: User;
   userId: number;
+  comments: Comment[];
+  emojis: Emoji[];
+  hearts: Heart[];
 };
 
 export type Certificate = {
@@ -121,24 +146,6 @@ export type Certificate = {
   courseId: number;
 };
 
-export enum CourseCategory {
-  DEVELOPMENT = 'DEVELOPMENT',
-  BUSINESS = 'BUSINESS',
-  DESIGN = 'DESIGN',
-  MARKETING = 'MARKETING',
-  IT = 'IT',
-  PERSONAL_DEVELOPMENT = 'PERSONAL_DEVELOPMENT',
-  PHOTOGRAPHY = 'PHOTOGRAPHY',
-  MUSIC = 'MUSIC',
-  HEALTH = 'HEALTH',
-  FITNESS = 'FITNESS',
-  LIFESTYLE = 'LIFESTYLE',
-  TEACHING = 'TEACHING',
-  ACADEMICS = 'ACADEMICS',
-  LANGUAGE = 'LANGUAGE',
-  OTHER = 'OTHER',
-}
-
 export type Course = {
   id: number;
   timestamp: Date;
@@ -149,24 +156,20 @@ export type Course = {
   knowledgeGained: string[];
   isPublic: boolean;
   status: CourseStatus;
-  descriptionMD?: string;
-
+  category: CourseCategory;
   priceAmount: number;
   currency: Currency;
-  priceId: string;
-  productId: string;
-
-  category: CourseCategory;
-
-  lessons?: Lesson[];
-  comments?: Comment[];
-  emojis?: Emoji[];
-  hearts?: Heart[];
-  parts?: Part[];
-  certificates?: Certificate[];
+  priceId?: string;
+  productId?: string;
+  descriptionMD?: string;
   user: User;
   userId: number;
-
+  lessons: Lesson[];
+  comments: Comment[];
+  emojis: Emoji[];
+  hearts: Heart[];
+  parts: Part[];
+  certificates: Certificate[];
   coursedPaid: CoursedPaid[];
 };
 
@@ -209,6 +212,13 @@ export type Emoji = {
   courseId?: number;
 };
 
+export type EmojiIcon = {
+  id: number;
+  name: string;
+  emojiHandle: string;
+  emojis: Emoji[];
+};
+
 export type Heart = {
   id: number;
   user: User;
@@ -218,19 +228,25 @@ export type Heart = {
   course?: Course;
   courseId?: number;
 };
+
 export type CoursedPaid = {
   course: Course;
   courseId: number;
   user: User;
   userId: number;
-
-  checkoutSessionId: string;
+  checkoutSessionId?: string;
   status: CoursedPaidStatus;
 };
 
-export enum CoursedPaidStatus {
-  PENDING = 'PENDING',
-  SUCCESS = 'SUCCESS',
-  FAILED = 'FAILED',
-  EXPIRED = 'EXPIRED',
-}
+export type SubmitForm = {
+  id: number;
+  timestamp: Date;
+  user: User;
+  userId: number;
+  real_firstName: string;
+  real_lastName: string;
+  selfie?: string;
+  frontIdCard?: string;
+  backIdCard?: string;
+  status: FormStatus;
+};

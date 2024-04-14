@@ -19,7 +19,7 @@ export const MaloloWelcomeEmail = ({
 }: MaloloWelcomeEmailProps) => (
   <Html>
     <Head />
-    <Preview>Welcome to Malolo</Preview>
+    <Preview>Welcome to DKE</Preview>
     <Tailwind>
       <Body className={main}>
         <Container className={container} style={{ maxWidth: 'unset' }}>
@@ -34,20 +34,21 @@ export const MaloloWelcomeEmail = ({
             Hi <b>{userFirstName}</b>,
           </Text>
           <Text className={paragraph}>
-            Welcome aboard! You've successfully joined the Malolo community via
-            Gmail. Dive straight in and let the journey of crafting your flights
-            and sharing your adventures commence.
+            Hello! You've joined the DKE elearning community through Gmail. Get
+            ready to "take off" and create your own knowledge flights, share
+            exciting learning adventures with us!
           </Text>
-          <Text className={paragraph}>Get started with your first flight:</Text>
+          <Text className={paragraph}>Take off with DKE elearning!</Text>
           <Link className={`block ${paragraph}`} href={process.env.PUBLIC_URL}>
             [Link to Dashboard]
           </Link>
           <Text className={paragraph}>
-            Remember, every flight is a story waiting to be told. And with
-            Malolo, your tales of ministry and adventure will soar.
+            Every learning journey opens a story waiting to be told.At DKE
+            elearning, the knowledge you gain will equip you for exciting
+            discoveries.
           </Text>
           <Text className={paragraph}>Fly true,</Text>
-          <Text className={paragraph}>The Malolo Team</Text>
+          <Text className={paragraph}>The DKE Team</Text>
         </Container>
       </Body>
     </Tailwind>
