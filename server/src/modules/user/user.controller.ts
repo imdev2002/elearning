@@ -37,6 +37,7 @@ export default class UserController extends BaseController {
     this.router.patch(
       `${this.path}/:id`,
       passport.authenticate('jwt', { session: false }),
+      videoUpload.fields([{ name: 'avatar', maxCount: 1 }]),
       this.updateUser,
     );
     // delete user
@@ -142,25 +143,37 @@ export default class UserController extends BaseController {
     try {
       const userRoles = (req.user as ReqUser).roles;
       const id = Number(req.params.id);
-      const dataUpdate = req.body;
+      const { username, firstName, lastName, phone, gender, birthday } =
+        req.body;
       const user = await this.prisma.user.findFirst({ where: { id } });
       if (!user) {
         throw new NotFoundException('user', id);
       }
-      if (userRoles.find((userRole) => userRole.role.name === RoleEnum.ADMIN)) {
-        const updateUser = await this.prisma.user.update({
-          where: { id: id },
-          data: dataUpdate,
-        });
-        return res.status(200).send(updateUser);
-      }
-      const checkOwner = user?.email === (req.user as ReqUser).email;
-      if (!checkOwner) {
+      if (
+        !(
+          userRoles.find((userRole) => userRole.role.name === RoleEnum.ADMIN) ||
+          user?.email === (req.user as ReqUser).email
+        )
+      ) {
         throw new HttpException(401, 'Unauthorized');
+      }
+      const usernameExist = await this.prisma.user.findFirst({
+        where: { username },
+      });
+      if (usernameExist) {
+        throw new HttpException(400, 'Username already exists');
       }
       const updateUser = await this.prisma.user.update({
         where: { id: id },
-        data: dataUpdate,
+        data: {
+          username: username || user.username,
+          firstName: firstName || '',
+          lastName: lastName || '',
+          phone: phone || '',
+          gender: gender || '',
+          birthday: birthday || new Date(),
+          avatar: (req.files as any)?.avatar[0].filename || '',
+        },
       });
       return res.status(200).send(updateUser);
     } catch (e: any) {

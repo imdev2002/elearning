@@ -126,6 +126,14 @@ export default class LessonController extends BaseController {
       if (!lesson) {
         throw new NotFoundException('lesson', id);
       }
+      if (
+        !(
+          reqUser.id === lesson.userId ||
+          reqUser.roles.find((_) => _.role.name === RoleEnum.ADMIN)
+        )
+      ) {
+        throw new HttpException(403, 'Forbidden');
+      }
       return res.status(200).json(lesson);
     } catch (e: any) {
       console.log(e);

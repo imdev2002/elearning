@@ -164,6 +164,8 @@ model Course {
   isPublic        Boolean      @default(false)
   status          CourseStatus @default(DRAFT)
 
+  thumbnail String
+
   category CourseCategory
 
   priceAmount Float    @default(0)

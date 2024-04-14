@@ -10,7 +10,7 @@ import LessonController from './modules/lesson/lesson.controller';
 import FileController from './modules/file/file.controller';
 import PublicCourseController from './modules/public/course/course.controller';
 import PublicLessonController from './modules/public/lesson/lesson.controller';
-import FormController from './form/form.controller';
+import FormController from './modules/form/form.controller';
 
 const controllers = [
   new UserController(),

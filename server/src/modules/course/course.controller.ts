@@ -16,6 +16,7 @@ import courseUtil from '../../util/course.util';
 import partUtil from '../../util/part.util';
 import xtripe from '../../configs/xtripe';
 import checkRoleMiddleware from '../../middlewares/checkRole.middleware';
+import { videoUpload } from '../../configs/multer';
 
 export default class CourseController extends BaseController {
   public path = '/api/v1/courses';
@@ -43,6 +44,7 @@ export default class CourseController extends BaseController {
     );
     this.router.patch(
       `${this.path}/:id`,
+      videoUpload.fields([{ name: 'thumbnail', maxCount: 1 }]),
       passport.authenticate('jwt', { session: false }),
       this.updateCourse,
     );
@@ -117,6 +119,7 @@ export default class CourseController extends BaseController {
           totalPart: 0,
           knowledgeGained: [],
           descriptionMD: '',
+          thumbnail: '',
           category: CourseCategory.OTHER,
           isPublic: false,
           priceId: product.default_price as string,
@@ -180,6 +183,14 @@ export default class CourseController extends BaseController {
   };
   updateCourse = async (req: Request, res: Response) => {
     try {
+      if (!req.files) {
+        throw new NotFoundException('video', 0);
+      }
+      let { thumbnail } = req.files as any;
+      if (!(thumbnail.length > 0)) {
+        throw new NotFoundException('thumbnail', 0);
+      }
+      thumbnail = thumbnail[0];
       const id = parseInt(req.params.id);
       const reqUser = req.user as ReqUser;
       const course = await this.prisma.course.findFirst({ where: { id } });
@@ -225,6 +236,7 @@ export default class CourseController extends BaseController {
           descriptionMD,
           category: category || CourseCategory.OTHER,
           totalPart: parts.length,
+          thumbnail: thumbnail.path,
           totalLesson: lessons.length,
           status: CourseStatus.PENDING,
           priceAmount: priceAmount || 0,

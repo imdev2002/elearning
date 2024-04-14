@@ -280,12 +280,14 @@ export default class AuthController extends BaseController {
       const salt = bcrypt.genSaltSync(10);
       const newPassword = bcrypt.hashSync(password, salt);
       let verifyCode = commonUtil.generateRandomString(10);
+      const username = email.split('@')[0];
       while (await this.prisma.user.findFirst({ where: { verifyCode } })) {
         verifyCode = commonUtil.generateRandomString(10);
       }
       await this.prisma.user.create({
         data: {
           email,
+          username,
           password: newPassword,
           salt,
           roles: { create: { role: { connect: { name: RoleEnum.USER } } } },
