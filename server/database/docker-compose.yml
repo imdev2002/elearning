@@ -1,16 +1,7 @@
 version: '3.7'
 
 services:
-  redis:
-    image: redis:alpine
-    command:
-      ['redis-server', '--appendonly', 'yes', '--requirepass', 'RsCS5RhcxG']
-    volumes:
-      - ./redis:/data
-    restart: always
-
   postgres:
-    container_name: postgres_container
     image: postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-710x}
@@ -18,6 +9,12 @@ services:
       PGDATA: /data/postgres
     volumes:
       - ./postgres:/data/postgres
+    networks:
+      - databases
     ports:
-      - '5432:5432'
+      - 5432:5432
     restart: unless-stopped
+
+networks:
+  databases:
+    name: databases

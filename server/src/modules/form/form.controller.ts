@@ -65,6 +65,18 @@ export default class FormController extends BaseController {
         where: { id },
         data: { status: status },
       });
+      if (status === FormStatus.APPROVED) {
+        const _ = await this.prisma.submitForm.findFirst({
+          where: { id },
+          include: { user: true },
+        });
+        await this.prisma.userRole.create({
+          data: {
+            user: { connect: { id: _?.user.id } },
+            role: { connect: { name: RoleEnum.AUTHOR } },
+          },
+        });
+      }
       return res.status(200).json(form);
     } catch (e: any) {
       console.log(e);

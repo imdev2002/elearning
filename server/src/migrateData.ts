@@ -1,4 +1,5 @@
-import { PrismaClient, RoleEnum } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { RoleEnum } from './global';
 
 const runner = async () => {
   const prisma = new PrismaClient();

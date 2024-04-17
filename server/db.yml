@@ -6,6 +6,8 @@ services:
     command: [ "redis-server", "--appendonly", "yes", "--requirepass", "RsCS5RhcxG" ]
     volumes:
       - redis:/data
+    ports:
+      - 6379:6379
     networks:
       - databases
     restart: always
@@ -20,7 +22,7 @@ services:
     volumes:
       - postgres:/data/postgres
     ports:
-      - "5432:5432"
+      - 5432:5432
     networks:
       - databases
     restart: unless-stopped
