@@ -1,2 +1,3 @@
 - NextJS 14
 - ExpressJS
+- TailwindCSS, NextUI

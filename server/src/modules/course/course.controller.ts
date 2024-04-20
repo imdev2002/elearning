@@ -58,11 +58,7 @@ export default class CourseController extends BaseController {
       passport.authenticate('jwt', { session: false }),
       this.createPart,
     );
-    this.router.get(
-      `${this.path}/:id/parts`,
-      passport.authenticate('jwt', { session: false }),
-      this.getParts,
-    );
+    this.router.get(`${this.path}/:id/parts`, this.getParts);
     this.router.get(
       `${this.path}/:id/parts/:partId`,
       passport.authenticate('jwt', { session: false }),
@@ -299,8 +295,9 @@ export default class CourseController extends BaseController {
     try {
       const reqUser = req.user as ReqUser;
       const courseId = Number(req.params.id);
-      const { partNumber, partName } = req.body;
-      if (!partNumber || !partName || !courseId) {
+      const partNumber = parseInt(req.body.partNumber);
+      const { partName } = req.body;
+      if (!partNumber || isNaN(partNumber) || !partName || !courseId) {
         throw new Error('Missing required fields');
       }
       const course = await this.prisma.course.findUnique({
@@ -328,6 +325,7 @@ export default class CourseController extends BaseController {
           partNumber,
           partName,
           courseId,
+          description: req.body.description || `${partNumber}: ${partName}`,
         },
       });
       await partUtil.refreshPart(courseId);
@@ -341,21 +339,12 @@ export default class CourseController extends BaseController {
   };
   getParts = async (req: Request, res: Response) => {
     try {
-      const reqUser = req.user as ReqUser;
       const courseId = Number(req.params.id);
       const course = await this.prisma.course.findFirst({
         where: { id: courseId },
       });
       if (!course) {
         throw new NotFoundException('course', courseId);
-      }
-      if (
-        !(
-          course.userId === reqUser.id ||
-          reqUser.roles.find((_) => _.role.name === RoleEnum.ADMIN)
-        )
-      ) {
-        throw new Error('Not authorized');
       }
       const parts = await this.prisma.part.findMany({
         where: { courseId },

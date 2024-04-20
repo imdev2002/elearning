@@ -272,7 +272,7 @@ export default class AuthController extends BaseController {
       const { password, confirmPassword, email } = req.body;
       const existUser = await this.prisma.user.findFirst({ where: { email } });
       if (existUser) {
-        throw new HttpException(400, 'Username already exist');
+        throw new HttpException(400, 'Email already exist');
       }
       if (confirmPassword !== password) {
         throw new HttpException(400, 'Passwords are not the same');
@@ -296,11 +296,11 @@ export default class AuthController extends BaseController {
           verifyCode,
         },
       });
+      res.status(200).json({ email });
       const emailHtml = render(
         VerifyEmail({ userFirstName: email.split('@')[0], verifyCode }),
       );
       await sendEmail(emailHtml, email, 'Let verify your email address');
-      return res.status(200).json({ email });
     } catch (e: any) {
       console.log(e);
       return res

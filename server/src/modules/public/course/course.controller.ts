@@ -6,6 +6,7 @@ import HttpException from '../../../exceptions/http-exception';
 import NotFoundException from '../../../exceptions/not-found';
 import xtripe from '../../../configs/xtripe';
 import { CoursedPaidStatus } from '@prisma/client';
+import { parse } from 'path';
 
 export default class PublicCourseController extends BaseController {
   public path = '/api/v1-public/courses';
@@ -46,17 +47,76 @@ export default class PublicCourseController extends BaseController {
       passport.authenticate('jwt', { session: false }),
       this.emojiAction,
     );
-    this.router.get(
-      `${this.path}`,
+    this.router.get(`${this.path}`, this.getCourses);
+    this.router.get(`${this.path}/:id`, this.getCourse);
+    this.router.post(
+      `${this.path}/actions/rate`,
       passport.authenticate('jwt', { session: false }),
-      this.getCourses,
-    );
-    this.router.get(
-      `${this.path}/:id`,
-      passport.authenticate('jwt', { session: false }),
-      this.getCourse,
+      this.rateAction,
     );
   }
+  rateAction = async (req: Request, res: Response) => {
+    try {
+      const reqUser = req.user as ReqUser;
+      const courseId = parseInt(req.body.courseId);
+      if (!courseId || isNaN(courseId)) {
+        throw new HttpException(400, 'courseId is missing');
+      }
+      const course = await this.prisma.course.findFirst({
+        where: { id: courseId },
+      });
+      if (!course) {
+        throw new NotFoundException('course', courseId);
+      }
+      const paid = await this.prisma.coursedPaid.findFirst({
+        where: { userId: reqUser.id, courseId },
+      });
+      if (!paid) {
+        throw new HttpException(400, 'You have to buy this course first');
+      }
+      const star = parseFloat(req.body.star);
+      if (!star || isNaN(star) || star < 0 || star > 5) {
+        throw new HttpException(400, 'Invalid star');
+      }
+      const existRate = await this.prisma.rating.findFirst({
+        where: { userId: reqUser.id, courseId },
+      });
+      if (!existRate) {
+        await this.prisma.rating.create({
+          data: {
+            star,
+            user: { connect: { id: reqUser.id } },
+            course: { connect: { id: courseId } },
+          },
+        });
+      } else {
+        await this.prisma.rating.updateMany({
+          where: { userId: reqUser.id, courseId },
+          data: {
+            star,
+          },
+        });
+      }
+      const rates = await this.prisma.rating.findMany({
+        where: { courseId },
+      });
+      const avg =
+        rates.reduce((acc, rate) => acc + rate.star, 0) / (rates.length || 1);
+      await this.prisma.course.update({
+        where: { id: courseId },
+        data: { avgRating: avg },
+      });
+      const _ = await this.prisma.rating.findFirst({
+        where: { userId: reqUser.id, courseId },
+      });
+      return res.status(200).json(_);
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
   buyAction = async (req: Request, res: Response) => {
     try {
       const reqUser = req.user as ReqUser;
@@ -359,6 +419,19 @@ export default class PublicCourseController extends BaseController {
       const courses = await this.prisma.course.findMany({
         ...query,
         include: {
+          rating: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                  avatar: true,
+                },
+              },
+            },
+          },
           user: {
             select: {
               id: true,
@@ -493,6 +566,19 @@ export default class PublicCourseController extends BaseController {
       const course = await this.prisma.course.findFirst({
         where: { id, isPublic: true, status: CourseStatus.APPROVED },
         include: {
+          rating: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                  avatar: true,
+                },
+              },
+            },
+          },
           user: {
             select: {
               id: true,

@@ -93,6 +93,7 @@ export type User = {
   courses: Course[];
   coursedPaid: CoursedPaid[];
   submitForms: SubmitForm[];
+  rating: Rating[];
 };
 
 export type Role = {
@@ -171,6 +172,8 @@ export type Course = {
   parts: Part[];
   certificates: Certificate[];
   coursedPaid: CoursedPaid[];
+  rating: Rating[];
+  avgRating: number;
 };
 
 export type Part = {
@@ -249,4 +252,13 @@ export type SubmitForm = {
   frontIdCard?: string;
   backIdCard?: string;
   status: FormStatus;
+};
+
+export type Rating = {
+  user: User;
+  userId: number;
+  course: Course;
+  courseId: number;
+
+  star: number;
 };

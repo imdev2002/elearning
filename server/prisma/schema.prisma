@@ -42,6 +42,8 @@ model User {
 
   coursedPaid CoursedPaid[]
   submitForms SubmitForm[]
+  rating      Rating[]
+  bookmarks   Bookmark[]
 }
 
 model Role {
@@ -107,9 +109,10 @@ model Lesson {
   user     User   @relation(fields: [userId], references: [id])
   userId   Int
 
-  comments Comment[]
-  emojis   Emoji[]
-  hearts   Heart[]
+  comments  Comment[]
+  emojis    Emoji[]
+  hearts    Heart[]
+  bookmarks Bookmark[]
 }
 
 model Certificate {
@@ -163,6 +166,7 @@ model Course {
   knowledgeGained String[]
   isPublic        Boolean      @default(false)
   status          CourseStatus @default(DRAFT)
+  avgRating       Float?
 
   thumbnail String
 
@@ -186,6 +190,8 @@ model Course {
   certificates Certificate[]
 
   coursedPaid CoursedPaid[]
+  rating      Rating[]
+  bookmarks   Bookmark[]
 }
 
 enum CoursedPaidStatus {
@@ -293,4 +299,28 @@ model SubmitForm {
   backIdCard  String?
 
   status FormStatus @default(PENDING)
+}
+
+model Rating {
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+
+  star Float @default(0)
+
+  @@id([userId, courseId])
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  lesson   Lesson? @relation(fields: [lessonId], references: [id])
+  lessonId Int?
+  course   Course? @relation(fields: [courseId], references: [id])
+  courseId Int?
 }

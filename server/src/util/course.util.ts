@@ -11,6 +11,19 @@ const courseUtil = {
       const course = await prisma.course.findFirst({
         where: { id },
         include: {
+          rating: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                  avatar: true,
+                },
+              },
+            },
+          },
           coursedPaid: {
             include: {
               user: {
@@ -127,6 +140,19 @@ const courseUtil = {
     const course = await prisma.course.findFirst({
       where: { id, userId },
       include: {
+        rating: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                avatar: true,
+              },
+            },
+          },
+        },
         coursedPaid: {
           include: {
             user: {
@@ -252,6 +278,19 @@ const courseUtil = {
         take: limit,
         skip: offset,
         include: {
+          rating: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                  avatar: true,
+                },
+              },
+            },
+          },
           coursedPaid: {
             include: {
               user: {
@@ -370,6 +409,19 @@ const courseUtil = {
       take: limit,
       skip: offset,
       include: {
+        rating: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                avatar: true,
+              },
+            },
+          },
+        },
         coursedPaid: {
           include: {
             user: {
