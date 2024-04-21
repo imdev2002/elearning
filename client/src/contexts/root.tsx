@@ -2,8 +2,9 @@
 
 import { NextUIProvider } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
-import { createContext, useState } from 'react'
+import { Suspense, createContext, useState } from 'react'
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
+import AccountProvider from '@/contexts/account'
 interface IContext {
   initializing: boolean
 }

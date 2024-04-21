@@ -7,10 +7,11 @@ import { Button, Input } from '@nextui-org/react'
 import { useState } from 'react'
 import { EyeFilledIcon, EyeSlashFilledIcon } from '@/components/icons/EyeIcon'
 import Link from 'next/link'
-import { loginByEmail } from '@/apiRequests/auth'
+import { authApiRequest, loginByEmail } from '@/services/auth.service'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { setItem } from '@/utils/localStorage'
+import { useAccountContext } from '@/contexts/account'
 
 const LoginForm = () => {
   const form = useForm<LoginBodyType>({
@@ -20,6 +21,7 @@ const LoginForm = () => {
       password: '',
     },
   })
+  const { setUser } = useAccountContext()
   const router = useRouter()
   const [isVisible, setIsVisible] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -31,8 +33,10 @@ const LoginForm = () => {
       const data: any = await loginByEmail(value)
       if (data) {
         const { accessToken, refreshToken, user } = data
+        await authApiRequest.auth({ accessToken, refreshToken })
         setItem('tokens', { accessToken, refreshToken })
         setItem('user', user)
+        setUser(user)
         toast('Login successful')
         router.push('/')
         router.refresh()
@@ -48,7 +52,7 @@ const LoginForm = () => {
       onSubmit={form.handleSubmit(onSubmit)}
       className="flex-1 p-10 space-y-4 max-w-2xl mx-auto w-full"
       autoComplete="off"
-      {...form}
+      // {...form}
     >
       <Controller
         name="email"
@@ -88,16 +92,6 @@ const LoginForm = () => {
           />
         )}
       />
-
-      <Button
-        type="submit"
-        size="lg"
-        variant="solid"
-        color="primary"
-        className="!mt-8 w-full"
-      >
-        Login
-      </Button>
       <div className="flex text-sm gap-1 font-normal ml-auto w-fit">
         You dont have account?{' '}
         <Link
@@ -107,6 +101,15 @@ const LoginForm = () => {
           Register now!
         </Link>
       </div>
+      <Button
+        type="submit"
+        size="lg"
+        variant="solid"
+        color="primary"
+        className="!mt-8 w-full"
+      >
+        Login
+      </Button>
     </form>
   )
 }

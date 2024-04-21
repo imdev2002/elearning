@@ -1,8 +1,15 @@
 'use client'
 
 import { ThemeSwitcher } from '@/components/ThemeSwitcher'
+import UserDropdown from '@/components/UserDropdown'
+import { useAccountContext } from '@/contexts/account'
 import {
+  Avatar,
   Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
   Navbar,
   NavbarBrand,
   NavbarContent,
@@ -10,6 +17,10 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  User,
 } from '@nextui-org/react'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -29,12 +40,13 @@ const menuItems = [
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { user } = useAccountContext()
   return (
     <Navbar
       isBordered
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      className="[&>header]:max-w-full [&>header]:px-40"
+      className="lg:[&>header]:max-w-full lg:[&>header]:px-40"
     >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle
@@ -44,7 +56,7 @@ const Header = () => {
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
-          <h1 className="font-bold">VLEducation</h1>
+          <h1 className="font-bold">DKEducation</h1>
           {/* <p className="font-bold text-inherit">ACME</p> */}
         </NavbarBrand>
       </NavbarContent>
@@ -52,7 +64,7 @@ const Header = () => {
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarBrand>
           <Link href="/">
-            <h1 className="font-bold text-2xl">VLEducation</h1>
+            <h1 className="font-bold text-2xl">DKEducation</h1>
           </Link>
           {/* <p className="font-bold text-inherit">ACME</p> */}
         </NavbarBrand>
@@ -75,14 +87,27 @@ const Header = () => {
 
       <NavbarContent justify="end">
         <ThemeSwitcher />
-        <NavbarItem className="hidden lg:flex">
-          <Link href="/login">Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color="primary" href="/register" variant="solid">
-            Sign Up
-          </Button>
-        </NavbarItem>
+        {user ? (
+          <NavbarItem>
+            <UserDropdown />
+          </NavbarItem>
+        ) : (
+          <>
+            <NavbarItem className="hidden lg:flex">
+              <Link href="/login">Login</Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Button
+                as={Link}
+                color="primary"
+                href="/register"
+                variant="solid"
+              >
+                Sign Up
+              </Button>
+            </NavbarItem>
+          </>
+        )}
       </NavbarContent>
 
       <NavbarMenu>

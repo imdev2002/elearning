@@ -90,6 +90,83 @@ body {
   }
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  background-color: none !important;
+  -webkit-text-fill-color: none !important;
+}
+
+/* custom date-picker */
+.react-date-picker {
+  @apply relative inline-flex tap-highlight-transparent shadow-sm bg-default-100 hover:bg-default-200 min-h-unit-8 rounded-small flex-col items-start justify-center gap-0 transition-background !duration-150 outline-none h-12 py-1.5 px-3;
+}
+
+.react-date-picker__wrapper {
+  @apply !border-none w-full flex justify-between;
+}
+
+.react-calendar {
+  @apply !bg-zinc-900 !border-none p-2 !rounded-lg;
+}
+
+.react-date-picker__inputGroup__input:invalid {
+  background: none !important;
+}
+
+.react-calendar button {
+  @apply rounded-md;
+}
+
+.react-calendar__tile--active {
+  @apply !bg-primary !text-black;
+}
+
+.react-calendar__tile--now {
+  @apply underline;
+  background: none !important;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  @apply !bg-white/10;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  @apply !bg-primary/80;
+}
+
+.react-calendar__navigation button:hover {
+  @apply !bg-white/10;
+}
+
+.react-date-picker__inputGroup {
+  @apply truncate;
+}
+
+.react-date-picker__inputGroup__input:focus-visible {
+  outline: none;
+}
+.react-date-picker__inputGroup__input {
+  @apply !text-sm;
+}
+
+.react-date-picker__inputGroup__day::placeholder,
+.react-date-picker__inputGroup__month::placeholder {
+  @apply !w-fit;
+}
+
+.react-date-picker__inputGroup__day {
+  text-align: end;
+}
+
 @keyframes floating-y {
   from {
     transform: translate(0, 0px);

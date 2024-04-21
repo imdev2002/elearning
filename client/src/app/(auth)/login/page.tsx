@@ -1,8 +1,21 @@
-import LoginForm from '@/app/(auth)/login/_components/login-form'
-import Image from 'next/image'
-import React from 'react'
+'use client'
 
-const page = () => {
+import GoogleLogin from '@/app/(auth)/login/_components/google-login'
+import LoginForm from '@/app/(auth)/login/_components/login-form'
+import { useAccountContext } from '@/contexts/account'
+import { setItem } from '@/utils/localStorage'
+import { Button } from '@nextui-org/react'
+import axios from 'axios'
+import Image from 'next/image'
+import { useParams, useRouter } from 'next/navigation'
+import React from 'react'
+import { toast } from 'react-toastify'
+
+const LoginPage = () => {
+  const router = useRouter()
+  const params = useParams()
+  const { setUser } = useAccountContext()
+  console.log(process.env.NEXT_PUBLIC_CLIENT_ID)
   return (
     <div className="flex justify-center items-center mt-20">
       <div className="w-[80vw] h-[80vh] flex">
@@ -24,10 +37,11 @@ const page = () => {
             rerum hic consectetur?
           </p>
           <LoginForm />
+          <GoogleLogin />
         </div>
       </div>
     </div>
   )
 }
 
-export default page
+export default LoginPage

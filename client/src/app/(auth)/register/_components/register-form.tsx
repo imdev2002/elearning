@@ -1,14 +1,19 @@
 'use client'
 
-import InputPassword from '@/app/(auth)/_components/InputPassword'
+import { authApiRequest } from '@/services/auth.service'
+import InputPassword from '@/components/InputPassword'
 import { RegisterBody, RegisterBodyType } from '@/schemaValidations/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Input } from '@nextui-org/react'
 import Link from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
 
 const RegisterForm = () => {
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
   const form = useForm<RegisterBodyType>({
     resolver: zodResolver(RegisterBody),
     defaultValues: {
@@ -16,7 +21,22 @@ const RegisterForm = () => {
       password: '',
     },
   })
-  const onSubmit = () => null
+  const onSubmit = async (values: RegisterBodyType) => {
+    if (loading) return
+    setLoading(true)
+    try {
+      const data: any = await authApiRequest.registerByEmail(values)
+      if (data) {
+        toast('Register successful')
+        router.push('/login')
+        router.refresh()
+      }
+    } catch (error: any) {
+      toast(error)
+    } finally {
+      setLoading(false)
+    }
+  }
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
@@ -48,16 +68,6 @@ const RegisterForm = () => {
           <InputPassword label="Comfirm password" field={field} />
         )}
       />
-
-      <Button
-        type="submit"
-        size="lg"
-        variant="solid"
-        color="secondary"
-        className="!mt-8 w-full"
-      >
-        Register
-      </Button>
       <div className="flex text-sm gap-1 font-normal ml-auto w-fit">
         You have an account?{' '}
         <Link
@@ -67,6 +77,15 @@ const RegisterForm = () => {
           Login now!
         </Link>
       </div>
+      <Button
+        type="submit"
+        size="lg"
+        variant="solid"
+        color="secondary"
+        className="!mt-8 w-full"
+      >
+        Register
+      </Button>
     </form>
   )
 }
