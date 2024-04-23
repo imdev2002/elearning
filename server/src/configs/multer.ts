@@ -22,7 +22,7 @@ const videoStorage = multer.diskStorage({
     // Create a unique filename to avoid conflicts
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const extension = file.mimetype.split('/')[1];
-    cb(null, file.fieldname + '-' + uniqueSuffix + '.' + extension);
+    cb(null, `file-${uniqueSuffix}.${extension}`);
   },
 });
 
