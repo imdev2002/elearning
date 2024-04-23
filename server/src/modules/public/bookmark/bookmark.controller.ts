@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { ReqUser } from '../../../global';
 import NotFoundException from '../../../exceptions/not-found';
 
-export default class PublicCourseController extends BaseController {
+export default class BookmarkController extends BaseController {
   public path = '/api/v1-public/bookmarks';
 
   constructor() {

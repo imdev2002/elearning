@@ -39,60 +39,15 @@ export default class FileController extends BaseController {
       });
 
       if (!lesson) {
-        throw new NotFoundException('file', filename);
-      }
-      const user = await this.prisma.user.findFirst({
-        where: { id: reqUser.id },
-        include: {
-          coursedPaid: true,
-        },
-      });
-      if (
-        !(
-          reqUser.id === lesson.userId ||
-          reqUser.roles.find((_) => _.role.name === RoleEnum.ADMIN) ||
-          user?.coursedPaid.find(
-            (_) =>
-              _.courseId === lesson.courseId &&
-              _.status === CoursedPaidStatus.SUCCESS,
-          ) ||
-          lesson.trialAllowed
-        )
-      ) {
-        throw new HttpException(403, 'Forbidden');
-      }
-      if (filename.includes('video')) {
-        const videoPath = path.resolve(lesson.localPath as string);
-        const stat = statSync(videoPath);
-        const fileSize = stat.size;
-        const range = req.headers.range;
+        const course = await this.prisma.course.findFirst({
+          where: { thumbnail: `uploads/${filename}` },
+        });
+        console.log(course);
 
-        if (range) {
-          const parts = range.replace(/bytes=/, '').split('-');
-          const start = parseInt(parts[0], 10);
-          const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-
-          const chunksize = end - start + 1;
-          const file = createReadStream(videoPath, { start, end });
-          const head = {
-            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-            'Accept-Ranges': 'bytes',
-            'Content-Length': chunksize,
-            'Content-Type': 'video/mp4',
-          };
-
-          res.writeHead(206, head);
-          file.pipe(res);
-        } else {
-          const head = {
-            'Content-Length': fileSize,
-            'Content-Type': 'video/mp4',
-          };
-          res.writeHead(200, head);
-          createReadStream(videoPath).pipe(res);
+        if (!course) {
+          throw new NotFoundException('file', filename);
         }
-      } else if (filename.includes('thumbnail')) {
-        const imagePath = path.resolve(lesson.thumbnailPath as string);
+        const imagePath = path.resolve(course.thumbnail as string);
         const stat = statSync(imagePath);
         const fileSize = stat.size;
         const head = {
@@ -101,7 +56,70 @@ export default class FileController extends BaseController {
         };
         res.writeHead(200, head);
         createReadStream(imagePath).pipe(res);
+      } else {
+        const user = await this.prisma.user.findFirst({
+          where: { id: reqUser.id },
+          include: {
+            coursedPaid: true,
+          },
+        });
+        if (filename.includes('video')) {
+          if (
+            !(
+              reqUser.id === lesson.userId ||
+              reqUser.roles.find((_) => _.role.name === RoleEnum.ADMIN) ||
+              user?.coursedPaid.find(
+                (_) =>
+                  _.courseId === lesson.courseId &&
+                  _.status === CoursedPaidStatus.SUCCESS,
+              ) ||
+              lesson.trialAllowed
+            )
+          ) {
+            throw new HttpException(403, 'Forbidden');
+          }
+          const videoPath = path.resolve(lesson.localPath as string);
+          const stat = statSync(videoPath);
+          const fileSize = stat.size;
+          const range = req.headers.range;
+
+          if (range) {
+            const parts = range.replace(/bytes=/, '').split('-');
+            const start = parseInt(parts[0], 10);
+            const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+            const chunksize = end - start + 1;
+            const file = createReadStream(videoPath, { start, end });
+            const head = {
+              'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+              'Accept-Ranges': 'bytes',
+              'Content-Length': chunksize,
+              'Content-Type': 'video/mp4',
+            };
+
+            res.writeHead(206, head);
+            file.pipe(res);
+          } else {
+            const head = {
+              'Content-Length': fileSize,
+              'Content-Type': 'video/mp4',
+            };
+            res.writeHead(200, head);
+            createReadStream(videoPath).pipe(res);
+          }
+        } else if (filename.includes('thumbnail')) {
+          const imagePath = path.resolve(lesson.thumbnailPath as string);
+          const stat = statSync(imagePath);
+          const fileSize = stat.size;
+          const head = {
+            'Content-Length': fileSize,
+            'Content-Type': `image/${filename.split('.')[1]}`,
+          };
+          res.writeHead(200, head);
+          createReadStream(imagePath).pipe(res);
+        }
       }
+      // throw new NotFoundException('file', filename);
     } catch (e: any) {
       console.log(e);
       return res

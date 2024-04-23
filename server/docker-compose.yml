@@ -12,6 +12,8 @@ services:
       - 3008:3000
     environment:
       - NODE_ENV=production
+    volumes:
+      - ./uploads:/app/uploads
 
 networks:
   databases:

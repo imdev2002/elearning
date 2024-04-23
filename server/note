@@ -1,0 +1,5 @@
+/api/v1/emojis (POST)
+/api/v1/courses/:id (PATCH)
+/api/v1/lessons (POST/PATCH)
+/api/v1/users/author/verify (POST)
+/api/v1/users/:id (PUT hay PATCH ấy)

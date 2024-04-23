@@ -6,7 +6,6 @@ import HttpException from '../../../exceptions/http-exception';
 import NotFoundException from '../../../exceptions/not-found';
 import xtripe from '../../../configs/xtripe';
 import { CoursedPaidStatus } from '@prisma/client';
-import { parse } from 'path';
 
 export default class PublicCourseController extends BaseController {
   public path = '/api/v1-public/courses';

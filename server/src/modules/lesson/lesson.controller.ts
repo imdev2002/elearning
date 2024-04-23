@@ -73,14 +73,11 @@ export default class LessonController extends BaseController {
       }
       video = video[0];
       thumbnail = thumbnail[0];
-      const {
-        lessonName,
-        lessonNumber,
-        partNumber,
-        trialAllowed,
-        descriptionMD,
-        courseId,
-      } = req.body;
+      const { lessonName, descriptionMD } = req.body;
+      const lessonNumber = parseInt(req.body.lessonNumber || '0');
+      const partNumber = parseInt(req.body.partNumber || '0');
+      const courseId = parseInt(req.body.courseId || '0');
+      const trialAllowed = req.body.trialAllowed === 'true';
       if (
         !lessonName ||
         !lessonNumber ||

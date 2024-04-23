@@ -203,14 +203,11 @@ export default class CourseController extends BaseController {
       ) {
         throw new HttpException(401, 'Access denied');
       }
-      const {
-        courseName,
-        knowledgeGained,
-        isPublic,
-        descriptionMD,
-        priceAmount,
-        category,
-      } = req.body;
+      const { courseName, descriptionMD, category } = req.body;
+      const isPublic = req.body.isPublic === 'true';
+      const priceAmount = parseFloat(req.body.priceAmount || '0');
+      const knowledgeGained =
+        (JSON.parse(req.body.knowledgeGained) as string[]) || [];
       if (
         !(courseName && knowledgeGained.length > 0 && descriptionMD && category)
       ) {
@@ -239,17 +236,28 @@ export default class CourseController extends BaseController {
           currency: Currency.USD,
         },
       });
+      const _price = await xtripe.prices.create({
+        currency: Currency.USD,
+        unit_amount_decimal: String(priceAmount * 100) || '000',
+        product: course.productId as string,
+      });
+      await this.prisma.course.update({
+        where: { id },
+        data: { priceId: _price.id },
+      });
       await xtripe.products.update(course.productId as string, {
         name: courseName,
         description: descriptionMD,
+        default_price: _price.id,
       });
-      await xtripe.prices.update(course.priceId as string, {
-        currency_options: {
-          USD: {
-            unit_amount_decimal: String(priceAmount * 100) || '000',
-          },
-        },
-      });
+
+      // await xtripe.prices.update(course.priceId as string, {
+      //   currency_options: {
+      //     USD: {
+      //       unit_amount_decimal: String(priceAmount * 100) || '000',
+      //     },
+      //   },
+      // });
       const newCourse = await courseUtil.getCourse(this.prisma, id, reqUser.id);
       return res.status(200).json(newCourse);
     } catch (e: any) {
