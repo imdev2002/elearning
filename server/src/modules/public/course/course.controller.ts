@@ -157,7 +157,6 @@ export default class PublicCourseController extends BaseController {
       const checkout = await xtripe.checkout.sessions.create({
         line_items: [{ price: course.priceId as string, quantity: 1 }],
         mode: 'payment',
-        expires_at: Date.now() + 1000 * 60 * 5,
         success_url: `${process.env.PUBLIC_URL}`,
       });
       return res.status(200).json(checkout);

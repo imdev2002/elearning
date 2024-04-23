@@ -20,8 +20,8 @@ export default class EmojiController extends BaseController {
   public initializeRoutes() {
     this.router.post(
       `${this.path}`,
-      // passport.authenticate('jwt', { session: false }),
-      // CheckRoleMiddleware([RoleEnum.ADMIN]),
+      passport.authenticate('jwt', { session: false }),
+      CheckRoleMiddleware([RoleEnum.ADMIN]),
       upload.single('image'),
       this.createEmoji,
     );
@@ -39,10 +39,10 @@ export default class EmojiController extends BaseController {
       if (!req.file) {
         throw new NotFoundException('file', 0);
       }
-      const path = `emojis/emoji_${Date.now()}`;
-      await sharp(req.file.buffer).toFormat('png').toFile(`${path}.png`);
-      commonUtil.convertPngToSvg(`${path}.png`, `${path}.svg`);
-      unlinkSync(`${path}.png`);
+      const path = `uploads/emoji_${Date.now()}.png`;
+      await sharp(req.file.buffer).toFormat('png').toFile(`${path}`);
+      // commonUtil.convertPngToSvg(`${path}.png`, `${path}.svg`);
+      // unlinkSync(`${path}.png`);
       const emoji = await this.prisma.emojiIcon.create({
         data: {
           name: req.body.name || path,

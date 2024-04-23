@@ -27,7 +27,7 @@ export default class FileController extends BaseController {
       if (!isExist) {
         throw new NotFoundException('file', filename);
       }
-      const fileType = ['jpeg', 'jpg', 'png', 'gif'].includes(
+      const fileType = ['jpeg', 'jpg', 'png', 'gif', 'svg'].includes(
         filename.split('.')[1],
       )
         ? 'image'
