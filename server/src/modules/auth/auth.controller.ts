@@ -97,6 +97,7 @@ export default class AuthController extends BaseController {
           lastName: family_name,
           avatar: picture,
           platform: Platform.GOOGLE,
+          isVerified: true,
         },
       });
     }

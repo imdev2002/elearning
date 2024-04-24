@@ -80,6 +80,13 @@ export default class UserController extends BaseController {
       const query = {
         skip: offset,
         take: limit,
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
       };
       for (const userRole of userRoles) {
         if (userRole.role.name === RoleEnum.ADMIN) {

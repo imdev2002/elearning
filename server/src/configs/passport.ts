@@ -35,6 +35,7 @@ const googleStrategy = new GoogleStrategy(
               },
             },
             platform: Platform.GOOGLE,
+            isVerified: true,
           },
         });
         const emailHtml = render(
