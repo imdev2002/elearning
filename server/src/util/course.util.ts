@@ -89,44 +89,47 @@ const courseUtil = {
               },
             },
           },
-          parts: true,
-          lessons: {
+          parts: {
             include: {
-              comments: {
+              lessons: {
                 include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true,
-                      avatar: true,
+                  comments: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
                     },
                   },
-                },
-              },
-              hearts: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true,
-                      avatar: true,
+                  hearts: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
                     },
                   },
-                },
-              },
-              emojis: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true,
-                      avatar: true,
+                  emojis: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
                     },
                   },
                 },
@@ -218,44 +221,47 @@ const courseUtil = {
             },
           },
         },
-        parts: true,
-        lessons: {
+        parts: {
           include: {
-            comments: {
+            lessons: {
               include: {
-                user: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true,
-                    avatar: true,
+                comments: {
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        avatar: true,
+                      },
+                    },
                   },
                 },
-              },
-            },
-            hearts: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true,
-                    avatar: true,
+                hearts: {
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        avatar: true,
+                      },
+                    },
                   },
                 },
-              },
-            },
-            emojis: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true,
-                    avatar: true,
+                emojis: {
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        avatar: true,
+                      },
+                    },
                   },
                 },
               },
@@ -356,44 +362,47 @@ const courseUtil = {
               },
             },
           },
-          parts: true,
-          lessons: {
+          parts: {
             include: {
-              comments: {
+              lessons: {
                 include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true,
-                      avatar: true,
+                  comments: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
                     },
                   },
-                },
-              },
-              hearts: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true,
-                      avatar: true,
+                  hearts: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
                     },
                   },
-                },
-              },
-              emojis: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true,
-                      avatar: true,
+                  emojis: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
                     },
                   },
                 },
@@ -487,44 +496,47 @@ const courseUtil = {
             },
           },
         },
-        parts: true,
-        lessons: {
+        parts: {
           include: {
-            comments: {
+            lessons: {
               include: {
-                user: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true,
-                    avatar: true,
+                comments: {
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        avatar: true,
+                      },
+                    },
                   },
                 },
-              },
-            },
-            hearts: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true,
-                    avatar: true,
+                hearts: {
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        avatar: true,
+                      },
+                    },
                   },
                 },
-              },
-            },
-            emojis: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true,
-                    avatar: true,
+                emojis: {
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        email: true,
+                        avatar: true,
+                      },
+                    },
                   },
                 },
               },

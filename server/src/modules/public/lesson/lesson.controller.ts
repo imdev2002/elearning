@@ -3,8 +3,12 @@ import { Request, Response } from 'express';
 import passport from '../../../configs/passport';
 import HttpException from '../../../exceptions/http-exception';
 import NotFoundException from '../../../exceptions/not-found';
-import { CourseStatus, LessonStatus, ReqUser } from '../../../global';
-import lessonUtil from '../../../util/lesson.util';
+import {
+  CoursedPaidStatus,
+  CourseStatus,
+  LessonStatus,
+  ReqUser,
+} from '../../../global';
 
 export default class PublicLessonController extends BaseController {
   public path = '/api/v1-public/lessons';
@@ -39,6 +43,11 @@ export default class PublicLessonController extends BaseController {
       `${this.path}/actions/emoji`,
       passport.authenticate('jwt', { session: false }),
       this.emojiAction,
+    );
+    this.router.post(
+      `${this.path}/actions/done`,
+      passport.authenticate('jwt', { session: false }),
+      this.doneLessonAction,
     );
     this.router.get(
       `${this.path}/:id`,
@@ -118,6 +127,7 @@ export default class PublicLessonController extends BaseController {
             user: { connect: { id: reqUser.id } },
             lesson: { connect: { id } },
             parent: { connect: { id: parentId } },
+            level,
           },
         });
       } else {
@@ -306,6 +316,70 @@ export default class PublicLessonController extends BaseController {
         },
       });
       return res.status(200).json(lesson);
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
+  doneLessonAction = async (req: Request, res: Response) => {
+    try {
+      const reqUser = req.user as ReqUser;
+      const lessonId = Number(req.body.lessonId);
+      const lesson = await this.prisma.lesson.findFirst({
+        where: { id: lessonId },
+      });
+      if (!lesson || lesson.status !== LessonStatus.APPROVED) {
+        throw new NotFoundException('lesson', lessonId);
+      }
+      const paid = await this.prisma.coursedPaid.findFirst({
+        where: {
+          courseId: lesson.courseId,
+          userId: reqUser.id,
+          status: CoursedPaidStatus.SUCCESS,
+        },
+      });
+      if (!paid) {
+        throw new HttpException(403, 'You have not paid for this course');
+      }
+      const done = await this.prisma.lessonDone.findFirst({
+        where: { lessonId, userId: reqUser.id },
+      });
+      if (!done) {
+        const done = await this.prisma.lessonDone.create({
+          data: {
+            lesson: { connect: { id: lessonId } },
+            user: { connect: { id: reqUser.id } },
+          },
+        });
+        const lessons = await this.prisma.lesson.findMany({
+          where: { courseId: lesson.courseId },
+        });
+        const lessonCount = await this.prisma.lesson.count({
+          where: {
+            courseId: lesson.courseId,
+            status: LessonStatus.APPROVED,
+            userId: reqUser.id,
+          },
+        });
+        if (lessonCount === lessons.length) {
+          await this.prisma.courseDone.create({
+            data: {
+              course: { connect: { id: lesson.courseId } },
+              user: { connect: { id: reqUser.id } },
+            },
+          });
+        }
+        return res.status(200).json(done);
+      }
+      await this.prisma.lessonDone.deleteMany({
+        where: { lessonId, userId: reqUser.id },
+      });
+      await this.prisma.courseDone.deleteMany({
+        where: { courseId: lesson.courseId, userId: reqUser.id },
+      });
+      return res.status(200).json(done);
     } catch (e: any) {
       console.log(e);
       return res

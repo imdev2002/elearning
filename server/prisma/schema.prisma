@@ -12,24 +12,25 @@ datasource db {
 }
 
 model User {
-  id           Int        @id @default(autoincrement())
-  email        String     @unique
-  username     String?
-  firstName    String?
-  lastName     String?
-  gender       String?
-  password     String?
-  salt         String?
-  roles        UserRole[]
-  phone        String?
-  avatar       String?
-  birthday     DateTime?
-  isVerified   Boolean    @default(false)
-  verifyCode   String?
-  platform     Platform
-  refreshToken String?
-  firstTime    Boolean    @default(true) // false if sent first time public profile email
-  isNewUser    Boolean    @default(true) // new user flag
+  id             Int        @id @default(autoincrement())
+  email          String     @unique
+  username       String?
+  firstName      String?
+  lastName       String?
+  gender         String?
+  password       String?
+  salt           String?
+  roles          UserRole[]
+  phone          String?
+  avatar         String?
+  birthday       DateTime?
+  isVerified     Boolean    @default(false)
+  verifyCode     String?
+  platform       Platform
+  refreshToken   String?
+  firstTime      Boolean    @default(true) // false if sent first time public profile email
+  isNewUser      Boolean    @default(true) // new user flag
+  syncWithGoogle Boolean    @default(false)
 
   timestamp DateTime @default(now())
 
@@ -44,6 +45,8 @@ model User {
   submitForms SubmitForm[]
   rating      Rating[]
   bookmarks   Bookmark[]
+  LessonDone  LessonDone[]
+  CourseDone  CourseDone[]
 }
 
 model Role {
@@ -88,31 +91,45 @@ model UserRole {
   userId Int
 }
 
+enum LessonType {
+  VIDEO
+  TEXT
+}
+
 model Lesson {
   id        Int      @id @default(autoincrement())
   timestamp DateTime @default(now())
 
-  lessonName    String
-  lessonNumber  Int
-  partNumber    Int?
+  lessonName   String
+  lessonNumber Int
+
+  lessonType LessonType @default(VIDEO)
+
   trialAllowed  Boolean @default(false)
   descriptionMD String?
 
   status LessonStatus
 
+  title   String?
+  content String?
+
   localPath     String?
   thumbnailPath String?
   filename      String?
+  duration      Float?
 
   course   Course @relation(fields: [courseId], references: [id])
   courseId Int
   user     User   @relation(fields: [userId], references: [id])
   userId   Int
 
-  comments  Comment[]
-  emojis    Emoji[]
-  hearts    Heart[]
-  bookmarks Bookmark[]
+  comments   Comment[]
+  emojis     Emoji[]
+  hearts     Heart[]
+  bookmarks  Bookmark[]
+  part       Part         @relation(fields: [partId], references: [id])
+  partId     Int
+  LessonDone LessonDone[]
 }
 
 model Certificate {
@@ -162,11 +179,13 @@ model Course {
   totalLesson     Int
   totalPart       Int
   courseName      String
-  totalDuration   Int
+  totalDuration   Float
   knowledgeGained String[]
   isPublic        Boolean      @default(false)
   status          CourseStatus @default(DRAFT)
-  avgRating       Float?
+
+  avgRating   Float?
+  totalRating Int    @default(0)
 
   thumbnail String
 
@@ -182,7 +201,7 @@ model Course {
   user   User @relation(fields: [userId], references: [id])
   userId Int
 
-  lessons      Lesson[]
+  // lessons      Lesson[]
   comments     Comment[]
   emojis       Emoji[]
   hearts       Heart[]
@@ -192,6 +211,8 @@ model Course {
   coursedPaid CoursedPaid[]
   rating      Rating[]
   bookmarks   Bookmark[]
+  Lesson      Lesson[]
+  CourseDone  CourseDone[]
 }
 
 enum CoursedPaidStatus {
@@ -219,6 +240,8 @@ model Part {
   partNumber  Int
   partName    String
   description String?
+
+  lessons Lesson[]
 
   course   Course @relation(fields: [courseId], references: [id])
   courseId Int
@@ -283,9 +306,28 @@ enum FormStatus {
   REJECTED
 }
 
+model LessonDone {
+  lesson   Lesson @relation(fields: [lessonId], references: [id])
+  lessonId Int
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+
+  @@id([userId, lessonId])
+}
+
+model CourseDone {
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+
+  @@id([userId, courseId])
+}
+
 model SubmitForm {
   id        Int      @id @default(autoincrement())
-  timestamp DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user   User @relation(fields: [userId], references: [id])
   userId Int
@@ -297,6 +339,10 @@ model SubmitForm {
 
   frontIdCard String?
   backIdCard  String?
+
+  linkCV String?
+
+  category CourseCategory @default(OTHER)
 
   status FormStatus @default(PENDING)
 }

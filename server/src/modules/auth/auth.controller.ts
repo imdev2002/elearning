@@ -49,6 +49,7 @@ export default class AuthController extends BaseController {
     );
     this.router.post(`${this.path}/local/register`, this.registerLocal);
     this.router.post(`${this.path}/local/login`, this.loginLocal);
+    this.router.post(`${this.path}/local/password`, this.changePassword);
   }
 
   upsertUser = async (
@@ -89,16 +90,19 @@ export default class AuthController extends BaseController {
       );
       await sendEmail(emailHtml, email, 'Your Adventure Begins with DKE!');
     } else {
+      const data: any = {
+        email,
+        platform: Platform.GOOGLE,
+        isVerified: true,
+      };
+      if (user?.syncWithGoogle) {
+        data.firstName = given_name;
+        data.lastName = family_name;
+        data.avatar = picture;
+      }
       await this.prisma.user.update({
         where: { email },
-        data: {
-          email,
-          firstName: given_name,
-          lastName: family_name,
-          avatar: picture,
-          platform: Platform.GOOGLE,
-          isVerified: true,
-        },
+        data,
       });
     }
     user = await this.prisma.user.findFirst({
@@ -158,6 +162,9 @@ export default class AuthController extends BaseController {
           },
         );
         email = data.email;
+        email = `${commonUtil
+          .replaceAll(email?.split('@')[0] as string, '.', '')
+          .toLowerCase()}@${email?.split('@')[1]}`;
         picture = data.picture;
         family_name = data.family_name;
         given_name = data.given_name;
@@ -170,6 +177,9 @@ export default class AuthController extends BaseController {
         });
         const payload = ticket.getPayload() as TokenPayload;
         email = payload.email;
+        email = `${commonUtil
+          .replaceAll(email?.split('@')[0] as string, '.', '')
+          .toLowerCase()}@${email?.split('@')[1]}`;
         picture = payload.picture;
         family_name = payload.family_name;
         given_name = payload.given_name;
@@ -270,7 +280,11 @@ export default class AuthController extends BaseController {
   };
   registerLocal = async (req: Request, res: Response) => {
     try {
-      const { password, confirmPassword, email } = req.body;
+      const { password, confirmPassword } = req.body;
+      let { email } = req.body;
+      email = `${commonUtil
+        .replaceAll(email?.split('@')[0] as string, '.', '')
+        .toLowerCase()}@${email?.split('@')[1]}`;
       const existUser = await this.prisma.user.findFirst({ where: { email } });
       if (existUser) {
         throw new HttpException(400, 'Email already exist');
@@ -311,7 +325,11 @@ export default class AuthController extends BaseController {
   };
   loginLocal = async (req: Request, res: Response) => {
     try {
-      const { email, password } = req.body;
+      const { password } = req.body;
+      let { email } = req.body;
+      email = `${commonUtil
+        .replaceAll(email?.split('@')[0] as string, '.', '')
+        .toLowerCase()}@${email?.split('@')[1]}`;
       const user = await this.prisma.user.findFirst({
         where: { email },
         include: { roles: { include: { role: true } } },
@@ -341,9 +359,41 @@ export default class AuthController extends BaseController {
         return res.status(200).json({
           accessToken,
           refreshToken,
-          user: { email },
+          user: { email, id: user.id },
         });
       }
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
+  changePassword = async (req: Request, res: Response) => {
+    try {
+      const reqUser = req.user as ReqUser;
+      const { password, confirmPassword, oldPassword } = req.body;
+      if (confirmPassword !== password) {
+        throw new HttpException(400, 'Passwords are not the same');
+      }
+      const user = await this.prisma.user.findFirst({
+        where: { email: reqUser.email, isVerified: true },
+        include: { roles: { include: { role: true } } },
+      });
+      if (!user) {
+        throw new HttpException(400, 'Invalid email address');
+      }
+      if (!bcrypt.compareSync(oldPassword, user.password as string)) {
+        throw new HttpException(400, 'Old password is not correct');
+      }
+      const newPassword = bcrypt.hashSync(password, user.salt as string);
+      await this.prisma.user.update({
+        where: { email: reqUser.email },
+        data: {
+          password: newPassword,
+        },
+      });
+      return res.status(200).json({ email: reqUser.email });
     } catch (e: any) {
       console.log(e);
       return res

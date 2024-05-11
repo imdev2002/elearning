@@ -8,6 +8,7 @@ import passport from 'passport';
 import { render } from '@react-email/render';
 import MaloloWelcomeEmail from '../email/templates/welcome';
 import { Platform, RoleEnum } from '../global';
+import commonUtil from '../util/common.util';
 
 const prisma = new PrismaClient();
 const User = prisma.user;
@@ -19,7 +20,10 @@ const googleStrategy = new GoogleStrategy(
     callbackURL: process.env.CALLBACK_URL,
   },
   async (accessToken, refreshToken, profile, done: VerifyCallback) => {
-    const email = profile._json.email;
+    let email = profile._json.email;
+    email = `${commonUtil
+      .replaceAll(email?.split('@')[0] as string, '.', '')
+      .toLowerCase()}@${email?.split('@')[1]}`;
     const sub = profile._json.sub;
     try {
       if (email && !(await User.findFirst({ where: { email } }))) {

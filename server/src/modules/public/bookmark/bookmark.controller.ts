@@ -53,7 +53,7 @@ export default class BookmarkController extends BaseController {
       const userId = reqUser.id;
       const { courseId, lessonId } = req.body;
       let bookmark;
-      if (!courseId || isNaN(courseId)) {
+      if (courseId || !isNaN(Number(courseId))) {
         const course = await this.prisma.course.findFirst({
           where: { id: courseId },
         });
@@ -72,7 +72,7 @@ export default class BookmarkController extends BaseController {
             user: { connect: { id: userId } },
           },
         });
-      } else if (!lessonId || isNaN(lessonId)) {
+      } else if (lessonId || !isNaN(Number(lessonId))) {
         const lesson = await this.prisma.lesson.findFirst({
           where: { id: lessonId },
         });

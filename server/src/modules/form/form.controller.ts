@@ -70,12 +70,35 @@ export default class FormController extends BaseController {
           where: { id },
           include: { user: true },
         });
-        await this.prisma.userRole.create({
-          data: {
-            user: { connect: { id: _?.user.id } },
-            role: { connect: { name: RoleEnum.AUTHOR } },
-          },
+        const __ = await this.prisma.userRole.findFirst({
+          where: { userId: _?.user.id, role: { name: RoleEnum.AUTHOR } },
+          include: { role: true },
         });
+        if (!__) {
+          await this.prisma.userRole.create({
+            data: {
+              user: { connect: { id: _?.user.id } },
+              role: { connect: { name: RoleEnum.AUTHOR } },
+            },
+          });
+        }
+      } else {
+        const _ = await this.prisma.submitForm.findFirst({
+          where: { id },
+          include: { user: true },
+        });
+        const __ = await this.prisma.userRole.findFirst({
+          where: { userId: _?.user.id, role: { name: RoleEnum.AUTHOR } },
+          include: { role: true },
+        });
+        if (__ && _) {
+          await this.prisma.userRole.deleteMany({
+            where: {
+              userId: _.user.id,
+              role: { name: RoleEnum.AUTHOR },
+            },
+          });
+        }
       }
       return res.status(200).json(form);
     } catch (e: any) {

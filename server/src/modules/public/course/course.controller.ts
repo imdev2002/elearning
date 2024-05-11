@@ -88,6 +88,10 @@ export default class PublicCourseController extends BaseController {
             course: { connect: { id: courseId } },
           },
         });
+        await this.prisma.course.update({
+          where: { id: courseId },
+          data: { totalRating: { increment: 1 } },
+        });
       } else {
         await this.prisma.rating.updateMany({
           where: { userId: reqUser.id, courseId },
@@ -239,6 +243,7 @@ export default class PublicCourseController extends BaseController {
             user: { connect: { id: reqUser.id } },
             course: { connect: { id } },
             parent: { connect: { id: parentId } },
+            level,
           },
         });
       } else {
@@ -372,7 +377,7 @@ export default class PublicCourseController extends BaseController {
       const limit = Number(req.query.limit) || 12;
       const offset = Number(req.query.offset) || 0;
       const search = req.query.search as string;
-      const category = req.query.category as CourseCategory[];
+      const category = (req.query.category as CourseCategory[]) || [];
       const orderBy = (req.query.orderBy as string) || 'timestamp';
       const direction = (req.query.direction as 'asc' | 'desc') || 'desc';
       const query: any = {
@@ -504,44 +509,47 @@ export default class PublicCourseController extends BaseController {
               },
             },
           },
-          parts: true,
-          lessons: {
+          parts: {
             include: {
-              comments: {
+              lessons: {
                 include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true,
-                      avatar: true,
+                  comments: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
                     },
                   },
-                },
-              },
-              hearts: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true,
-                      avatar: true,
+                  hearts: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
                     },
                   },
-                },
-              },
-              emojis: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true,
-                      avatar: true,
+                  emojis: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
                     },
                   },
                 },
@@ -651,44 +659,47 @@ export default class PublicCourseController extends BaseController {
               },
             },
           },
-          parts: true,
-          lessons: {
+          parts: {
             include: {
-              comments: {
+              lessons: {
                 include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true,
-                      avatar: true,
+                  comments: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
                     },
                   },
-                },
-              },
-              hearts: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true,
-                      avatar: true,
+                  hearts: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
                     },
                   },
-                },
-              },
-              emojis: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      firstName: true,
-                      lastName: true,
-                      email: true,
-                      avatar: true,
+                  emojis: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
                     },
                   },
                 },

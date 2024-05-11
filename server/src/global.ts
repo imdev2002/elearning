@@ -64,6 +64,10 @@ export enum FormStatus {
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
 }
+export enum LessonType {
+  VIDEO = 'VIDEO',
+  TEXT = 'TEXT',
+}
 
 export type User = {
   id: number;
@@ -94,6 +98,22 @@ export type User = {
   coursedPaid: CoursedPaid[];
   submitForms: SubmitForm[];
   rating: Rating[];
+  bookmarks: Bookmark[];
+  LessonDone: LessonDone[];
+  CourseDone: CourseDone[];
+};
+export type LessonDone = {
+  lesson: Lesson;
+  lessonId: number;
+  user: User;
+  userId: number;
+};
+
+export type CourseDone = {
+  course: Course;
+  courseId: number;
+  user: User;
+  userId: number;
 };
 
 export type Role = {
@@ -117,7 +137,7 @@ export type Lesson = {
   timestamp: Date;
   lessonName: string;
   lessonNumber: number;
-  partNumber?: number;
+  lessonType: LessonType;
   trialAllowed: boolean;
   descriptionMD?: string;
   status: LessonStatus;
@@ -131,6 +151,10 @@ export type Lesson = {
   comments: Comment[];
   emojis: Emoji[];
   hearts: Heart[];
+  bookmarks: Bookmark[];
+  part: Part;
+  partId: number;
+  LessonDone: LessonDone[];
 };
 
 export type Certificate = {
@@ -140,7 +164,7 @@ export type Certificate = {
   description?: string;
   issuedAt?: Date;
   isPublic: boolean;
-  certificateNumber: number;
+  certificateNumber: bigint;
   student: User;
   studentId: number;
   course: Course;
@@ -157,6 +181,8 @@ export type Course = {
   knowledgeGained: string[];
   isPublic: boolean;
   status: CourseStatus;
+  avgRating?: number;
+  thumbnail: string;
   category: CourseCategory;
   priceAmount: number;
   currency: Currency;
@@ -165,7 +191,6 @@ export type Course = {
   descriptionMD?: string;
   user: User;
   userId: number;
-  lessons: Lesson[];
   comments: Comment[];
   emojis: Emoji[];
   hearts: Heart[];
@@ -173,7 +198,18 @@ export type Course = {
   certificates: Certificate[];
   coursedPaid: CoursedPaid[];
   rating: Rating[];
-  avgRating: number;
+  bookmarks: Bookmark[];
+  Lesson: Lesson[];
+  CourseDone: CourseDone[];
+};
+
+export type CoursedPaid = {
+  course: Course;
+  courseId: number;
+  user: User;
+  userId: number;
+  checkoutSessionId?: string;
+  status: CoursedPaidStatus;
 };
 
 export type Part = {
@@ -182,6 +218,7 @@ export type Part = {
   partNumber: number;
   partName: string;
   description?: string;
+  lessons: Lesson[];
   course: Course;
   courseId: number;
 };
@@ -232,15 +269,6 @@ export type Heart = {
   courseId?: number;
 };
 
-export type CoursedPaid = {
-  course: Course;
-  courseId: number;
-  user: User;
-  userId: number;
-  checkoutSessionId?: string;
-  status: CoursedPaidStatus;
-};
-
 export type SubmitForm = {
   id: number;
   timestamp: Date;
@@ -259,6 +287,16 @@ export type Rating = {
   userId: number;
   course: Course;
   courseId: number;
-
   star: number;
+};
+
+export type Bookmark = {
+  id: number;
+  timestamp: Date;
+  user: User;
+  userId: number;
+  lesson?: Lesson;
+  lessonId?: number;
+  course?: Course;
+  courseId?: number;
 };

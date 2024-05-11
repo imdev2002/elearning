@@ -4,12 +4,10 @@ import { videoUpload } from '../../configs/multer';
 import NotFoundException from '../../exceptions/not-found';
 import passport from '../../configs/passport';
 import HttpException from '../../exceptions/http-exception';
-import { LessonStatus, ReqUser, RoleEnum } from '../../global';
-import path from 'path';
-import { createReadStream, statSync } from 'fs';
+import { LessonStatus, LessonType, ReqUser, RoleEnum } from '../../global';
 import lessonUtil from '../../util/lesson.util';
 import checkRoleMiddleware from '../../middlewares/checkRole.middleware';
-import courseUtil from '../../util/course.util';
+import { getVideoDurationInSeconds } from 'get-video-duration';
 
 export default class LessonController extends BaseController {
   public path = '/api/v1/lessons';
@@ -64,50 +62,100 @@ export default class LessonController extends BaseController {
   createLesson = async (req: Request, res: Response) => {
     try {
       const reqUser = req.user as ReqUser;
-      if (!req.files) {
-        throw new NotFoundException('video', 0);
+      const lessonType =
+        (req.body.lessonType as LessonType) || LessonType.VIDEO;
+      if (lessonType === LessonType.VIDEO) {
+        if (!req.files) {
+          throw new NotFoundException('video', 0);
+        }
+        let { video, thumbnail } = req.files as any;
+        if (!(video.length === 1 && thumbnail.length === 1)) {
+          throw new HttpException(400, 'Missing file');
+        }
+        video = video[0];
+        thumbnail = thumbnail[0];
+        const { lessonName, descriptionMD } = req.body;
+        const lessonNumber = parseInt(req.body.lessonNumber || '0');
+        const partId = parseInt(req.body.partId || '0');
+        const courseId = parseInt(req.body.courseId || '0');
+        const trialAllowed = req.body.trialAllowed === 'true';
+        if (
+          !lessonName ||
+          !lessonNumber ||
+          !descriptionMD ||
+          !partId ||
+          !courseId
+        ) {
+          throw new HttpException(400, 'Missing fields');
+        }
+        const duration = (await getVideoDurationInSeconds(video.path)) || 0;
+        const lesson = await this.prisma.lesson.create({
+          data: {
+            lessonName,
+            lessonNumber: Number(lessonNumber),
+            part: { connect: { id: Number(partId) } },
+            trialAllowed: trialAllowed || false,
+            descriptionMD,
+            duration,
+            course: { connect: { id: Number(courseId) } },
+            status: LessonStatus.PENDING,
+            localPath: video.path,
+            thumbnailPath: thumbnail.path,
+            filename: video.filename,
+            user: { connect: { id: (req.user as ReqUser).id } },
+          },
+        });
+        const newLesson = await lessonUtil.getLesson(
+          this.prisma,
+          lesson.id,
+          reqUser.id,
+        );
+        res.status(200).json(newLesson);
+        await this.prisma.course.update({
+          where: { id: Number(courseId) },
+          data: {
+            totalDuration: { increment: duration },
+          },
+        });
+      } else if (lessonType === LessonType.TEXT) {
+        const { lessonName, descriptionMD, title, content } = req.body;
+        const lessonNumber = parseInt(req.body.lessonNumber || '0');
+        const partId = parseInt(req.body.partId || '0');
+        const courseId = parseInt(req.body.courseId || '0');
+        const trialAllowed = req.body.trialAllowed === 'true';
+        if (
+          !lessonName ||
+          !lessonNumber ||
+          !descriptionMD ||
+          !partId ||
+          !courseId
+        ) {
+          throw new HttpException(400, 'Missing fields');
+        }
+        const lesson = await this.prisma.lesson.create({
+          data: {
+            lessonName,
+            lessonType: LessonType.TEXT,
+            lessonNumber: Number(lessonNumber),
+            part: { connect: { id: Number(partId) } },
+            trialAllowed: trialAllowed || false,
+            descriptionMD,
+            title: title || '',
+            content: content || '',
+            course: { connect: { id: Number(courseId) } },
+            status: LessonStatus.PENDING,
+            user: { connect: { id: (req.user as ReqUser).id } },
+          },
+        });
+        const newLesson = await lessonUtil.getLesson(
+          this.prisma,
+          lesson.id,
+          reqUser.id,
+        );
+        return res.status(200).json(newLesson);
+      } else {
+        throw new HttpException(400, 'Invalid lesson type');
       }
-      let { video, thumbnail } = req.files as any;
-      if (!(video.length === 1 && thumbnail.length === 1)) {
-        throw new HttpException(400, 'Missing file');
-      }
-      video = video[0];
-      thumbnail = thumbnail[0];
-      const { lessonName, descriptionMD } = req.body;
-      const lessonNumber = parseInt(req.body.lessonNumber || '0');
-      const partNumber = parseInt(req.body.partNumber || '0');
-      const courseId = parseInt(req.body.courseId || '0');
-      const trialAllowed = req.body.trialAllowed === 'true';
-      if (
-        !lessonName ||
-        !lessonNumber ||
-        !descriptionMD ||
-        !partNumber ||
-        !courseId
-      ) {
-        throw new HttpException(400, 'Missing fields');
-      }
-      const lesson = await this.prisma.lesson.create({
-        data: {
-          lessonName,
-          lessonNumber: Number(lessonNumber),
-          partNumber: Number(partNumber),
-          trialAllowed: trialAllowed || false,
-          descriptionMD,
-          course: { connect: { id: Number(courseId) } },
-          status: LessonStatus.PENDING,
-          localPath: video.path,
-          thumbnailPath: thumbnail.path,
-          filename: video.filename,
-          user: { connect: { id: (req.user as ReqUser).id } },
-        },
-      });
-      const newLesson = await lessonUtil.getLesson(
-        this.prisma,
-        lesson.id,
-        reqUser.id,
-      );
-      res.status(200).json(newLesson);
     } catch (e: any) {
       console.log(e);
       return res
@@ -168,31 +216,82 @@ export default class LessonController extends BaseController {
       if (!lesson) {
         throw new NotFoundException('lesson', id);
       }
-      const {
-        lessonName,
-        lessonNumber,
-        partNumber,
-        trialAllowed,
-        descriptionMD,
-      } = req.body;
-
-      await this.prisma.lesson.update({
-        where: { id, userId: reqUser.id },
-        data: {
+      if (lesson.lessonType === LessonType.VIDEO) {
+        const {
+          lessonName,
+          lessonNumber,
+          partId,
+          trialAllowed,
+          descriptionMD,
+        } = req.body;
+        const data: any = {
           lessonName: lessonName || lesson.lessonName,
           lessonNumber: Number(lessonNumber) || lesson.lessonNumber,
-          partNumber: Number(partNumber) || lesson.partNumber,
+          part: { connect: { id: Number(partId || lesson.partId) } },
           trialAllowed: trialAllowed || lesson.trialAllowed,
           descriptionMD: descriptionMD || lesson.descriptionMD,
           status: LessonStatus.PENDING,
-          localPath: (req.file as any)?.video[0]?.path || lesson.localPath,
-          thumbnailPath:
-            (req.file as any)?.thumbnail[0]?.path || lesson.thumbnailPath,
-          filename: (req.file as any)?.video[0]?.filename || lesson.filename,
-        },
-      });
-      const newLesson = await lessonUtil.getLesson(this.prisma, id, reqUser.id);
-      res.status(200).json(newLesson);
+        };
+        if ((req.files as any)?.video) {
+          if ((req.file as any)?.video[0]?.path) {
+            const duration = await getVideoDurationInSeconds(
+              (req.files as any)?.video[0]?.path,
+            );
+            data.duration = duration;
+            data.videoPath = (req.files as any)?.video[0]?.path;
+            data.localPath = (req.files as any)?.video[0]?.filename;
+          }
+        }
+        if ((req.files as any)?.thumbnail) {
+          if ((req.files as any)?.thumbnail[0]?.path) {
+            data.thumbnailPath = (req.files as any)?.thumbnail[0]?.path;
+          }
+        }
+        await this.prisma.lesson.update({
+          where: { id, userId: reqUser.id },
+          data,
+          include: { part: true },
+        });
+        const newLesson = await lessonUtil.getLesson(
+          this.prisma,
+          id,
+          reqUser.id,
+        );
+        return res.status(200).json(newLesson);
+      } else if (lesson.lessonType === LessonType.TEXT) {
+        const {
+          lessonName,
+          lessonNumber,
+          partId,
+          trialAllowed,
+          descriptionMD,
+          title,
+          content,
+        } = req.body;
+
+        await this.prisma.lesson.update({
+          where: { id, userId: reqUser.id },
+          data: {
+            lessonName: lessonName || lesson.lessonName,
+            lessonNumber: Number(lessonNumber) || lesson.lessonNumber,
+            part: { connect: { id: Number(partId || lesson.partId) } },
+            trialAllowed: trialAllowed || lesson.trialAllowed,
+            descriptionMD: descriptionMD || lesson.descriptionMD,
+            status: LessonStatus.PENDING,
+            title: title || lesson.title,
+            content: content || lesson.content,
+          },
+          include: { part: true },
+        });
+        const newLesson = await lessonUtil.getLesson(
+          this.prisma,
+          id,
+          reqUser.id,
+        );
+        return res.status(200).json(newLesson);
+      } else {
+        throw new HttpException(400, 'Invalid lesson type');
+      }
     } catch (e: any) {
       console.log(e);
       return res
@@ -208,7 +307,14 @@ export default class LessonController extends BaseController {
       if (!lesson) {
         throw new NotFoundException('lesson', id);
       }
-      return res.status(200).json(lesson);
+      res.status(200).json(lesson);
+      await this.prisma.course.update({
+        where: { id: lesson.courseId },
+        data: {
+          totalDuration: { decrement: lesson.duration || 0 },
+          totalLesson: { decrement: 1 },
+        },
+      });
     } catch (e: any) {
       console.log(e);
       return res

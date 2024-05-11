@@ -3,7 +3,13 @@ import { Request, Response } from 'express';
 import passport from '../../configs/passport';
 import HttpException from '../../exceptions/http-exception';
 import NotFoundException from '../../exceptions/not-found';
-import { ReqUser, RoleEnum } from '../../global';
+import {
+  CourseCategory,
+  CoursedPaidStatus,
+  LessonDone,
+  ReqUser,
+  RoleEnum,
+} from '../../global';
 import { Platform } from '@prisma/client';
 import { videoUpload } from '../../configs/multer';
 
@@ -49,7 +55,7 @@ export default class UserController extends BaseController {
     // get user detail
     this.router.get(
       `${this.path}/:id`,
-      passport.authenticate('jwt', { session: false }),
+      // passport.authenticate('jwt', { session: false }),
       this.getUserDetail,
     );
     this.router.get(
@@ -67,6 +73,26 @@ export default class UserController extends BaseController {
         { name: 'selfie', maxCount: 1 },
       ]),
       this.authorVerify,
+    );
+    this.router.get(
+      `${this.path}/actions/hearted`,
+      passport.authenticate('jwt', { session: false }),
+      this.getHearted,
+    );
+    this.router.get(
+      `${this.path}/actions/bought`,
+      passport.authenticate('jwt', { session: false }),
+      this.getBought,
+    );
+    this.router.get(
+      `${this.path}/actions/progress`,
+      passport.authenticate('jwt', { session: false }),
+      this.getProgress,
+    );
+    this.router.get(
+      `${this.path}/actions/forms`,
+      passport.authenticate('jwt', { session: false }),
+      this.getMyForms,
     );
   }
 
@@ -150,8 +176,15 @@ export default class UserController extends BaseController {
     try {
       const userRoles = (req.user as ReqUser).roles;
       const id = Number(req.params.id);
-      const { username, firstName, lastName, phone, gender, birthday } =
-        req.body;
+      const {
+        username,
+        firstName,
+        lastName,
+        phone,
+        gender,
+        birthday,
+        syncWithGoogle,
+      } = req.body;
       const user = await this.prisma.user.findFirst({ where: { id } });
       if (!user) {
         throw new NotFoundException('user', id);
@@ -165,22 +198,31 @@ export default class UserController extends BaseController {
         throw new HttpException(401, 'Unauthorized');
       }
       const usernameExist = await this.prisma.user.findFirst({
-        where: { username },
+        where: { username, id: { not: id } },
       });
       if (usernameExist) {
         throw new HttpException(400, 'Username already exists');
       }
+      const data: any = {
+        username: username || user.username,
+        firstName: firstName || '',
+        lastName: lastName || '',
+        phone: phone || '',
+        gender: gender || '',
+        birthday: birthday || new Date(),
+        syncWithGoogle: syncWithGoogle === 'true' || false,
+      };
+
+      if ((req.files as any)?.avatar) {
+        if ((req.files as any)?.avatar[0]?.path) {
+          console.log('HERE');
+
+          data.avatar = (req.files as any)?.avatar[0]?.path;
+        }
+      }
       const updateUser = await this.prisma.user.update({
         where: { id: id },
-        data: {
-          username: username || user.username,
-          firstName: firstName || '',
-          lastName: lastName || '',
-          phone: phone || '',
-          gender: gender || '',
-          birthday: birthday || new Date(),
-          avatar: (req.files as any)?.avatar[0].filename || '',
-        },
+        data,
       });
       return res.status(200).send(updateUser);
     } catch (e: any) {
@@ -308,12 +350,24 @@ export default class UserController extends BaseController {
         throw new HttpException(400, 'Please upload files');
       }
       let { frontIdCard, backIdCard, selfie } = req.files as any;
-      frontIdCard = frontIdCard[0].filename;
-      backIdCard = backIdCard[0].filename;
-      selfie = selfie[0].filename;
-      const { real_firstName, real_lastName } = req.body;
+      console.log(req.files);
+      frontIdCard = frontIdCard[0];
+      backIdCard = backIdCard[0];
+      selfie = selfie[0];
+      const { real_firstName, real_lastName, linkCV } = req.body;
+      const category = req.body.category as CourseCategory;
       if (!real_firstName || !real_lastName) {
         throw new HttpException(400, 'Please provide your real name');
+      }
+      if (
+        await this.prisma.submitForm.findFirst({
+          where: { userId: reqUser.id },
+        })
+      ) {
+        throw new HttpException(
+          400,
+          'You have already submitted your information',
+        );
       }
       const submitForm = await this.prisma.submitForm.create({
         data: {
@@ -323,9 +377,94 @@ export default class UserController extends BaseController {
           frontIdCard: frontIdCard.path,
           backIdCard: backIdCard.path,
           selfie: selfie.path,
+          linkCV,
+          category,
         },
       });
       return res.status(200).json(submitForm);
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
+  getHearted = async (req: Request, res: Response) => {
+    try {
+      const reqUser = req.user as ReqUser;
+      const lessonHearted = await this.prisma.heart.findMany({
+        where: {
+          userId: reqUser.id,
+          lessonId: { not: null },
+        },
+        include: {
+          lesson: true,
+        },
+      });
+      const courseHearted = await this.prisma.heart.findMany({
+        where: { userId: reqUser.id, courseId: { not: null } },
+        include: { course: true },
+      });
+      return res.status(200).json({ lessonHearted, courseHearted });
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
+  getBought = async (req: Request, res: Response) => {
+    try {
+      const course = await this.prisma.coursedPaid.findMany({
+        where: {
+          userId: (req.user as ReqUser).id,
+          status: CoursedPaidStatus.SUCCESS,
+        },
+        include: { course: true },
+      });
+      return res.status(200).json(course);
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
+  getProgress = async (req: Request, res: Response) => {
+    try {
+      const reqUser = req.user as ReqUser;
+      const lessons = await this.prisma.lessonDone.findMany({
+        where: { userId: reqUser.id },
+        include: { lesson: true },
+      });
+      const _ = [] as { courseId: number; lessons: any[] }[];
+      const __ = [] as number[];
+      for (const lesson of lessons) {
+        if (!__.includes(lesson.lesson.courseId)) {
+          __.push(lesson.lesson.courseId);
+        }
+      }
+      for (const id of __) {
+        _.push({
+          courseId: id,
+          lessons: lessons.filter((lesson) => lesson.lesson.courseId === id),
+        });
+      }
+      return res.status(200).json(_);
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
+  getMyForms = async (req: Request, res: Response) => {
+    try {
+      const reqUser = req.user as ReqUser;
+      const forms = await this.prisma.submitForm.findMany({
+        where: { userId: reqUser.id },
+      });
+      return res.status(200).json(forms);
     } catch (e: any) {
       console.log(e);
       return res

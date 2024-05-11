@@ -179,19 +179,17 @@ export default class CourseController extends BaseController {
   };
   updateCourse = async (req: Request, res: Response) => {
     try {
-      if (!req.files) {
-        throw new NotFoundException('video', 0);
-      }
-      let { thumbnail } = req.files as any;
-      if (!(thumbnail.length > 0)) {
-        throw new NotFoundException('thumbnail', 0);
-      }
-      thumbnail = thumbnail[0];
       const id = parseInt(req.params.id);
       const reqUser = req.user as ReqUser;
       const course = await this.prisma.course.findFirst({ where: { id } });
       if (!course) {
         throw new NotFoundException('course', id);
+      }
+      let { thumbnail } = req.files as any;
+      if (thumbnail) {
+        thumbnail = thumbnail[0];
+      } else {
+        thumbnail = { path: course.thumbnail };
       }
       if (
         !(
@@ -488,15 +486,19 @@ export default class CourseController extends BaseController {
       let course = await this.prisma.course.findFirst({
         where: { id },
         include: {
-          lessons: {
+          parts: {
             include: {
-              user: {
-                select: {
-                  id: true,
-                  email: true,
-                  firstName: true,
-                  lastName: true,
-                  avatar: true,
+              lessons: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      email: true,
+                      firstName: true,
+                      lastName: true,
+                      avatar: true,
+                    },
+                  },
                 },
               },
             },
@@ -506,11 +508,13 @@ export default class CourseController extends BaseController {
       if (!course) {
         throw new NotFoundException('course', id);
       }
-      for (const lesson of course.lessons) {
-        await this.prisma.lesson.update({
-          where: { id: lesson.id },
-          data: { status: LessonStatus.APPROVED },
-        });
+      for (const part of course.parts) {
+        for (const lesson of part.lessons) {
+          await this.prisma.lesson.update({
+            where: { id: lesson.id },
+            data: { status: LessonStatus.APPROVED },
+          });
+        }
       }
       await this.prisma.course.update({
         where: { id },
@@ -519,15 +523,19 @@ export default class CourseController extends BaseController {
       course = await this.prisma.course.findFirst({
         where: { id },
         include: {
-          lessons: {
+          parts: {
             include: {
-              user: {
-                select: {
-                  id: true,
-                  email: true,
-                  firstName: true,
-                  lastName: true,
-                  avatar: true,
+              lessons: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      email: true,
+                      firstName: true,
+                      lastName: true,
+                      avatar: true,
+                    },
+                  },
                 },
               },
             },
