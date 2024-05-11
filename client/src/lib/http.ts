@@ -175,8 +175,8 @@ const request = async <Response>(
       )
     ) {
       clientTokens.value = {
-        accessToken: (payload as LoginResponseType).data.accessToken,
-        refreshToken: (payload as LoginResponseType).data.refreshToken,
+        accessToken: (payload as LoginResponseType).accessToken,
+        refreshToken: (payload as LoginResponseType).refreshToken,
       }
       // clientTokens.expiresAt = (
       //   payload as LoginResponseType

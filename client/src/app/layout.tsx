@@ -8,6 +8,7 @@ import 'react-date-picker/dist/DatePicker.css'
 import 'react-calendar/dist/Calendar.css'
 import AccountProvider from '@/contexts/account'
 import { cookies } from 'next/headers'
+import 'swiper/css'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,7 +28,7 @@ export default function RootLayout({
   const refreshToken = cookieStore.get('refreshToken')?.value as string
   const tokens = { accessToken, refreshToken }
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning={false}>
       <body className={`${inter.className} bg-background`}>
         <RootProvider>
           <AccountProvider inititalTokens={tokens}>

@@ -1,3 +1,4 @@
+import { Lesson } from '@/app/globals'
 import http from '@/lib/http'
 import { LessonBodyType } from '@/schemaValidations/lesson.schema'
 
@@ -18,13 +19,13 @@ export const lessonManagerApiRequest = {
 }
 
 export const lessonPublicApiRequest = {
-  get: (lessonId: number) => http.get(`-public/lessons/${lessonId}`),
+  get: (lessonId: number) => http.get<Lesson>(`-public/lessons/${lessonId}`),
 
   heart: (body: any) => http.post('-public/lessons/actions/heart', body),
 
   buy: (body: any) => http.post('-public/lessons/actions/buy', body),
 
-  commnet: (body: any) => http.post('-public/lessons/actions/comment', body),
+  comment: (body: any) => http.post('-public/lessons/actions/comment', body),
 
   editComment: (lessonId: number, body: any) =>
     http.patch(`-public/lessons/actions/comment/${lessonId}`, body),

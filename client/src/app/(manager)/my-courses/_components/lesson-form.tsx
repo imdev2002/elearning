@@ -1,4 +1,5 @@
 import { ImageUpload } from '@/components/ImageUpload'
+import FileUpload from '@/components/input/file-upload'
 import { LessonBody, LessonBodyType } from '@/schemaValidations/lesson.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@nextui-org/react'
@@ -20,8 +21,8 @@ const LessonForm = () => {
   return (
     <form>
       <div className="flex gap-8">
-        <ImageUpload />
-        <ImageUpload />
+        <FileUpload name="thumbnail" form={form} />
+        <FileUpload type="video" name="video" form={form} />
       </div>
       <div className="flex gap-8">
         <Controller

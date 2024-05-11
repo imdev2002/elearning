@@ -1,5 +1,6 @@
 'use client'
 import { useAccountContext } from '@/contexts/account'
+import { generateMediaLink } from '@/lib/utils'
 import {
   Avatar,
   Dropdown,
@@ -8,9 +9,11 @@ import {
   DropdownTrigger,
   User,
 } from '@nextui-org/react'
+import { useRouter } from 'next/navigation'
 
 const UserDropdown = () => {
   const { user } = useAccountContext()
+  const { push } = useRouter()
   if (!user) return
   const { avatar, email } = user
   return (
@@ -19,10 +22,13 @@ const UserDropdown = () => {
         <Avatar
           isBordered
           size="sm"
-          as="button"
+          // as="button"
           color="secondary"
           className="transition-transform"
-          src={avatar || 'https://i.pravatar.cc/150?u=a042581f4e29026704d'}
+          src={
+            generateMediaLink(avatar ?? '') ||
+            'https://i.pravatar.cc/150?u=a042581f4e29026704d'
+          }
         />
       </DropdownTrigger>
       <DropdownMenu aria-label="Profile Actions" variant="flat">
@@ -30,7 +36,12 @@ const UserDropdown = () => {
           <p className="font-semibold">Signed in as</p>
           <p className="font-semibold">{email}</p>
         </DropdownItem>
-        <DropdownItem key="settings">My Settings</DropdownItem>
+        <DropdownItem
+          key="settings"
+          onClick={() => push(`/profile/${user.id}`)}
+        >
+          My Settings
+        </DropdownItem>
         <DropdownItem key="team_settings">Team Settings</DropdownItem>
         <DropdownItem key="analytics">Analytics</DropdownItem>
         <DropdownItem key="system">System</DropdownItem>

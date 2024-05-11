@@ -1,3 +1,4 @@
+import { User } from '@/app/globals'
 import z from 'zod'
 
 // Register
@@ -38,47 +39,48 @@ export const LoginBody = z.object({
 export type LoginBodyType = z.TypeOf<typeof LoginBody>
 
 export const LoginResponse = z.object({
-  data: z.object({
-    accessToken: z.string(),
+  accessToken: z.string(),
+  refreshToken: z.string(),
+  user: z.object({
+    id: z.number(),
+    email: z.string(),
+    username: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+    gender: z.string(),
+    password: z.null(),
+    salt: z.null(),
+    phone: z.string(),
+    avatar: z.string(),
+    birthday: z.string(),
+    isVerified: z.boolean(),
+    verifyCode: z.null(),
+    platform: z.string(),
     refreshToken: z.string(),
-    data: z.object({
-      id: z.number(),
-      email: z.string(),
-      username: z.string(),
-      firstName: z.string(),
-      lastName: z.string(),
-      gender: z.string(),
-      password: z.null(),
-      salt: z.null(),
-      phone: z.string(),
-      avatar: z.string(),
-      birthday: z.string(),
-      isVerified: z.boolean(),
-      verifyCode: z.null(),
-      platform: z.string(),
-      refreshToken: z.string(),
-      firstTime: z.boolean(),
-      isNewUser: z.boolean(),
-      timestamp: z.string(),
-      roles: z.array(
-        z.object({
+    firstTime: z.boolean(),
+    isNewUser: z.boolean(),
+    timestamp: z.string(),
+    roles: z.array(
+      z.object({
+        id: z.number(),
+        timestamp: z.string(),
+        roleId: z.number(),
+        userId: z.number(),
+        role: z.object({
           id: z.number(),
-          timestamp: z.string(),
-          roleId: z.number(),
-          userId: z.number(),
-          role: z.object({
-            id: z.number(),
-            name: z.string(),
-            description: z.string(),
-          }),
-        })
-      ),
-    }),
+          name: z.string(),
+          description: z.string(),
+        }),
+      })
+    ),
   }),
-  message: z.string(),
 })
 
-export type LoginResponseType = z.TypeOf<typeof LoginResponse>
+export type LoginResponseType = {
+  accessToken: string
+  refreshToken: string
+  user: User
+}
 
 export type TokensType = {
   accessToken: string

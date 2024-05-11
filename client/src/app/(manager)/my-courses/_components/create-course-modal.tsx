@@ -16,13 +16,13 @@ import React from 'react'
 import { toast } from 'react-toastify'
 
 const CreateCourseModal = () => {
-  const { push } = useRouter()
+  const { refresh } = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const handleCreateCourse = async () => {
     try {
       const res = await courseManagerApiRequests.create()
       toast.success('Create a draft course successfully!')
-      push('/')
+      refresh()
     } catch (error) {
       toast.error('Error creating draft course')
     }
@@ -30,8 +30,8 @@ const CreateCourseModal = () => {
   return (
     <>
       <div
-        className="h-full w-full flex items-center justify-center border border-dashed rounded-lg cursor-pointer"
-        onClick={() => onOpen()}
+        className="h-full w-full flex items-center justify-center border border-dashed rounded-lg cursor-pointer aspect-square"
+        onClick={onOpen}
       >
         <PlusCircle size={52} />
       </div>

@@ -1,15 +1,16 @@
 'use client'
 
-import { ThemeSwitcher } from '@/components/ThemeSwitcher'
-import UserDropdown from '@/components/UserDropdown'
+import { GraduationCap } from '@/components/icons/graduation-cap'
+import { ThemeSwitcher } from '@/components/theme-swicher'
+import UserDropdown from '@/components/user-dropdown'
 import { useAccountContext } from '@/contexts/account'
+import { CATEGORIES } from '@/lib/constants'
 import {
-  Avatar,
   Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Navbar,
   NavbarBrand,
   NavbarContent,
@@ -17,11 +18,8 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  User,
 } from '@nextui-org/react'
+import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -52,35 +50,82 @@ const Header = () => {
         <NavbarMenuToggle
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
         />
+        {/* <NavbarBrand>
+          <Link
+            href="/"
+            className="flex gap-2 items-center p-2 border rounded-md"
+          >
+            <GraduationCap size={32} />
+            <p className="font-bold text-inherit text-xl uppercase">DangKhai</p>
+          </Link>
+        </NavbarBrand> */}
       </NavbarContent>
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
-        <NavbarBrand>
-          <h1 className="font-bold">DKEducation</h1>
-          {/* <p className="font-bold text-inherit">ACME</p> */}
-        </NavbarBrand>
+        {/* <NavbarBrand>
+          <Link
+            href="/"
+            className="flex gap-2 items-center p-2 border rounded-md"
+          >
+            <GraduationCap size={32} />
+            <p className="font-bold text-inherit text-xl uppercase">DangKhai</p>
+          </Link>
+        </NavbarBrand> */}
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarBrand>
-          <Link href="/">
-            <h1 className="font-bold text-2xl">DKEducation</h1>
+          <Link
+            href="/"
+            className="flex gap-2 items-center p-2 border rounded-md"
+          >
+            <GraduationCap size={32} />
+            <p className="font-bold text-inherit text-xl uppercase">DangKhai</p>
           </Link>
           {/* <p className="font-bold text-inherit">ACME</p> */}
         </NavbarBrand>
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Features
-          </Link>
-        </NavbarItem>
+        <Dropdown>
+          <NavbarItem>
+            <DropdownTrigger>
+              <Button
+                disableRipple
+                className="p-0 bg-transparent data-[hover=true]:bg-transparent"
+                endContent={<ChevronDown size={18} />}
+                radius="sm"
+                variant="light"
+              >
+                Categories
+              </Button>
+            </DropdownTrigger>
+          </NavbarItem>
+          <DropdownMenu
+            aria-label="ACME categories"
+            className="w-[340px]"
+            itemClasses={{
+              base: 'gap-4',
+            }}
+          >
+            {CATEGORIES.map((category, index) => (
+              <DropdownItem
+                key={index}
+                // description="ACME scales apps to meet user demand, automagically, based on load."
+                as={Link}
+                href={`${category.path}`}
+                startContent={category.icon}
+              >
+                {category.name}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </Dropdown>
         <NavbarItem isActive>
           <Link href="#" aria-current="page">
             Customers
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Integrations
+          <Link color="foreground" href="/dashboard">
+            Dashboard
           </Link>
         </NavbarItem>
       </NavbarContent>

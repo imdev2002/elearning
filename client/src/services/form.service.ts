@@ -1,9 +1,15 @@
+import { SubmitForm } from '@/app/globals'
 import http from '@/lib/http'
 
-export const FormApiRequest = {
-  get: (formId: number) => http.get(`/form/${formId}`),
+export const formApiRequest = {
+  get: (formId: number) => http.get(`/forms/${formId}`),
 
-  getList: () => http.get('/form'),
+  getList: (access_token: string) =>
+    http.get<SubmitForm[]>('/forms', {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    }),
 
-  update: (formId: number, body: any) => http.patch(`/form/${formId}`, body),
+  update: (formId: number, body: any) => http.patch(`/forms/${formId}`, body),
 }

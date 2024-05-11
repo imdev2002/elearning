@@ -7,7 +7,7 @@ import { Button, Input } from '@nextui-org/react'
 import { useState } from 'react'
 import { EyeFilledIcon, EyeSlashFilledIcon } from '@/components/icons/EyeIcon'
 import Link from 'next/link'
-import { authApiRequest, loginByEmail } from '@/services/auth.service'
+import { authApiRequest } from '@/services/auth.service'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { setItem } from '@/utils/localStorage'
@@ -30,9 +30,9 @@ const LoginForm = () => {
     if (loading) return
     setLoading(true)
     try {
-      const data: any = await loginByEmail(value)
-      if (data) {
-        const { accessToken, refreshToken, user } = data
+      const { payload } = await authApiRequest.loginByEmail(value)
+      if (payload) {
+        const { accessToken, refreshToken, user } = payload
         await authApiRequest.auth({ accessToken, refreshToken })
         setItem('tokens', { accessToken, refreshToken })
         setItem('user', user)

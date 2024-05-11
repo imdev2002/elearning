@@ -1,7 +1,7 @@
 'use client'
 
 import { authApiRequest } from '@/services/auth.service'
-import InputPassword from '@/components/InputPassword'
+import InputPassword from '@/components/input/input-password'
 import { RegisterBody, RegisterBodyType } from '@/schemaValidations/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Input } from '@nextui-org/react'

@@ -1,4 +1,5 @@
-import http from '@/lib/http'
+import CourseCard from '@/components/course/course-card'
+import ListCardSlider from '@/components/course/list-card-slider'
 import { coursePublicApiRequests } from '@/services/course.service'
 import { Button, cn } from '@nextui-org/react'
 import { ArrowUpRight } from 'lucide-react'
@@ -9,8 +10,7 @@ import Link from 'next/link'
 export default async function Home() {
   const cookieStore = cookies()
   const token = cookieStore.get('accessToken')?.value
-  const { payload } = await coursePublicApiRequests.getList()
-  console.log('Home  payload:', payload)
+  const { payload: listCourses } = await coursePublicApiRequests.getList()
   return (
     <main className="flex min-h-screen flex-col items-center justify-between mt-[120px]">
       <div className="flex justify-between">
@@ -119,6 +119,7 @@ export default async function Home() {
           </div>
         </div>
       </div>
+      <ListCardSlider data={listCourses} />
       {/* <div className="w-full">
         <h3>Most Popular Category</h3>
         <p>

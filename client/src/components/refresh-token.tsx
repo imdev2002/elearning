@@ -15,7 +15,7 @@ export default function SlideRefreshToken() {
         const res = await authApiRequest.refeshToken({
           refreshToken: clientTokens.value.refreshToken,
         })
-        const newAccessToken = res.payload?.data?.accessToken
+        const newAccessToken = res.payload?.accessToken
         clientTokens.expiresAt = decodeJWT(newAccessToken).exp
       }
     }, 1000 * 60 * 30)

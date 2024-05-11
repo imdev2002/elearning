@@ -1,8 +1,8 @@
 import z from 'zod'
 
 export const LessonBody = z.object({
-  video: z.string(),
-  thumbnail: z.string(),
+  video: z.any(),
+  thumbnail: z.any(),
   lessonName: z.string(),
   lessonNumber: z.coerce.number(),
   trialAllowdown: z.boolean(),

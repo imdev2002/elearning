@@ -1,70 +1,30 @@
-'use client'
-
 import { HeaderManager } from '@/app/(manager)/layout'
 import CourseForm from '@/app/(manager)/my-courses/_components/course-form'
-import LessonForm from '@/app/(manager)/my-courses/_components/lesson-form'
+import CreateTabs from '@/app/(manager)/my-courses/_components/create-tabs'
 import PartCourseForm from '@/app/(manager)/my-courses/_components/part-course-form'
+import { courseManagerApiRequests } from '@/services/course.service'
 import { Chip, Tab, Tabs } from '@nextui-org/react'
 import { File, FilePen, ListOrdered, Presentation } from 'lucide-react'
+import { cookies } from 'next/headers'
 import React from 'react'
 
-const EditCoursePage = () => {
+type Props = {
+  params: { courseId: string }
+}
+
+const EditCoursePage = async ({ params }: Props) => {
+  const cookieStore = cookies()
+  const accessToken = cookieStore.get('accessToken')?.value
+  const { payload: courseData } = await courseManagerApiRequests.get(
+    Number(params.courseId),
+    accessToken ?? ''
+  )
+  // const {payload} = await courseManagerApiRequests.get
   return (
     <>
       <HeaderManager icon={<FilePen />} title="Edit course" />
       <div className="flex w-full flex-col p-5">
-        <Tabs
-          aria-label="Options"
-          color="primary"
-          variant="underlined"
-          classNames={{
-            tabList:
-              'gap-6 w-full relative rounded-none p-0 border-b border-divider',
-            cursor: 'w-full',
-            tab: 'max-w-fit px-0 h-12',
-            tabContent: '',
-          }}
-        >
-          <Tab
-            key="photos"
-            title={
-              <div className="flex items-center space-x-2">
-                <File />
-                <span>Course ifomation</span>
-                <Chip size="sm" variant="faded">
-                  9
-                </Chip>
-              </div>
-            }
-          >
-            <CourseForm />
-          </Tab>
-          <Tab
-            key="music"
-            title={
-              <div className="flex items-center space-x-2">
-                <ListOrdered />
-                <span>Course Parts</span>
-                <Chip size="sm" variant="faded">
-                  3
-                </Chip>
-              </div>
-            }
-          >
-            <PartCourseForm />
-          </Tab>
-          <Tab
-            key="videos"
-            title={
-              <div className="flex items-center space-x-2">
-                <Presentation />
-                <span>Lesson</span>
-              </div>
-            }
-          >
-            <LessonForm />
-          </Tab>
-        </Tabs>
+        <CreateTabs courseData={courseData} />
       </div>
     </>
   )

@@ -1,10 +1,10 @@
 import z from 'zod'
 
 export const CourseBody = z.object({
-  thumbnail: z.string(),
+  thumbnail: z.any(),
   courseName: z.string(),
-  knowledgeGained: z.string(),
-  isPublic: z.boolean(),
+  knowledgeGained: z.array(z.string()),
+  isPublic: z.any(),
   descriptionMD: z.string(),
   priceAmount: z.string(),
   category: z.string(),
@@ -12,16 +12,43 @@ export const CourseBody = z.object({
 
 export type CourseBodyType = z.infer<typeof CourseBody>
 
-export const CoureRes = z.object({
+// export const CourseRes = z.object({
+//   id: z.number(),
+//   timestamp: z.string(),
+//   totalLesson: z.number(),
+//   totalPart: z.number(),
+//   courseName: z.string(),
+//   totalDuration: z.number(),
+//   knowledgeGained: z.array(z.string()),
+//   isPublic: z.boolean(),
+//   status: z.string(),
+//   thumbnail: z.string(),
+//   category: z.string(),
+//   priceAmount: z.number(),
+//   currency: z.string(),
+//   priceId: z.string(),
+//   productId: z.string(),
+//   descriptionMD: z.string(),
+//   userId: z.number(),
+//   coursedPaid: z.array(z.any()),
+//   comments: z.array(z.any()),
+//   hearts: z.array(z.any()),
+//   emojis: z.array(z.any()),
+//   certificates: z.array(z.any()),
+//   parts: z.array(z.any()),
+//   lessons: z.array(z.any()),
+// })
+export const CourseRes = z.object({
   id: z.number(),
   timestamp: z.string(),
   totalLesson: z.number(),
   totalPart: z.number(),
   courseName: z.string(),
   totalDuration: z.number(),
-  knowledgeGained: z.array(z.unknown()),
+  knowledgeGained: z.array(z.string()),
   isPublic: z.boolean(),
   status: z.string(),
+  avgRating: z.null(),
   thumbnail: z.string(),
   category: z.string(),
   priceAmount: z.number(),
@@ -30,19 +57,58 @@ export const CoureRes = z.object({
   productId: z.string(),
   descriptionMD: z.string(),
   userId: z.number(),
+  rating: z.array(z.unknown()),
+  user: z.object({
+    id: z.number(),
+    firstName: z.string(),
+    lastName: z.null(),
+    email: z.string(),
+    avatar: z.string(),
+  }),
   coursedPaid: z.array(z.unknown()),
   comments: z.array(z.unknown()),
   hearts: z.array(z.unknown()),
   emojis: z.array(z.unknown()),
   certificates: z.array(z.unknown()),
-  parts: z.array(z.unknown()),
-  lessons: z.array(z.unknown()),
+  parts: z.array(
+    z.object({
+      id: z.number(),
+      timestamp: z.string(),
+      partNumber: z.number(),
+      partName: z.string(),
+      description: z.string(),
+      courseId: z.number(),
+      lessons: z.array(
+        z.object({
+          id: z.number(),
+          timestamp: z.string(),
+          lessonName: z.string(),
+          lessonNumber: z.number(),
+          lessonType: z.string(),
+          trialAllowed: z.boolean(),
+          descriptionMD: z.string(),
+          status: z.string(),
+          title: z.null(),
+          content: z.null(),
+          localPath: z.string(),
+          thumbnailPath: z.string(),
+          filename: z.string(),
+          courseId: z.number(),
+          userId: z.number(),
+          partId: z.number(),
+          comments: z.array(z.unknown()),
+          hearts: z.array(z.unknown()),
+          emojis: z.array(z.unknown()),
+        })
+      ),
+    })
+  ),
 })
 
-export type CourseResType = z.infer<typeof CoureRes>
+export type CourseResType = z.infer<typeof CourseRes>
 
 export const CoursePartsBody = z.object({
-  partNumber: z.coerce.number(),
+  partNumber: z.string(),
   partName: z.string(),
 })
 

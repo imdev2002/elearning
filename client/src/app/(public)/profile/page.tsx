@@ -1,5 +1,4 @@
-import ProfileForm from '@/app/(public)/profile/_component/profile-form'
-import React from 'react'
+import ProfileForm from '@/components/forms/profile-form'
 
 const ProfilePage = () => {
   return (

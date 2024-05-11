@@ -42,13 +42,15 @@
 // }
 
 'use client'
-import { TokensType, clientTokens } from '@/lib/http'
+import { User } from '@/app/globals'
+import { clientTokens } from '@/lib/http'
 import { AccountResType } from '@/schemaValidations/account.schema'
+import { TokensType } from '@/schemaValidations/auth.schema'
 import { createContext, useContext, useState } from 'react'
 import { useReadLocalStorage } from 'usehooks-ts'
 
 // type User = Omit<AccountResType['data'], 'refreshToken'>
-type User = AccountResType['data']
+// type UserTY = User
 
 const AccountContext = createContext<{
   user: User | null

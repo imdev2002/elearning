@@ -1,10 +1,10 @@
 'use client'
 
 import { accountApiRequest } from '@/services/account.service'
-import { ImageUpload } from '@/components/ImageUpload'
 import {
   AccountBody,
   AccountBodyType,
+  AccountResType,
 } from '@/schemaValidations/account.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Input, Radio, RadioGroup } from '@nextui-org/react'
@@ -12,36 +12,73 @@ import { CalendarDays, X } from 'lucide-react'
 import React from 'react'
 import DatePicker from 'react-date-picker'
 import { Controller, useForm } from 'react-hook-form'
+import FileUpload from '@/components/input/file-upload'
+import { useAccountContext } from '@/contexts/account'
+import { userApiRequest } from '@/services/user.service'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
+import { setItem } from '@/utils/localStorage'
+import { User } from '@/app/globals'
 
-const ProfileForm = () => {
+type Props = {
+  data?: User
+}
+
+const ProfileForm = ({ data }: Props) => {
+  const { user, setUser } = useAccountContext()
+  const { refresh } = useRouter()
+  const profileData = data ? data : user
+  const fullname = profileData?.firstName
+    ? `${profileData?.firstName}`
+    : '' + profileData?.lastName
+    ? ` ${profileData?.lastName}`
+    : ''
   const form = useForm<AccountBodyType>({
     resolver: zodResolver(AccountBody),
     defaultValues: {
-      avatar: '',
-      username: '',
-      firstName: '',
-      lastName: '',
-      phone: '',
-      gender: '',
-      birthday: '',
+      avatar: profileData?.avatar ?? '',
+      username: profileData?.username ?? '',
+      firstName: profileData?.firstName ?? '',
+      lastName: profileData?.lastName ?? '',
+      phone: profileData?.phone ?? '',
+      gender: profileData?.gender ?? '',
+      birthday: profileData?.birthday ?? '',
     },
   })
-  const submitProfileForm = async (values: any) => {
-    values.birthday = values.birthday.toISOString()
-    const formData = new FormData()
-    Object.keys(values).forEach((key) => {
-      formData.append(key, values[key])
-    })
-    await accountApiRequest.edit(2, formData)
-  }
   console.log('ProfileForm  form:', form)
+  const submitProfileForm = async (values: any) => {
+    try {
+      values.birthday =
+        values.birthday instanceof Date
+          ? values.birthday.toISOString()
+          : values.birthday
+      const formData = new FormData()
+      Object.keys(values).forEach((key) => {
+        formData.append(key, values[key])
+      })
+      const res = await userApiRequest.edit(Number(profileData?.id), formData)
+      if (res.status === 200) {
+        toast.success(`Updated information of ${fullname}!`)
+
+        console.log(res.payload)
+        if (user?.id === profileData?.id) {
+          setUser(res.payload)
+          setItem('user', { ...user, ...res.payload })
+        }
+        refresh()
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error(`Could not update information of ${fullname}`)
+    }
+  }
   return (
     <form
       className="mx-auto w-fit"
       onSubmit={form.handleSubmit(submitProfileForm)}
     >
       <div className="flex">
-        <ImageUpload name="avatar" setValue={form.setValue} />
+        <FileUpload name="avatar" form={form} />
         <div>
           <div className="flex gap-4">
             <Controller
@@ -111,6 +148,7 @@ const ProfileForm = () => {
                   orientation="horizontal"
                   label="Gender"
                   isRequired
+                  value={field.value}
                   // className="flex flex-row gap-4"
                 >
                   <Radio value="male">Male</Radio>

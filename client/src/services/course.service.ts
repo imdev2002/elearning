@@ -1,14 +1,15 @@
+import { Course } from '@/app/globals'
 import http from '@/lib/http'
 import {
-  CourseBodyType,
   CoursePartsBodyType,
+  CourseResType,
 } from '@/schemaValidations/course.schema'
 
 export const courseManagerApiRequests = {
   create: () => http.post('/courses', undefined),
 
   get: (id: number, access_token: string) =>
-    http.get(`/courses/${id}`, {
+    http.get<Course>(`/courses/${id}`, {
       headers: {
         Authorization: `Bearer ${access_token}`,
       },
@@ -21,8 +22,10 @@ export const courseManagerApiRequests = {
       },
     }),
 
-  update: (courseId: number, body: CourseBodyType) =>
-    http.patch(`/course/${courseId}`, body),
+  update: (courseId: number, body: any) =>
+    http.patch(`/courses/${courseId}`, body),
+
+  delete: (courseId: number) => http.delete(`/courses/${courseId}`),
 
   ceateParts: (courseId: number, body: CoursePartsBodyType) =>
     http.post(`/courses/${courseId}/parts`, body),
@@ -43,13 +46,17 @@ export const courseManagerApiRequests = {
 
 export const coursePublicApiRequests = {
   getList: () =>
-    http.get('-public/courses?limit&offset&search&category&orderBy&direction', {
+    http.get<CourseResType[]>('-public/courses', {
       cache: 'no-store',
     }),
 
-  get: (courseId: number) => http.get(`-public/courses/${courseId}`),
+  get: (courseId: number) =>
+    http.get<Course>(`-public/courses/${courseId}`, {
+      cache: 'no-store',
+    }),
 
-  buy: (courseId: number) => http.post('-public/courses/actions/buy', courseId),
+  buy: (courseId: number) =>
+    http.post('-public/courses/actions/buy', { courseId }),
 
   like: (courseId: number) =>
     http.post('-public/courses/actions/heart', courseId),

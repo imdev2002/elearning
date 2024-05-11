@@ -2,18 +2,21 @@
 
 import { useAccountContext } from '@/contexts/account'
 import { dashboardNavigation } from '@/lib/constants'
-import { cn } from '@/lib/utils'
+import { cn, generateMediaLink } from '@/lib/utils'
+import { Transition } from '@headlessui/react'
 import { Avatar, Chip, Tooltip } from '@nextui-org/react'
-import { Power } from 'lucide-react'
+import { Menu, Power } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState } from 'react'
 import { isMobile } from 'react-device-detect'
 
 export default function SideBar() {
   const pathname = usePathname()
   const { user } = useAccountContext()
+
   return (
-    <div className=" shrink-0 p-5 flex flex-col gap-8 border-r-1 border-white/20 bg-black">
+    <div className="shadow-xl shrink-0 p-5 flex flex-col gap-8 border-r-1 dark:border-white/20 bg-background">
       {!isMobile && (
         <Link className="font-semibold text-2xl" href="/">
           DKEducation
@@ -25,10 +28,10 @@ export default function SideBar() {
             href={navigation.pathname}
             key={index}
             className={cn(
-              'flex gap-2 items-center p-3 rounded-lg',
+              'flex gap-2 items-center p-3 rounded-lg dark:text-foreground',
               pathname === navigation.pathname
-                ? 'bg-blue-500 font-semibold'
-                : 'text-white/80 hover:bg-white/10'
+                ? 'bg-blue-500 font-semibold text-white/80'
+                : 'hover:bg-white/10'
             )}
           >
             {navigation.icon}
@@ -39,10 +42,10 @@ export default function SideBar() {
         ))}
       </div>
       {user && (
-        <div className="bg-neutral-800 rounded-xl p-3 flex gap-3">
+        <div className="shadow-xl border dark:border-none dark:bg-neutral-800 rounded-xl p-3 flex gap-3">
           <Avatar
             size="md"
-            src={user.avatar}
+            src={generateMediaLink(user.avatar ?? '')}
             showFallback
             isBordered
             classNames={{
