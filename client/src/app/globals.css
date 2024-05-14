@@ -1,3 +1,5 @@
+@import '_content.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -141,6 +143,23 @@
 
 .slider-cards .swiper-slide {
   width: 240px;
+}
+
+.quill {
+  position: relative;
+  max-height: 50vh;
+  overflow: auto;
+}
+
+.quill .ql-toolbar {
+  @apply rounded-t-md bg-white/85;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.quill .ql-container {
+  @apply !border-2 rounded-b-md !border-default-200;
 }
 
 @keyframes floating-y {

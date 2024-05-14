@@ -1,14 +1,13 @@
 'use client'
 
 import CourseForm from '@/app/(manager)/my-courses/_components/course-form'
-import LessonForm from '@/app/(manager)/my-courses/_components/lesson-form'
-import PartCourseForm from '@/app/(manager)/my-courses/_components/part-course-form'
-import { Course, Part } from '@/app/globals'
+import { Course } from '@/app/globals'
 import ListPartsAccordion from '@/components/course/list-parts-accordion'
-import { CourseResType } from '@/schemaValidations/course.schema'
-import { Button, Chip, Tab, Tabs } from '@nextui-org/react'
+import { Chip, Tab, Tabs } from '@nextui-org/react'
 import { File, ListOrdered, Presentation } from 'lucide-react'
 import React from 'react'
+import VideoLessonForm from '@/app/(manager)/my-courses/_components/video-lesson-form'
+import TextLessonForm from '@/app/(manager)/my-courses/_components/text-lesson-form'
 type Props = {
   courseData: Course
 }
@@ -33,9 +32,6 @@ const CreateTabs = ({ courseData }: Props) => {
           <div className="flex items-center space-x-2">
             <File />
             <span>Course ifomation</span>
-            <Chip size="sm" variant="faded">
-              9
-            </Chip>
           </div>
         }
       >
@@ -48,23 +44,12 @@ const CreateTabs = ({ courseData }: Props) => {
             <ListOrdered />
             <span>Course Parts</span>
             <Chip size="sm" variant="faded">
-              3
+              {courseData.parts.length}
             </Chip>
           </div>
         }
       >
         <ListPartsAccordion isAuth data={courseData.parts} />
-      </Tab>
-      <Tab
-        key="videos"
-        title={
-          <div className="flex items-center space-x-2">
-            <Presentation />
-            <span>Lesson</span>
-          </div>
-        }
-      >
-        <LessonForm />
       </Tab>
     </Tabs>
   )

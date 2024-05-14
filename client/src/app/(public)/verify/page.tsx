@@ -27,7 +27,7 @@ const VerifyPage = () => {
       }
     }
     if (verifyCode) handleVerify()
-  }, [])
+  }, [verifyCode])
   return (
     <div className="mx-auto min-h-screen flex flex-col items-center gap-4">
       <BadgeCheck size={50} className="stroke-green-600" />

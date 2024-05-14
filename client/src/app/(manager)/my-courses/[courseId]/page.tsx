@@ -1,10 +1,7 @@
-import { HeaderManager } from '@/app/(manager)/layout'
-import CourseForm from '@/app/(manager)/my-courses/_components/course-form'
 import CreateTabs from '@/app/(manager)/my-courses/_components/create-tabs'
-import PartCourseForm from '@/app/(manager)/my-courses/_components/part-course-form'
+import { Heading } from '@/components/heading'
 import { courseManagerApiRequests } from '@/services/course.service'
-import { Chip, Tab, Tabs } from '@nextui-org/react'
-import { File, FilePen, ListOrdered, Presentation } from 'lucide-react'
+import { FilePen } from 'lucide-react'
 import { cookies } from 'next/headers'
 import React from 'react'
 
@@ -22,7 +19,7 @@ const EditCoursePage = async ({ params }: Props) => {
   // const {payload} = await courseManagerApiRequests.get
   return (
     <>
-      <HeaderManager icon={<FilePen />} title="Edit course" />
+      <Heading icon={<FilePen />} title="Edit course" />
       <div className="flex w-full flex-col p-5">
         <CreateTabs courseData={courseData} />
       </div>

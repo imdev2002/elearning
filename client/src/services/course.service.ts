@@ -12,6 +12,7 @@ export const courseManagerApiRequests = {
     http.get<Course>(`/courses/${id}`, {
       headers: {
         Authorization: `Bearer ${access_token}`,
+        cache: 'no-store',
       },
     }),
 
@@ -19,6 +20,7 @@ export const courseManagerApiRequests = {
     http.get('/courses', {
       headers: {
         Authorization: `Bearer ${access_token}`,
+        cache: 'no-store',
       },
     }),
 

@@ -1,9 +1,10 @@
 'use client'
 
+import { clientTokens } from '@/lib/http'
 import { generateMediaLink } from '@/lib/utils'
 import { Button } from '@nextui-org/react'
 import Image from 'next/image'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Controller } from 'react-hook-form'
 
 type ImageUploadPropsType = {
@@ -14,8 +15,25 @@ type ImageUploadPropsType = {
 
 const FileUpload = ({ name, form, type = 'image' }: ImageUploadPropsType) => {
   const [file, setFile] = useState<File | null>(null)
+  const [videoURL, setVideoURL] = useState('')
   const inputRef = useRef<HTMLInputElement | null>(null)
   const data = form.watch(name)
+  useEffect(() => {
+    const getVideo = async () => {
+      const url = generateMediaLink(data)
+      const videoRes = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${clientTokens.value.accessToken}`,
+        },
+      })
+      if (videoRes.status === 200) {
+        const blob = await videoRes.blob()
+        const videoURL = URL.createObjectURL(blob)
+        setVideoURL(videoURL)
+      }
+    }
+    if (type === 'video' && data) getVideo()
+  }, [])
   return (
     <div>
       <Controller
@@ -54,7 +72,7 @@ const FileUpload = ({ name, form, type = 'image' }: ImageUploadPropsType) => {
               width="100%"
               height={400}
               controls
-              src={file ? URL.createObjectURL(file) : generateMediaLink(data)}
+              src={file ? URL.createObjectURL(file) : videoURL}
             />
           )}
         </div>

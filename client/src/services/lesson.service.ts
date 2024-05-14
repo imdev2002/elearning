@@ -1,15 +1,18 @@
 import { Lesson } from '@/app/globals'
 import http from '@/lib/http'
-import { LessonBodyType } from '@/schemaValidations/lesson.schema'
+import {
+  LessonTextBodyType,
+  LessonVideoBodyType,
+} from '@/schemaValidations/lesson.schema'
 
 export const lessonManagerApiRequest = {
-  create: (body: LessonBodyType) => http.post(`/lessons`, body),
+  create: (body: any) => http.post(`/lessons`, body),
 
   get: (lessonId: number) => http.get(`/lessons/${lessonId}`),
 
   getList: () => http.get(`/lessons`),
 
-  update: (lessonId: number, payload: LessonBodyType) =>
+  update: (lessonId: number, payload: any) =>
     http.patch(`/lessons/${lessonId}`, payload),
 
   delete: (lessonId: number) => http.delete(`/lessons/${lessonId}`),
@@ -19,7 +22,13 @@ export const lessonManagerApiRequest = {
 }
 
 export const lessonPublicApiRequest = {
-  get: (lessonId: number) => http.get<Lesson>(`-public/lessons/${lessonId}`),
+  get: (lessonId: number, access_token: string) =>
+    http.get<Lesson>(`-public/lessons/${lessonId}`, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        cache: 'no-store',
+      },
+    }),
 
   heart: (body: any) => http.post('-public/lessons/actions/heart', body),
 
@@ -34,4 +43,7 @@ export const lessonPublicApiRequest = {
     http.delete(`-public/lessons/actions/comment/${lessonId}`),
 
   emojiAction: (body: any) => http.post('-public/lessons/actions/emoji', body),
+
+  finish: (lessonId: number) =>
+    http.post('-public/lessons/actions/done', { lessonId }),
 }

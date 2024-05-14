@@ -1,0 +1,111 @@
+.entry-content,
+.entry-content .ql-snow .ql-editor {
+  /* font-family: 'Epilogue', sans-serif; */
+  font-size: 16px;
+}
+.entry-content p,
+.entry-content .ql-snow .ql-editor p {
+  display: inline;
+  line-height: 1 !important;
+  margin-bottom: 10px !important;
+}
+.entry-content a,
+.entry-content .ql-snow .ql-editor a {
+  display: inline-block;
+}
+.entry-content h2,
+.entry-content .ql-snow .ql-editor h2,
+.entry-content h3,
+.entry-content .ql-snow .ql-editor h3,
+.entry-content h4,
+.entry-content .ql-snow .ql-editor h4 {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+.entry-content h2,
+.entry-content .ql-snow .ql-editor h2 {
+  font-size: 32px;
+}
+.entry-content h3,
+.entry-content .ql-snow .ql-editor h3 {
+  font-size: 26px;
+}
+.entry-content h4,
+.entry-content .ql-snow .ql-editor h4 {
+  font-size: 22px;
+}
+.entry-content p,
+.entry-content .ql-snow .ql-editor p {
+  margin-bottom: 20px;
+  line-height: 2;
+}
+.entry-content figure,
+.entry-content .ql-snow .ql-editor figure {
+  margin-bottom: 20px;
+}
+.entry-content figure img,
+.entry-content .ql-snow .ql-editor figure img {
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+.entry-content figcaption,
+.entry-content .ql-snow .ql-editor figcaption {
+  text-align: center;
+  font-style: italic;
+  font-size: 14px;
+  color: #6b6b6b;
+}
+.entry-content ul,
+.entry-content .ql-snow .ql-editor ul {
+  list-style-type: disc;
+}
+.entry-content ol,
+.entry-content .ql-snow .ql-editor ol {
+  list-style: decimal;
+}
+.entry-content ul,
+.entry-content .ql-snow .ql-editor ul,
+.entry-content ol,
+.entry-content .ql-snow .ql-editor ol {
+  margin-bottom: 20px;
+  padding-left: 40px;
+  margin-left: 0;
+}
+.entry-content ul li,
+.entry-content .ql-snow .ql-editor ul li,
+.entry-content ol li,
+.entry-content .ql-snow .ql-editor ol li {
+  margin-bottom: 10px;
+}
+.entry-content img,
+.entry-content .ql-snow .ql-editor img {
+  border-radius: 8px;
+  margin: 20px 0;
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}
+@media screen and (max-width: 1023.98px) {
+  .entry-content,
+  .entry-content .ql-snow .ql-editor {
+    font-size: 14px;
+  }
+  .entry-content h2,
+  .entry-content .ql-snow .ql-editor h2 {
+    font-size: 26px;
+  }
+  .entry-content h3,
+  .entry-content .ql-snow .ql-editor h3 {
+    font-size: 24px;
+  }
+  .entry-content h4,
+  .entry-content .ql-snow .ql-editor h4 {
+    font-size: 20px;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .entry-content,
+  .entry-content .ql-snow .ql-editor {
+    padding: 0 24px;
+  }
+}

@@ -14,7 +14,7 @@ type Props = {
 
 const LearningSidebar = ({ data, isAuth = false }: Props) => {
   return (
-    <div className="flex-1">
+    <div className="flex-1 sticky top-20 block h-full">
       <ListPartsAccordion data={data} />
     </div>
   )

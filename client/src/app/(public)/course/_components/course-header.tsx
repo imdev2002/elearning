@@ -21,7 +21,7 @@ const CourseHeader = ({ data }: Props) => {
       setHeaderHeight(headerRef.current.clientHeight)
       setHeaderOffsetTop(headerRef.current.offsetTop)
     }
-  }, [headerRef.current])
+  }, [])
   return (
     <>
       <div

@@ -7,6 +7,11 @@ import {
   TokensType,
 } from '@/schemaValidations/auth.schema'
 
+type RefreshTokenResType = {
+  accessToken: string
+  newRefreshToken: string
+}
+
 export const authApiRequest = {
   auth: (tokens: TokensType) =>
     http.post('/api/auth', tokens, {
@@ -23,5 +28,5 @@ export const authApiRequest = {
     http.post<LoginResponseType>('auth/login', body),
 
   refeshToken: (body: Omit<TokensType, 'accessToken'>) =>
-    http.post('/auth/refresh', body),
+    http.post<RefreshTokenResType>('/auth/refresh', body),
 }

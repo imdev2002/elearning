@@ -22,7 +22,7 @@ const UserDropdown = () => {
         <Avatar
           isBordered
           size="sm"
-          // as="button"
+          as="button"
           color="secondary"
           className="transition-transform"
           src={

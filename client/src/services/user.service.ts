@@ -10,7 +10,7 @@ export const userApiRequest = {
       },
     }),
 
-  get: (userId: number, access_token: string) =>
+  get: (userId: number, access_token?: string) =>
     http.get<User>(`/users/${userId}`, {
       headers: {
         Authorization: `Bearer ${access_token}`,
