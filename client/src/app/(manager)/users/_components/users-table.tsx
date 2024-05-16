@@ -3,9 +3,7 @@
 import DeleteUser from '@/app/(manager)/users/_components/delete-user'
 import EditUserModal from '@/app/(manager)/users/_components/edit-user-modal'
 import { User as UserType } from '@/app/globals'
-import { generateMediaLink } from '@/lib/utils'
-import { AccountResType } from '@/schemaValidations/account.schema'
-import { userApiRequest } from '@/services/user.service'
+import { displayFullname, generateMediaLink } from '@/lib/utils'
 import {
   Table,
   TableHeader,
@@ -44,13 +42,7 @@ const UsersTable = ({ data }: Props) => {
                 src: generateMediaLink(user.avatar ?? ''),
               }}
               description={user.email ?? user.username}
-              name={
-                user.firstName
-                  ? `${user.firstName}`
-                  : '' + user.lastName
-                  ? ` ${user.lastName}`
-                  : ''
-              }
+              name={displayFullname(user.firstName, user.lastName)}
             >
               {user.email}
             </User>

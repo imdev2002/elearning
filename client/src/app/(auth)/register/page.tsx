@@ -3,14 +3,15 @@ import Image from 'next/image'
 
 const page = () => {
   return (
-    <div className="flex">
-      <div>
+    <div className="w-[80vw] h-screen flex flex-row-reverse items-center justify-between mx-auto">
+      <div className="w-2/4">
         <Image
-          src="/public/images/register.png"
+          src="/images/register.png"
           alt=""
-          width={0}
-          height={0}
-          className="w-2/4 object-cover"
+          width={360}
+          height={360}
+          sizes="100%"
+          className="object-cover mx-auto"
         />
       </div>
       <RegisterForm />

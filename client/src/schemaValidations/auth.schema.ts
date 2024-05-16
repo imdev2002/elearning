@@ -13,7 +13,7 @@ export const RegisterBody = z
     if (confirmPassword !== password) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Mật khẩu không khớp',
+        message: 'Passwords do not match',
         path: ['confirmPassword'],
       })
     }
@@ -86,3 +86,22 @@ export type TokensType = {
   accessToken: string
   refreshToken: string
 }
+
+export const ChangePasswordBody = z
+  .object({
+    oldPassword: z.string().min(6).max(100),
+    newPassword: z.string().min(6).max(100),
+    confirmPassword: z.string().min(6).max(100),
+  })
+  .strict()
+  .superRefine(({ confirmPassword, newPassword }, ctx) => {
+    if (confirmPassword !== newPassword) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Passwords do not match',
+        path: ['confirmPassword'],
+      })
+    }
+  })
+
+export type ChangePasswordBodyType = z.TypeOf<typeof ChangePasswordBody>

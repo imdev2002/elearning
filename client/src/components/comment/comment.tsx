@@ -85,111 +85,131 @@ const Comment = ({ data, comment, type = 'course' }: Props) => {
           )}
         </ModalContent>
       </Modal>
-      <div style={{ marginLeft: comment.level * 20 + 'px' }}>
-        <div className="flex items-center gap-2">
+      <div className="mt-4">
+        <div className="flex gap-2">
           <Avatar
             src={generateMediaLink(comment.user.avatar ?? '')}
             size="sm"
+            className={comment.level === 0 ? '' : 'scale-85'}
           />
-          <p className="font-semibold">
-            {displayFullname(comment.user.firstName, comment.user.lastName)}
-          </p>
-          <p className="text-xs">
-            {formatDistanceToNow(new Date(comment.timestamp)) + ' ago.'}
-          </p>
-        </div>
-        {isEditing ? (
-          <ActionComment
-            postId={comment.id}
-            level={comment.id}
-            parentId={comment.parentId ?? null}
-            defaultValue={comment.content}
-            action="edit"
-            type={type}
-            onCancel={() => setIsEditing(false)}
-          />
-        ) : (
-          <div>{comment.content}</div>
-        )}
-        <div className="text-xs">
-          <div className="flex gap-2">
-            <Button size="sm" className="flex gap-1" onClick={handleReply}>
-              <MessagesSquare size={16} />
-              REPPLY
-            </Button>
-            <Dropdown>
-              <DropdownTrigger>
-                <Button size="sm" className="!w-fit px-2 !min-w-0">
-                  <Ellipsis size={16} />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu aria-label="Static Actions">
-                <DropdownItem key="edit" onClick={() => setIsEditing(true)}>
-                  Edit
-                </DropdownItem>
-                <DropdownItem
-                  key="delete"
-                  className="text-danger"
-                  color="danger"
-                  onClick={() => onOpen()}
-                >
-                  Delete
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
 
-          {childrenComments.length > 0 && (
-            <div
-              className="cursor-pointer flex gap-1 items-center"
-              onClick={toggleReplies}
-            >
-              {showReplies ? (
-                <ChevronUp size={14} />
-              ) : (
-                <Reply size={14} className="rotate-180" />
+          {isEditing ? (
+            <ActionComment
+              postId={comment.id}
+              level={comment.id}
+              parentId={comment.parentId ?? null}
+              defaultValue={comment.content}
+              action="edit"
+              type={type}
+              onCancel={() => setIsEditing(false)}
+            />
+          ) : (
+            <div className="w-full">
+              <div className="rounded-md bg-default-100 py-2 px-4">
+                <div className="flex items-center gap-2">
+                  <p className="font-semibold">
+                    {displayFullname(
+                      comment.user.firstName,
+                      comment.user.lastName
+                    )}
+                  </p>
+                  <p className="text-xs">
+                    {formatDistanceToNow(new Date(comment.timestamp)) + ' ago.'}
+                  </p>
+                </div>
+                {comment.content}
+              </div>
+              <div className="text-xs mt-2">
+                <div className="flex gap-2 mb-2">
+                  <Button
+                    size="sm"
+                    className="flex gap-1"
+                    onClick={handleReply}
+                  >
+                    <MessagesSquare size={16} />
+                    REPPLY
+                  </Button>
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button size="sm" className="!w-fit px-2 !min-w-0">
+                        <Ellipsis size={16} />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label="Static Actions">
+                      <DropdownItem
+                        key="edit"
+                        onClick={() => setIsEditing(true)}
+                      >
+                        Edit
+                      </DropdownItem>
+                      <DropdownItem
+                        key="delete"
+                        className="text-danger"
+                        color="danger"
+                        onClick={() => onOpen()}
+                      >
+                        Delete
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                </div>
+
+                {childrenComments.length > 0 && (
+                  <div
+                    className="cursor-pointer flex gap-1 items-center"
+                    onClick={toggleReplies}
+                  >
+                    {showReplies ? (
+                      <ChevronUp size={14} />
+                    ) : (
+                      <Reply size={14} className="rotate-180" />
+                    )}
+                    {`${showReplies ? 'Hide' : 'View'} ${
+                      childrenComments.length
+                    } reply`}
+                  </div>
+                )}
+              </div>
+              {showReplies && (
+                <>
+                  {childrenComments.map((childComment) => (
+                    <Comment
+                      key={childComment.id}
+                      comment={childComment}
+                      data={data}
+                      type={type}
+                    />
+                  ))}
+                  {comment.level < 2 && (
+                    <div
+                      style={{ marginLeft: (comment.level + 1) * 20 + 'px' }}
+                    >
+                      <ActionComment
+                        postId={
+                          type === 'course'
+                            ? comment.courseId ?? 0
+                            : comment.lessonId ?? 0
+                        }
+                        level={comment.level + 1}
+                        parentId={comment.id}
+                        type={type}
+                        defaultValue={
+                          isReply
+                            ? `@${displayFullname(
+                                comment.user.firstName,
+                                comment.user.lastName
+                              )}`
+                            : undefined
+                        }
+                      />
+                    </div>
+                  )}
+                </>
               )}
-              {`${showReplies ? 'Hide' : 'View'} ${
-                childrenComments.length
-              } reply`}
             </div>
           )}
         </div>
       </div>
-      {showReplies && (
-        <>
-          {childrenComments.map((childComment) => (
-            <Comment
-              key={childComment.id}
-              comment={childComment}
-              data={data}
-              type={type}
-            />
-          ))}
-          {comment.level < 2 && (
-            <div style={{ marginLeft: (comment.level + 1) * 20 + 'px' }}>
-              <ActionComment
-                postId={
-                  type === 'course'
-                    ? comment.courseId ?? 0
-                    : comment.lessonId ?? 0
-                }
-                level={comment.level + 1}
-                parentId={comment.id}
-                type={type}
-                defaultValue={
-                  isReply
-                    ? `@${displayFullname(
-                        comment.user.firstName,
-                        comment.user.lastName
-                      )}`
-                    : undefined
-                }
-              />
-            </div>
-          )}
-        </>
-      )}
     </>
   )
 }

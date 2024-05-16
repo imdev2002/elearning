@@ -12,6 +12,7 @@ import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { setItem } from '@/utils/localStorage'
 import { useAccountContext } from '@/contexts/account'
+import InputPassword from '@/components/input/input-password'
 
 const LoginForm = () => {
   const form = useForm<LoginBodyType>({
@@ -21,6 +22,7 @@ const LoginForm = () => {
       password: '',
     },
   })
+  const { errors } = form.formState
   const { setUser } = useAccountContext()
   const router = useRouter()
   const [isVisible, setIsVisible] = useState(false)
@@ -50,9 +52,8 @@ const LoginForm = () => {
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
-      className="flex-1 p-10 space-y-4 max-w-2xl mx-auto w-full"
+      className="flex-1 p-10 space-y-4 max-w-2xl mx-auto w-full flex flex-col gap-y-8"
       autoComplete="off"
-      // {...form}
     >
       <Controller
         name="email"
@@ -62,6 +63,9 @@ const LoginForm = () => {
             label="Email"
             variant="bordered"
             placeholder="Enter your email"
+            labelPlacement="outside"
+            isRequired
+            errorMessage={errors.email?.message}
             {...field}
           />
         )}
@@ -70,26 +74,7 @@ const LoginForm = () => {
         name="password"
         control={form.control}
         render={({ field }) => (
-          <Input
-            label="Password"
-            variant="bordered"
-            endContent={
-              <button
-                className="focus:outline-none"
-                type="button"
-                onClick={toggleVisibility}
-              >
-                {isVisible ? (
-                  <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                ) : (
-                  <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                )}
-              </button>
-            }
-            type={isVisible ? 'text' : 'password'}
-            placeholder="Enter your password"
-            {...field}
-          />
+          <InputPassword field={field} errorMsg={errors.password?.message} />
         )}
       />
       <div className="flex text-sm gap-1 font-normal ml-auto w-fit">

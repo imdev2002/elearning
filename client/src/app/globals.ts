@@ -99,6 +99,7 @@ export type User = {
   submitForms: SubmitForm[]
   rating: Rating[]
   bookmarks: Bookmark[]
+  syncWithGoogle: boolean
 }
 
 export type Role = {

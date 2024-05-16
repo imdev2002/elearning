@@ -3,6 +3,7 @@ import http from '@/lib/http'
 import {
   CoursePartsBodyType,
   CourseResType,
+  GetCoursesPublicParamsType,
 } from '@/schemaValidations/course.schema'
 
 export const courseManagerApiRequests = {
@@ -47,8 +48,8 @@ export const courseManagerApiRequests = {
 }
 
 export const coursePublicApiRequests = {
-  getList: () =>
-    http.get<CourseResType[]>('-public/courses', {
+  getList: (params: string = '') =>
+    http.get<CourseResType[]>(`-public/courses` + params, {
       cache: 'no-store',
     }),
 

@@ -6,6 +6,7 @@ import EditLessonModal from '@/app/(manager)/my-courses/_components/edit-lesson-
 import PartCourseForm from '@/app/(manager)/my-courses/_components/part-course-form'
 import { Course, Lesson, Part } from '@/app/globals'
 import { cn, formatDuration, formatVideoDuration } from '@/lib/utils'
+import { userApiRequest } from '@/services/user.service'
 import {
   Accordion,
   AccordionItem,
@@ -30,8 +31,13 @@ import {
   SquarePlay,
   Video,
 } from 'lucide-react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 type Props = {
   data: Part[]
@@ -41,10 +47,13 @@ type Props = {
 const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
   const { push } = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [listLessonFinished, setListLessonFinished] = useState([])
   const [partData, setPartData] = useState()
   const [action, setAction] = useState<'create' | 'edit'>('create')
   const searchParams = useSearchParams()
   const lessonId = searchParams.get('lesson')
+  const { courseId } = useParams()
+  console.log('ListPartsAccordion  pathname:', courseId)
   let currentPartId = 1
   data.forEach((part) => {
     const lesson = part.lessons.find((lesson) => lesson.id === Number(lessonId))
@@ -52,6 +61,24 @@ const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
       currentPartId = part.id
     }
   })
+  // useEffect(() => {
+  //   ;(async function fetchProgress() {
+  //     try {
+  //       const res = await userApiRequest.getCourseProgress()
+  //       if (res.status === 200 && lessonId) {
+  //         const course = (res.payload as any[]).find(
+  //           (course: any) => course.id === data.id
+  //         )
+  //         const lisLessonFinished = course.lessons.map(
+  //           (item: any) => item.lesson.lessonNumber
+  //         )
+  //         const isFinished = lisLessonFinished.includes(parseInt(lessonId))
+  //         setCanNext(isFinished)
+  //         setCanPrev(isFinished)
+  //       }
+  //     } catch (error) {}
+  //   })()
+  // }, [lessonId])
   return (
     <>
       {isAuth && (

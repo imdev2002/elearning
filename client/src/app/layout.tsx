@@ -32,7 +32,11 @@ export default function RootLayout({
       <body className={`${inter.className} bg-background`}>
         <RootProvider>
           <AccountProvider inititalTokens={tokens}>
-            <ToastContainer theme="dark" />
+            <ToastContainer
+              theme="dark"
+              hideProgressBar
+              position="bottom-right"
+            />
             {children}
           </AccountProvider>
         </RootProvider>

@@ -7,11 +7,13 @@ import React, { useState } from 'react'
 type InputPasswordType = {
   label?: string
   field: any
+  errorMsg?: string
 }
 
 const InputPassword = ({
   label = 'Password',
   field,
+  errorMsg,
   ...props
 }: InputPasswordType) => {
   const [isVisible, setIsVisible] = useState(false)
@@ -20,6 +22,9 @@ const InputPassword = ({
     <Input
       label={label}
       variant="bordered"
+      errorMessage={errorMsg}
+      labelPlacement="outside"
+      isRequired
       endContent={
         <button
           className="focus:outline-none"

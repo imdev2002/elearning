@@ -22,6 +22,7 @@ const PartCourseForm = ({ data, action = 'create' }: Props) => {
       partName: data?.partName ?? '',
     },
   })
+  const { errors } = form.formState
   return (
     <form className="flex gap-2 items-end bg-neutral-700/30 p-4 rounded-xl">
       {/* <div className="flex gap-4 w-[90%]"> */}
@@ -36,6 +37,7 @@ const PartCourseForm = ({ data, action = 'create' }: Props) => {
             variant="bordered"
             labelPlacement="outside"
             placeholder="Enter your course name"
+            errorMessage={errors.partNumber?.message}
             {...field}
           />
         )}
@@ -50,6 +52,7 @@ const PartCourseForm = ({ data, action = 'create' }: Props) => {
             variant="bordered"
             labelPlacement="outside"
             placeholder="Enter part name..."
+            errorMessage={errors.partName?.message}
             {...field}
           />
         )}

@@ -43,6 +43,7 @@ const CourseForm = ({ defaultValues }: Props) => {
       category: defaultValues?.category || '',
     },
   })
+  const { errors } = form.formState
   const { fields, remove, append } = useFieldArray({
     control: form.control,
     name: 'knowledgeGained',
@@ -81,6 +82,7 @@ const CourseForm = ({ defaultValues }: Props) => {
               variant="bordered"
               labelPlacement="outside"
               placeholder="Enter your course name"
+              errorMessage={errors.courseName?.message}
               {...field}
             />
           )}
@@ -95,6 +97,7 @@ const CourseForm = ({ defaultValues }: Props) => {
               variant="bordered"
               labelPlacement="outside"
               placeholder="eg, 189"
+              errorMessage={errors.priceAmount?.message}
               {...field}
             />
           )}
@@ -113,6 +116,7 @@ const CourseForm = ({ defaultValues }: Props) => {
               placeholder="Enter your description"
               className="max-w-md"
               variant="bordered"
+              errorMessage={errors.descriptionMD?.message}
               {...field}
             />
           )}
@@ -139,6 +143,7 @@ const CourseForm = ({ defaultValues }: Props) => {
                   placeholder="Enter your description"
                   className="max-w-md"
                   variant="bordered"
+                  errorMessage={errors.knowledgeGained?.message}
                   {...field}
                 />
               )}
@@ -159,6 +164,7 @@ const CourseForm = ({ defaultValues }: Props) => {
             placeholder="Select an category"
             isRequired
             // selectionMode="multiple"
+            errorMessage={errors.category?.message}
             className="max-w-xs"
           >
             {categories.map((category) => (

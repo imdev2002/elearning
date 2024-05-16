@@ -21,6 +21,7 @@ const RegisterForm = () => {
       password: '',
     },
   })
+  const errors = form.formState.errors
   const onSubmit = async (values: RegisterBodyType) => {
     if (loading) return
     setLoading(true)
@@ -42,7 +43,7 @@ const RegisterForm = () => {
       onSubmit={form.handleSubmit(onSubmit)}
       className="flex-1 p-10 space-y-4 max-w-2xl mx-auto w-full"
       autoComplete="off"
-      {...form}
+      // {...form}
     >
       <Controller
         name="email"
@@ -52,6 +53,7 @@ const RegisterForm = () => {
             label="Email"
             variant="bordered"
             placeholder="Enter your email"
+            errorMessage={errors.email?.message}
             {...field}
           />
         )}
@@ -59,13 +61,19 @@ const RegisterForm = () => {
       <Controller
         name="password"
         control={form.control}
-        render={({ field }) => <InputPassword field={field} />}
+        render={({ field }) => (
+          <InputPassword field={field} errorMsg={errors.password?.message} />
+        )}
       />
       <Controller
         name="confirmPassword"
         control={form.control}
         render={({ field }) => (
-          <InputPassword label="Comfirm password" field={field} />
+          <InputPassword
+            label="Comfirm password"
+            field={field}
+            errorMsg={errors.confirmPassword?.message}
+          />
         )}
       />
       <div className="flex text-sm gap-1 font-normal ml-auto w-fit">

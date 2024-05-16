@@ -34,13 +34,9 @@ export const convertObjectToFormData = (data: any) => {
 }
 
 export const displayFullname = (firstName?: string, lastName?: string) =>
-  firstName
-    ? firstName
-    : '' + (firstName && lastName)
-    ? ' '
-    : '' + lastName
-    ? lastName
-    : ''
+  (firstName ? firstName : '') +
+  (firstName && lastName ? ' ' : '') +
+  (lastName ? lastName : '')
 
 export const formatDuration = (duration: number) => {
   let seconds = Math.floor(duration % 60)

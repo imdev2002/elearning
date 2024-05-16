@@ -54,8 +54,8 @@ const StepsBecomeInstructor = () => {
           top: ref.current?.offsetTop + 'px',
         }}
       ></div>
-      <div className="text-center relative space-y-4 py-6" ref={ref}>
-        <h3 className="font-bold text-4xl">{`How you'll become successful instructor`}</h3>
+      <div className="text-center relative space-y-8 py-6" ref={ref}>
+        <h3 className="font-bold text-4xl w-96 mx-auto">{`How you'll become successful instructor`}</h3>
         <div className="flex gap-4 justify-between">
           {steps.map((step, index) => (
             <div key={index} className=" space-y-2">

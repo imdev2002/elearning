@@ -28,6 +28,7 @@ const BecomeInstructorForm = () => {
       linkCV: '',
     },
   })
+  const { errors } = form.formState
   const submit = async (data: BecomeInstructorBodyType) => {
     const body = convertObjectToFormData(data)
     try {
@@ -59,6 +60,7 @@ const BecomeInstructorForm = () => {
                   label="First name"
                   variant="bordered"
                   placeholder="Enter your real first name"
+                  errorMessage={errors.real_firstName?.message}
                   {...field}
                 />
               )}
@@ -73,6 +75,7 @@ const BecomeInstructorForm = () => {
                   label="Last name"
                   variant="bordered"
                   placeholder="Enter your real last name"
+                  errorMessage={errors.real_lastName?.message}
                   {...field}
                 />
               )}
@@ -88,6 +91,7 @@ const BecomeInstructorForm = () => {
                 label="Link CV"
                 variant="bordered"
                 placeholder="Enter your link CV"
+                errorMessage={errors.linkCV?.message}
                 {...field}
               />
             )}
@@ -104,6 +108,7 @@ const BecomeInstructorForm = () => {
                 placeholder="Select an category"
                 isRequired
                 className="max-w-xs"
+                errorMessage={errors.category?.message}
               >
                 {CATEGORIES.map((category) => (
                   <SelectItem

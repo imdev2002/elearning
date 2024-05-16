@@ -28,7 +28,6 @@ type CourseType = {
 
 const CourseCard = ({ data, isAuth = false }: CourseType) => {
   const { push, refresh } = useRouter()
-  const slug = slugify(data.courseName, { lower: true })
   const {
     id,
     category,
@@ -65,7 +64,7 @@ const CourseCard = ({ data, isAuth = false }: CourseType) => {
 
   return (
     <Card
-      className="py-3 border border-foreground/10 rounded-md shadow-none"
+      className="py-3 border border-foreground/10 rounded-md shadow-none relative"
       as={Link}
       href={isAuth ? '#' : `/course/${id}`}
       // href={isAuth ? '#' : `/course/${slug}-${id}`}

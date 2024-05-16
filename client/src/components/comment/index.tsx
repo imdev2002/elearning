@@ -29,10 +29,11 @@ const CommentSection = ({ data, postId }: Props) => {
   return (
     <div>
       <ActionComment postId={postId} level={0} type={type} />
-
-      {parentComments.map((comment) => (
-        <Comment key={comment.id} comment={comment} data={data} type={type} />
-      ))}
+      <div className="space-y-4">
+        {parentComments.map((comment) => (
+          <Comment key={comment.id} comment={comment} data={data} type={type} />
+        ))}
+      </div>
     </div>
   )
 }

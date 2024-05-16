@@ -1,6 +1,10 @@
 import CourseCard from '@/components/course/course-card'
 import ListCardSlider from '@/components/course/list-card-slider'
-import { coursePublicApiRequests } from '@/services/course.service'
+import { Heading } from '@/components/heading'
+import {
+  courseManagerApiRequests,
+  coursePublicApiRequests,
+} from '@/services/course.service'
 import { Button, cn } from '@nextui-org/react'
 import { ArrowUpRight } from 'lucide-react'
 import { cookies } from 'next/headers'
@@ -12,8 +16,8 @@ export default async function Home() {
   const token = cookieStore.get('accessToken')?.value
   const { payload: listCourses } = await coursePublicApiRequests.getList()
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between mt-[120px]">
-      <div className="flex justify-between">
+    <main className="flex min-h-screen flex-col items-center justify-between mt-[120px] space-y-8">
+      <div className="flex justify-between mb-20">
         <div className="flex flex-col w-1/3 gap-y-8">
           <h3 className="font-bold text-4xl leading-10">
             Learn a New Skill Everyday, Anytime, and Anywhere.
@@ -119,7 +123,18 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <ListCardSlider data={listCourses} />
+      <div className="w-full space-y-4">
+        <Heading title="Best selling courses" />
+        <ListCardSlider data={listCourses} />
+      </div>
+      <div className="space-y-4">
+        <Heading title="Recent courses" />
+        <div className="grid grid-cols-4 gap-4">
+          {listCourses.map((course, index) => (
+            <CourseCard key={index} data={course} />
+          ))}
+        </div>
+      </div>
       {/* <div className="w-full">
         <h3>Most Popular Category</h3>
         <p>

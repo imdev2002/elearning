@@ -24,6 +24,7 @@ const EmojiForm = ({ closeModal }: Props) => {
       name: '',
     },
   })
+  const { errors } = form.formState
   const submitEmojiForm = async (values: EmojiBodyType) => {
     const formData = convertObjectToFormData(values)
     try {
@@ -49,7 +50,8 @@ const EmojiForm = ({ closeModal }: Props) => {
             label="Name"
             variant="bordered"
             labelPlacement="outside"
-            placeholder="eg, 189"
+            placeholder="eg, poop, smiley"
+            errorMessage={errors.name?.message}
             {...field}
           />
         )}

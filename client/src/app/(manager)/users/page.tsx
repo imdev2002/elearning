@@ -18,6 +18,7 @@ const page = async () => {
     defaultParams,
     accessToken
   )
+  console.log(listUser)
   return (
     <>
       <Heading icon={<AccountsIcon />} title="Users" />

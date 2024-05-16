@@ -30,11 +30,11 @@ const LearningPage = async ({ params, searchParams }: Props) => {
   )
   return (
     <>
-      <div className="flex gap-x-4">
+      <div className="flex gap-x-10">
         <LearningContent data={lessonData} />
         <LearningSidebar data={parts} />
       </div>
-      <LearningControl />
+      <LearningControl data={parts} />
     </>
   )
 }

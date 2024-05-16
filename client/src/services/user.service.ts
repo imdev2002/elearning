@@ -7,6 +7,7 @@ export const userApiRequest = {
     http.get<any>(`/users?limit=${params.limit}&offset=${params.offset}`, {
       headers: {
         Authorization: `Bearer ${access_token}`,
+        cache: 'no-store',
       },
     }),
 
@@ -28,4 +29,10 @@ export const userApiRequest = {
     http.patch<any>(`/users/${userId}`, body),
 
   delete: (userId: number) => http.delete(`/users/${userId}`),
+
+  getCourseProgress: () => http.get('/users/actions/progress'),
+
+  getCourseBought: () => http.get('/users/actions/bought'),
+
+  getWishList: () => http.get('/users/actions/hearted'),
 }

@@ -29,4 +29,6 @@ export const authApiRequest = {
 
   refeshToken: (body: Omit<TokensType, 'accessToken'>) =>
     http.post<RefreshTokenResType>('/auth/refresh', body),
+
+  changePassword: (body: any) => http.post('/auth/local/password', body),
 }

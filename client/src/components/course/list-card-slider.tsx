@@ -10,7 +10,7 @@ type Props = {
 
 const ListCardSlider = ({ data }: Props) => {
   return (
-    <div className="slider-cards container">
+    <div className="slider-cards">
       <Swiper grabCursor={true} spaceBetween={16} slidesPerView="auto">
         {data.map((course) => (
           <SwiperSlide key={course.id}>

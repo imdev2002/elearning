@@ -1,6 +1,7 @@
 'use client'
 
 import { GraduationCap } from '@/components/icons/graduation-cap'
+import { SearchIcon } from '@/components/icons/searchicon'
 import { ThemeSwitcher } from '@/components/theme-swicher'
 import UserDropdown from '@/components/user-dropdown'
 import { useAccountContext } from '@/contexts/account'
@@ -11,6 +12,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Input,
   Navbar,
   NavbarBrand,
   NavbarContent,
@@ -118,15 +120,27 @@ const Header = () => {
             ))}
           </DropdownMenu>
         </Dropdown>
-        <NavbarItem isActive>
+        {/* <NavbarItem isActive>
           <Link href="#" aria-current="page">
             Customers
           </Link>
-        </NavbarItem>
+        </NavbarItem> */}
         <NavbarItem>
           <Link color="foreground" href="/dashboard">
             Dashboard
           </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Input
+            startContent={<SearchIcon />}
+            isClearable
+            className="w-full"
+            classNames={{
+              input: 'w-full',
+              mainWrapper: 'w-full',
+            }}
+            placeholder="Search..."
+          />
         </NavbarItem>
       </NavbarContent>
 

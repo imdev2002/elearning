@@ -27,8 +27,7 @@ type Props = {
 }
 
 const TextLessonForm = ({ data, onSubmit }: Props) => {
-  const [content, setContent] = useState('')
-  console.log('TextLessonForm  content:', content)
+  const [content, setContent] = useState(data?.content ?? '')
   const [loading, setLoading] = useState(false)
   const { refresh } = useRouter()
   const modules = useMemo(
@@ -57,12 +56,13 @@ const TextLessonForm = ({ data, onSubmit }: Props) => {
   const form = useForm<LessonTextBodyType>({
     resolver: zodResolver(LessonTextBody),
     defaultValues: {
-      lessonName: '',
-      title: 'xxx',
-      content: '',
-      descriptionMD: 'yyy',
+      lessonName: data?.lessonName ?? '',
+      title: data?.title ?? '',
+      content: data?.content ?? '',
+      descriptionMD: data?.descriptionMD ?? '',
     },
   })
+  const { errors } = form.formState
   const handleContentChange = (value: any) => {}
 
   const submit = async (values: any) => {
@@ -89,6 +89,7 @@ const TextLessonForm = ({ data, onSubmit }: Props) => {
             variant="bordered"
             labelPlacement="outside"
             placeholder="Enter lesson name..."
+            errorMessage={errors.lessonName?.message}
             {...field}
           />
         )}

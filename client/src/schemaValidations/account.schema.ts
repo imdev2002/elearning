@@ -8,6 +8,7 @@ export const AccountBody = z.object({
   phone: z.string(),
   gender: z.string(),
   birthday: z.any(),
+  syncWithGoogle: z.any(),
 })
 
 export type AccountBodyType = z.infer<typeof AccountBody>

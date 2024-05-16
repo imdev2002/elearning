@@ -107,6 +107,18 @@ export const CourseRes = z.object({
 
 export type CourseResType = z.infer<typeof CourseRes>
 
+export type GetCoursesPublicParamsType = {
+  limit?: number
+  offset?: number
+  search?: string
+  category?: string
+  orderBy?: string
+  direction?: string
+  isBestSeller?: boolean
+  myOwn?: boolean
+  byAuthor?: number
+}
+
 export const CoursePartsBody = z.object({
   partNumber: z.string(),
   partName: z.string(),

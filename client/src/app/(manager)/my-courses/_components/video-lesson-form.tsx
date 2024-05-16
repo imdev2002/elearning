@@ -27,6 +27,7 @@ const VideoLessonForm = ({ data, onSubmit }: Props) => {
       lessonName: data?.lessonName ?? '',
     },
   })
+  const { errors } = form.formState
   const submit = async (values: any) => {
     setLoading(true)
     await onSubmit(values)
@@ -52,6 +53,7 @@ const VideoLessonForm = ({ data, onSubmit }: Props) => {
             variant="bordered"
             labelPlacement="outside"
             placeholder="Enter lesson name..."
+            errorMessage={errors.lessonName?.message}
             {...field}
           />
         )}
@@ -67,6 +69,7 @@ const VideoLessonForm = ({ data, onSubmit }: Props) => {
             placeholder="Enter your description"
             className=""
             variant="bordered"
+            errorMessage={errors.descriptionMD?.message}
             {...field}
           />
         )}
