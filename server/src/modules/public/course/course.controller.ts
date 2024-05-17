@@ -1,11 +1,17 @@
 import { Request, Response } from 'express';
 import { BaseController } from '../../../abstractions/base.controller';
 import passport from '../../../configs/passport';
-import { CourseCategory, CourseStatus, ReqUser } from '../../../global';
+import {
+  CourseCategory,
+  CourseStatus,
+  ReqUser,
+  RoleEnum,
+} from '../../../global';
 import HttpException from '../../../exceptions/http-exception';
 import NotFoundException from '../../../exceptions/not-found';
 import xtripe from '../../../configs/xtripe';
 import { CoursedPaidStatus } from '@prisma/client';
+import { JwtPayload, verify } from 'jsonwebtoken';
 
 export default class PublicCourseController extends BaseController {
   public path = '/api/v1-public/courses';
@@ -377,9 +383,13 @@ export default class PublicCourseController extends BaseController {
       const limit = Number(req.query.limit) || 12;
       const offset = Number(req.query.offset) || 0;
       const search = req.query.search as string;
-      const category = (req.query.category as CourseCategory[]) || [];
+      const categories = req.query.categories || '';
       const orderBy = (req.query.orderBy as string) || 'timestamp';
       const direction = (req.query.direction as 'asc' | 'desc') || 'desc';
+      const isBestSeller = req.query.isBestSeller === 'true';
+      const myOwn = req.query.myOwn === 'true';
+      const byAuthor = Number(req.query.byAuthor) || -1;
+
       const query: any = {
         where: {
           isPublic: true,
@@ -394,28 +404,56 @@ export default class PublicCourseController extends BaseController {
           },
         ],
       };
-      if (category.length > 0) {
+      if (categories) {
+        const category = String(categories).split(',') as CourseCategory[];
         query.where.category = {
           in: category,
         };
       }
+      if (isBestSeller) {
+        query.orderBy.push({
+          coursedPaid: {
+            _count: 'desc',
+          },
+        });
+      }
+      if (byAuthor !== -1) {
+        query.where.userId = byAuthor;
+      }
+      if (myOwn) {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+          return res.status(401).send('No token provided');
+        }
+        const reqUser = (
+          verify(token, process.env.SECRET as string) as JwtPayload
+        ).user as ReqUser;
+        if (!reqUser.roles.some((_) => _.role.name === RoleEnum.AUTHOR)) {
+          throw new HttpException(403, 'Forbidden');
+        }
+        query.where.userId = reqUser.id;
+        query.where.isPublic = undefined;
+        query.where.status = undefined;
+      }
       if (search) {
         query.where.OR = [
           {
-            title: {
+            courseName: {
               contains: search,
+              mode: 'insensitive',
             },
           },
           {
             descriptionMD: {
               contains: search,
+              mode: 'insensitive',
             },
           },
           {
-            user: { firstName: { contains: search } },
+            user: { firstName: { contains: search, mode: 'insensitive' } },
           },
           {
-            user: { lastName: { contains: search } },
+            user: { lastName: { contains: search, mode: 'insensitive' } },
           },
         ];
       }

@@ -6,7 +6,7 @@ import {
 import { PrismaClient } from '@prisma/client';
 import passport from 'passport';
 import { render } from '@react-email/render';
-import MaloloWelcomeEmail from '../email/templates/welcome';
+import Welcome from '../email/templates/welcome';
 import { Platform, RoleEnum } from '../global';
 import commonUtil from '../util/common.util';
 
@@ -43,7 +43,7 @@ const googleStrategy = new GoogleStrategy(
           },
         });
         const emailHtml = render(
-          MaloloWelcomeEmail({ userFirstName: profile._json.given_name || '' }),
+          Welcome({ userFirstName: profile._json.given_name || '' }),
         );
         // await sendEmail(emailHtml, email, 'Your Adventure Begins with Malolo!');
       }

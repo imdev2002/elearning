@@ -17,6 +17,7 @@ import partUtil from '../../util/part.util';
 import xtripe from '../../configs/xtripe';
 import checkRoleMiddleware from '../../middlewares/checkRole.middleware';
 import { videoUpload } from '../../configs/multer';
+import { DeleteUtil } from '../../util/delete.util';
 
 export default class CourseController extends BaseController {
   public path = '/api/v1/courses';
@@ -213,10 +214,12 @@ export default class CourseController extends BaseController {
       }
       const parts = await this.prisma.part.findMany({
         where: { courseId: id },
+        include: { lessons: true },
       });
-      const lessons = await this.prisma.lesson.findMany({
-        where: { courseId: id },
-      });
+      let lessonsLength = 0;
+      for (const part of parts) {
+        lessonsLength += part.lessons.length;
+      }
 
       await this.prisma.course.update({
         where: { id },
@@ -228,7 +231,7 @@ export default class CourseController extends BaseController {
           category: category || CourseCategory.OTHER,
           totalPart: parts.length,
           thumbnail: thumbnail.path,
-          totalLesson: lessons.length,
+          totalLesson: lessonsLength,
           status: CourseStatus.PENDING,
           priceAmount: priceAmount || 0,
           currency: Currency.USD,
@@ -281,14 +284,7 @@ export default class CourseController extends BaseController {
       ) {
         throw new HttpException(403, 'Forbidden');
       }
-      await this.prisma.lesson.deleteMany({ where: { courseId: id } });
-      await this.prisma.comment.deleteMany({ where: { courseId: id } });
-      await this.prisma.emoji.deleteMany({ where: { courseId: id } });
-      await this.prisma.heart.deleteMany({ where: { courseId: id } });
-      await this.prisma.part.deleteMany({ where: { courseId: id } });
-      await this.prisma.certificate.deleteMany({ where: { courseId: id } });
-      await this.prisma.coursedPaid.deleteMany({ where: { courseId: id } });
-      await this.prisma.course.deleteMany({ where: { id } });
+      await DeleteUtil.deleteCourse(id);
       return res.status(200).json(course);
     } catch (e: any) {
       console.log(e);
@@ -468,9 +464,7 @@ export default class CourseController extends BaseController {
       if (!part) {
         throw new NotFoundException('part', partId);
       }
-      await this.prisma.part.delete({
-        where: { id: partId },
-      });
+      await DeleteUtil.deletePart(partId);
       await partUtil.refreshPart(courseId);
       return res.status(200).json(part);
     } catch (e: any) {

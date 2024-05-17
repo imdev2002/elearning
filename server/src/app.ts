@@ -12,6 +12,7 @@ import PublicCourseController from './modules/public/course/course.controller';
 import PublicLessonController from './modules/public/lesson/lesson.controller';
 import FormController from './modules/form/form.controller';
 import BookmarkController from './modules/public/bookmark/bookmark.controller';
+import TestController from './modules/test/test.controller';
 
 const controllers = [
   new UserController(),
@@ -24,6 +25,7 @@ const controllers = [
   new PublicLessonController(),
   new FormController(),
   new BookmarkController(),
+  new TestController(),
 ];
 
 class App {

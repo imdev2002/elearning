@@ -3,6 +3,10 @@ import passport from '../../configs/passport';
 import checkRoleMiddleware from '../../middlewares/checkRole.middleware';
 import { FormStatus, ReqUser, RoleEnum } from '../../global';
 import { Request, Response } from 'express';
+import { render } from '@react-email/render';
+import sendEmail from '../../email/process';
+import AcceptForm from '../../email/templates/accept';
+import RejectForm from '../../email/templates/reject';
 
 export default class FormController extends BaseController {
   public path = '/api/v1/forms';
@@ -59,11 +63,13 @@ export default class FormController extends BaseController {
   };
   updateForm = async (req: Request, res: Response) => {
     try {
+      const reqUser = req.user as ReqUser;
       const id = Number(req.params.id);
       const status = req.body.status as FormStatus;
       const form = await this.prisma.submitForm.update({
         where: { id },
         data: { status: status },
+        include: { user: true },
       });
       if (status === FormStatus.APPROVED) {
         const _ = await this.prisma.submitForm.findFirst({
@@ -82,6 +88,16 @@ export default class FormController extends BaseController {
             },
           });
         }
+        const emailHtml = render(
+          AcceptForm({
+            userFirstName: reqUser.email.split('@')[0],
+          }),
+        );
+        await sendEmail(
+          emailHtml,
+          form.user.email,
+          'Your form has been approved',
+        );
       } else {
         const _ = await this.prisma.submitForm.findFirst({
           where: { id },
@@ -99,6 +115,16 @@ export default class FormController extends BaseController {
             },
           });
         }
+        const emailHtml = render(
+          RejectForm({
+            userFirstName: reqUser.email.split('@')[0],
+          }),
+        );
+        await sendEmail(
+          emailHtml,
+          form.user.email,
+          'Your form has been rejected',
+        );
       }
       return res.status(200).json(form);
     } catch (e: any) {

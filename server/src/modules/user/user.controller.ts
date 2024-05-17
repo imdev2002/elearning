@@ -6,6 +6,7 @@ import NotFoundException from '../../exceptions/not-found';
 import {
   CourseCategory,
   CoursedPaidStatus,
+  FormStatus,
   LessonDone,
   ReqUser,
   RoleEnum,
@@ -93,6 +94,11 @@ export default class UserController extends BaseController {
       `${this.path}/actions/forms`,
       passport.authenticate('jwt', { session: false }),
       this.getMyForms,
+    );
+    this.router.patch(
+      `${this.path}/actions/forms`,
+      passport.authenticate('jwt', { session: false }),
+      this.updateMyForm,
     );
   }
 
@@ -265,11 +271,15 @@ export default class UserController extends BaseController {
   getUserDetail = async (req: Request, res: Response) => {
     try {
       const id = Number(req.params.id);
-      const user = await this.prisma.user.findFirst({ where: { id } });
+      const user = await this.prisma.user.findFirst({
+        where: { id },
+        include: { roles: { include: { role: { select: { name: true } } } } },
+      });
       if (!user) {
         throw new NotFoundException('user', id);
       }
-      return res.status(200).send(user);
+      const { refreshToken, password, salt, ...data } = user;
+      return res.status(200).send(data);
     } catch (e: any) {
       console.log(e);
       return res
@@ -435,19 +445,21 @@ export default class UserController extends BaseController {
       const reqUser = req.user as ReqUser;
       const lessons = await this.prisma.lessonDone.findMany({
         where: { userId: reqUser.id },
-        include: { lesson: true },
+        include: { lesson: { include: { part: true } } },
       });
       const _ = [] as { courseId: number; lessons: any[] }[];
       const __ = [] as number[];
       for (const lesson of lessons) {
-        if (!__.includes(lesson.lesson.courseId)) {
-          __.push(lesson.lesson.courseId);
+        if (!__.includes(lesson.lesson.part.courseId)) {
+          __.push(lesson.lesson.part.courseId);
         }
       }
       for (const id of __) {
         _.push({
           courseId: id,
-          lessons: lessons.filter((lesson) => lesson.lesson.courseId === id),
+          lessons: lessons.filter(
+            (lesson) => lesson.lesson.part.courseId === id,
+          ),
         });
       }
       return res.status(200).json(_);
@@ -465,6 +477,46 @@ export default class UserController extends BaseController {
         where: { userId: reqUser.id },
       });
       return res.status(200).json(forms);
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
+  updateMyForm = async (req: Request, res: Response) => {
+    try {
+      const myForm = await this.prisma.submitForm.findFirst({
+        where: { userId: (req.user as ReqUser).id },
+      });
+      if (!myForm) {
+        throw new NotFoundException('form', (req.user as ReqUser).id);
+      }
+      const now = new Date();
+      const is15Days =
+        now.getTime() - myForm.updatedAt.getTime() > 15 * 24 * 60 * 60 * 1000;
+      if (!(is15Days && myForm.status === FormStatus.REJECTED)) {
+        throw new HttpException(400, 'You can only update form every 15 days');
+      }
+      const { real_firstName, real_lastName, linkCV } = req.body;
+      const category = req.body.category as CourseCategory;
+      if (!real_firstName || !real_lastName) {
+        throw new HttpException(400, 'Please provide your real name');
+      }
+      if (!linkCV) {
+        throw new HttpException(400, 'Please provide your CV');
+      }
+      const submitForm = await this.prisma.submitForm.update({
+        where: { id: myForm.id },
+        data: {
+          real_firstName,
+          real_lastName,
+          linkCV,
+          category,
+          status: FormStatus.PENDING,
+        },
+      });
+      return res.status(200).json(submitForm);
     } catch (e: any) {
       console.log(e);
       return res

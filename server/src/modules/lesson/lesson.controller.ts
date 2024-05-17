@@ -8,6 +8,7 @@ import { LessonStatus, LessonType, ReqUser, RoleEnum } from '../../global';
 import lessonUtil from '../../util/lesson.util';
 import checkRoleMiddleware from '../../middlewares/checkRole.middleware';
 import { getVideoDurationInSeconds } from 'get-video-duration';
+import { DeleteUtil } from '../../util/delete.util';
 
 export default class LessonController extends BaseController {
   public path = '/api/v1/lessons';
@@ -97,7 +98,6 @@ export default class LessonController extends BaseController {
             trialAllowed: trialAllowed || false,
             descriptionMD,
             duration,
-            course: { connect: { id: Number(courseId) } },
             status: LessonStatus.PENDING,
             localPath: video.path,
             thumbnailPath: thumbnail.path,
@@ -142,7 +142,6 @@ export default class LessonController extends BaseController {
             descriptionMD,
             title: title || '',
             content: content || '',
-            course: { connect: { id: Number(courseId) } },
             status: LessonStatus.PENDING,
             user: { connect: { id: (req.user as ReqUser).id } },
           },
@@ -217,13 +216,11 @@ export default class LessonController extends BaseController {
         throw new NotFoundException('lesson', id);
       }
       if (lesson.lessonType === LessonType.VIDEO) {
-        const {
-          lessonName,
-          lessonNumber,
-          partId,
-          trialAllowed,
-          descriptionMD,
-        } = req.body;
+        const { lessonName, lessonNumber, partId, descriptionMD } = req.body;
+        let trialAllowed = lesson.trialAllowed;
+        if (req.body.trialAllowed) {
+          trialAllowed = req.body.trialAllowed === 'true';
+        }
         const data: any = {
           lessonName: lessonName || lesson.lessonName,
           lessonNumber: Number(lessonNumber) || lesson.lessonNumber,
@@ -307,14 +304,8 @@ export default class LessonController extends BaseController {
       if (!lesson) {
         throw new NotFoundException('lesson', id);
       }
-      res.status(200).json(lesson);
-      await this.prisma.course.update({
-        where: { id: lesson.courseId },
-        data: {
-          totalDuration: { decrement: lesson.duration || 0 },
-          totalLesson: { decrement: 1 },
-        },
-      });
+      await DeleteUtil.deleteLesson(id);
+      return res.status(200).json(lesson);
     } catch (e: any) {
       console.log(e);
       return res
@@ -327,6 +318,7 @@ export default class LessonController extends BaseController {
       const id = Number(req.params.id);
       const lesson = await this.prisma.lesson.findFirst({
         where: { id },
+        include: { part: true },
       });
       if (!lesson) {
         throw new NotFoundException('lesson', id);
@@ -338,7 +330,8 @@ export default class LessonController extends BaseController {
         },
       });
       const lessons = await this.prisma.lesson.findMany({
-        where: { courseId: lesson.courseId },
+        where: { part: { courseId: lesson.part.courseId } },
+        include: { part: true },
       });
       for (const lesson of lessons) {
         if (lesson.status !== LessonStatus.APPROVED) {
@@ -346,7 +339,7 @@ export default class LessonController extends BaseController {
         }
       }
       await this.prisma.course.update({
-        where: { id: lesson.courseId },
+        where: { id: lesson.part.courseId },
         data: { status: LessonStatus.APPROVED },
       });
       return res.status(200).json(lessons);

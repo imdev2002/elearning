@@ -99,8 +99,8 @@ export type User = {
   submitForms: SubmitForm[];
   rating: Rating[];
   bookmarks: Bookmark[];
-  LessonDone: LessonDone[];
-  CourseDone: CourseDone[];
+  lessonDones: LessonDone[];
+  courseDones: CourseDone[];
 };
 export type LessonDone = {
   lesson: Lesson;
@@ -144,8 +144,6 @@ export type Lesson = {
   localPath?: string;
   thumbnailPath?: string;
   filename?: string;
-  course: Course;
-  courseId: number;
   user: User;
   userId: number;
   comments: Comment[];
@@ -154,7 +152,7 @@ export type Lesson = {
   bookmarks: Bookmark[];
   part: Part;
   partId: number;
-  LessonDone: LessonDone[];
+  lessonDones: LessonDone[];
 };
 
 export type Certificate = {
@@ -199,8 +197,7 @@ export type Course = {
   coursedPaid: CoursedPaid[];
   rating: Rating[];
   bookmarks: Bookmark[];
-  Lesson: Lesson[];
-  CourseDone: CourseDone[];
+  courseDones: CourseDone[];
 };
 
 export type CoursedPaid = {

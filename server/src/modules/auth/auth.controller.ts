@@ -2,7 +2,7 @@ import { BaseController } from '../../abstractions/base.controller';
 import { Request, Response } from 'express';
 import passport from '../../configs/passport';
 import { sign, verify } from 'jsonwebtoken';
-import MaloloWelcomeEmail from '../../email/templates/welcome';
+import Welcome from '../../email/templates/welcome';
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
 import sendEmail from '../../email/process';
 import { render } from '@react-email/render';
@@ -12,6 +12,7 @@ import HttpException from '../../exceptions/http-exception';
 import { Platform, ReqUser, RoleEnum, UserRole } from '../../global';
 import commonUtil from '../../util/common.util';
 import VerifyEmail from '../../email/templates/verify';
+import ResetPassword from '../../email/templates/reset';
 
 export default class AuthController extends BaseController {
   public path = '/api/v1/auth';
@@ -50,6 +51,7 @@ export default class AuthController extends BaseController {
     this.router.post(`${this.path}/local/register`, this.registerLocal);
     this.router.post(`${this.path}/local/login`, this.loginLocal);
     this.router.post(`${this.path}/local/password`, this.changePassword);
+    this.router.post(`${this.path}/local/reset`, this.resetPassword);
   }
 
   upsertUser = async (
@@ -85,9 +87,7 @@ export default class AuthController extends BaseController {
           isVerified: true,
         },
       });
-      const emailHtml = render(
-        MaloloWelcomeEmail({ userFirstName: given_name || '' }),
-      );
+      const emailHtml = render(Welcome({ userFirstName: given_name || '' }));
       await sendEmail(emailHtml, email, 'Your Adventure Begins with DKE!');
     } else {
       const data: any = {
@@ -292,6 +292,12 @@ export default class AuthController extends BaseController {
       if (confirmPassword !== password) {
         throw new HttpException(400, 'Passwords are not the same');
       }
+      if (!commonUtil.validatePassword(password)) {
+        throw new HttpException(
+          400,
+          'Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character',
+        );
+      }
       const salt = bcrypt.genSaltSync(10);
       const newPassword = bcrypt.hashSync(password, salt);
       let verifyCode = commonUtil.generateRandomString(10);
@@ -313,9 +319,12 @@ export default class AuthController extends BaseController {
       });
       res.status(200).json({ email });
       const emailHtml = render(
-        VerifyEmail({ userFirstName: email.split('@')[0], verifyCode }),
+        VerifyEmail({
+          userFirstName: email.split('@')[0],
+          verifyLink: `${process.env.PUBLIC_URL}/verify?verify=${verifyCode}`,
+        }),
       );
-      await sendEmail(emailHtml, email, 'Let verify your email address');
+      await sendEmail(emailHtml, email, `Let's verify your email address!`);
     } catch (e: any) {
       console.log(e);
       return res
@@ -383,6 +392,12 @@ export default class AuthController extends BaseController {
       if (!user) {
         throw new HttpException(400, 'Invalid email address');
       }
+      if (!commonUtil.validatePassword(password)) {
+        throw new HttpException(
+          400,
+          'Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character',
+        );
+      }
       if (!bcrypt.compareSync(oldPassword, user.password as string)) {
         throw new HttpException(400, 'Old password is not correct');
       }
@@ -394,6 +409,48 @@ export default class AuthController extends BaseController {
         },
       });
       return res.status(200).json({ email: reqUser.email });
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
+  resetPassword = async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+      const user = await this.prisma.user.findFirst({
+        where: { email, isVerified: true },
+        include: { roles: { include: { role: true } } },
+      });
+      if (!user) {
+        throw new HttpException(400, 'Invalid email address');
+      }
+      if (
+        !(
+          !user.lastReset ||
+          new Date().getTime() - user.lastReset.getTime() > 1296000000
+        )
+      ) {
+        throw new HttpException(
+          400,
+          'You can only reset password every 15 days',
+        );
+      }
+      let newPassword = commonUtil.generateRandomPassword();
+      const salt = user.salt || bcrypt.genSaltSync(10);
+      newPassword = bcrypt.hashSync(newPassword, salt);
+      await this.prisma.user.update({
+        where: { email },
+        data: {
+          password: newPassword,
+          salt,
+          lastReset: new Date(),
+        },
+      });
+      const emailHtml = render(ResetPassword({ newPassword }));
+      await sendEmail(emailHtml, email, 'We reset your password');
+      return res.status(200).json({ email });
     } catch (e: any) {
       console.log(e);
       return res

@@ -1,62 +1,97 @@
+import React from 'react';
 import {
   Body,
   Container,
   Head,
   Html,
-  Img,
   Link,
   Preview,
   Tailwind,
   Text,
+  Img,
 } from '@react-email/components';
-import React from 'react';
 
-interface MaloloWelcomeEmailProps {
-  userFirstName: string;
-}
-export const MaloloWelcomeEmail = ({
-  userFirstName = 'User',
-}: MaloloWelcomeEmailProps) => (
+const Welcome = ({ userFirstName = 'User' }) => (
   <Html>
     <Head />
-    <Preview>Welcome to DKE</Preview>
+    <Preview>Verify your account</Preview>
     <Tailwind>
       <Body className={main}>
         <Container className={container} style={{ maxWidth: 'unset' }}>
+          <div className="bg-blue-500 px-4 mb-2 relative">
+            <Link
+              href="https://dkelearning.vercel.app"
+              className="flex text-white gap-x-2"
+              style={{ display: 'flex' }}
+            >
+              <img
+                src="https://i.imgur.com/spX3OOe.png"
+                alt=""
+                className="absolute top-2/4 -translate-y-2/4"
+                style={{ height: '26px', objectFit: 'cover' }}
+              />
+              <p className="ml-10 font-semibold text-lg leading-none">
+                Dang Khai
+              </p>
+            </Link>
+          </div>
+          <Text className="text-start text-dm">
+            Dear <b>{userFirstName}</b>,
+          </Text>
+          <Text className="text-start text-base">
+            You've joined the <b>Dang Khai</b> elearning community through
+            Gmail.
+          </Text>
           <Img
-            src="https://i.imgur.com/TQeS7ZG.png"
-            width="110"
-            height="50"
+            src="https://static.vecteezy.com/system/resources/previews/016/140/559/original/cartoon-welcome-ribbon-icon-in-comic-style-hello-sticker-label-sign-illustration-pictogram-welcome-tag-business-splash-effect-concept-vector.jpg"
+            width="0"
+            height="0"
+            sizes="1000px"
             alt=""
-            className="inline-block mr-1 translateY-2/4"
+            className="block object-cover w-[280px] h-auto mx-auto"
           />
-          <Text className={paragraph}>
-            Hi <b>{userFirstName}</b>,
+          <Text className="text-start text-base">
+            At <b>Dang Khai Education</b>, we are committed to providing you
+            with the best possible learning experience. We offer a wide range of
+            courses, from basic skills to advanced programs, all designed to
+            help you achieve your goals.
           </Text>
-          <Text className={paragraph}>
-            Hello! You've joined the DKE elearning community through Gmail. Get
-            ready to "take off" and create your own knowledge flights, share
-            exciting learning adventures with us!
+          <Text className="text-start text-base">
+            Our experienced and dedicated instructors are passionate about
+            teaching and are committed to helping you succeed. They will provide
+            you with the support and guidance you need to reach your full
+            potential.
           </Text>
-          <Text className={paragraph}>Take off with DKE elearning!</Text>
-          <Link className={`block ${paragraph}`} href={process.env.PUBLIC_URL}>
-            [Link to Dashboard]
+
+          <Link
+            className="block text-base mx-auto w-fit px-8 py-3 bg-blue-500 text-white font-semibold rounded-md"
+            href="https://dkelearning.vercel.app"
+          >
+            Go to Home page
           </Link>
-          <Text className={paragraph}>
-            Every learning journey opens a story waiting to be told.At DKE
-            elearning, the knowledge you gain will equip you for exciting
-            discoveries.
+          <Text className="text-start text-base">
+            We are confident that you will have a positive and rewarding
+            experience at <b>Dang Khai Education</b>. We encourage you to get
+            involved in our campus community and take advantage of all that we
+            have to offer.
           </Text>
-          <Text className={paragraph}>Fly true,</Text>
-          <Text className={paragraph}>The DKE Team</Text>
+          <Text className="text-start text-dm">
+            Sincerely,
+            <br />
+            <b>Dang Khai Education</b>
+          </Text>
+          <div className="bg-slate-300 py-4 mt-4 text-sm text-center">
+            Copyright © 2024 Dang Khai Education. All rights reserved.
+          </div>
         </Container>
       </Body>
     </Tailwind>
   </Html>
 );
 
-export default MaloloWelcomeEmail;
+export default Welcome;
+
 const main = `bg-white font-['-apple-system,BlinkMacSystemFont,"Segoe_UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica_Neue",sans-serif'] text-black`;
 // const container = 'p-5 pb-12 w-[60%]';
-const container = 'p-5 pb-12 px-15';
+const container = 'p-5 pb-12 px-15 max-w-screen-sm';
 const paragraph = 'text-base leading-[26px] text-start';

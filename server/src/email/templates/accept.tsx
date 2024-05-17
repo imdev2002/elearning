@@ -11,10 +11,7 @@ import {
   Img,
 } from '@react-email/components';
 
-const VerifyEmail = ({
-  userFirstName = 'User',
-  verifyLink = 'Flight Deck',
-}) => (
+const AcceptForm = ({ userFirstName = 'User' }) => (
   <Html>
     <Head />
     <Preview>Verify your account</Preview>
@@ -39,23 +36,39 @@ const VerifyEmail = ({
             </Link>
           </div>
           <Img
-            src="https://static.vecteezy.com/system/resources/previews/016/131/298/non_2x/envelope-with-confirmed-document-icon-in-comic-style-verify-cartoon-illustration-on-white-isolated-background-receive-splash-effect-business-concept-vector.jpg"
+            src="https://png.pngtree.com/png-vector/20230122/ourmid/pngtree-approved-compliance-document-icon-in-comic-style-development-procedure-law-vector-png-image_48873476.jpg"
             width="0"
             height="0"
             sizes="1000px"
             alt=""
             className="block object-cover w-[280px] h-auto mx-auto"
           />
-
-          <Text className="text-center text-base">
-            We're happy you're here. Let's get your email address verified
+          <Text className="text-start text-dm">
+            Dear <b>{userFirstName}</b>,
           </Text>
-          <Link
-            className="block text-base mx-auto w-fit px-8 py-3 bg-blue-500 text-white font-semibold rounded-md"
-            href={verifyLink}
-          >
-            Verify Email Address
-          </Link>
+          <Text className="text-start text-dm">
+            We are thrilled to inform you that you have been selected for the{' '}
+            <b>Instructor</b> position at <b>Dang Khai Education</b>!
+          </Text>
+          <Text className="text-start text-dm">
+            Your outstanding performance throughout the recruitment process
+            truly impressed us, and we are confident that you will be a valuable
+            asset to our team.
+          </Text>
+          <Text className="text-start text-dm">
+            Please logging back in, you will notice the updated role and access
+            to employee-exclusive systems and resources within{' '}
+            <b>Dang Khai Education</b>.
+          </Text>
+          <Text className="text-start text-dm">
+            We are genuinely excited to have you join our team and look forward
+            to your contributions.
+          </Text>
+          <Text className="text-start text-dm">
+            Sincerely,
+            <br />
+            <b>Dang Khai Education</b>
+          </Text>
           <div className="bg-slate-300 py-4 mt-4 text-sm text-center">
             Copyright © 2024 Dang Khai Education. All rights reserved.
           </div>
@@ -65,7 +78,7 @@ const VerifyEmail = ({
   </Html>
 );
 
-export default VerifyEmail;
+export default AcceptForm;
 
 const main = `bg-white font-['-apple-system,BlinkMacSystemFont,"Segoe_UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica_Neue",sans-serif'] text-black`;
 // const container = 'p-5 pb-12 w-[60%]';

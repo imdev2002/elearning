@@ -264,9 +264,9 @@ export default class PublicLessonController extends BaseController {
         where: {
           id,
           status: LessonStatus.APPROVED,
-          course: { isPublic: true, status: CourseStatus.APPROVED },
+          part: { course: { isPublic: true, status: CourseStatus.APPROVED } },
         },
-        include: { course: true },
+        include: { part: { include: { course: true } } },
       });
       if (!lesson) {
         throw new NotFoundException('lesson', id);
@@ -329,13 +329,14 @@ export default class PublicLessonController extends BaseController {
       const lessonId = Number(req.body.lessonId);
       const lesson = await this.prisma.lesson.findFirst({
         where: { id: lessonId },
+        include: { part: true },
       });
       if (!lesson || lesson.status !== LessonStatus.APPROVED) {
         throw new NotFoundException('lesson', lessonId);
       }
       const paid = await this.prisma.coursedPaid.findFirst({
         where: {
-          courseId: lesson.courseId,
+          courseId: lesson.part.courseId,
           userId: reqUser.id,
           status: CoursedPaidStatus.SUCCESS,
         },
@@ -353,12 +354,18 @@ export default class PublicLessonController extends BaseController {
             user: { connect: { id: reqUser.id } },
           },
         });
+        const parts = await this.prisma.part.findMany({
+          where: { courseId: lesson.part.courseId },
+        });
         const lessons = await this.prisma.lesson.findMany({
-          where: { courseId: lesson.courseId },
+          where: {
+            partId: { in: parts.map((_) => _.id) },
+            status: LessonStatus.APPROVED,
+          },
         });
         const lessonCount = await this.prisma.lesson.count({
           where: {
-            courseId: lesson.courseId,
+            part: { courseId: lesson.part.courseId },
             status: LessonStatus.APPROVED,
             userId: reqUser.id,
           },
@@ -366,7 +373,7 @@ export default class PublicLessonController extends BaseController {
         if (lessonCount === lessons.length) {
           await this.prisma.courseDone.create({
             data: {
-              course: { connect: { id: lesson.courseId } },
+              course: { connect: { id: lesson.part.courseId } },
               user: { connect: { id: reqUser.id } },
             },
           });
@@ -377,7 +384,7 @@ export default class PublicLessonController extends BaseController {
         where: { lessonId, userId: reqUser.id },
       });
       await this.prisma.courseDone.deleteMany({
-        where: { courseId: lesson.courseId, userId: reqUser.id },
+        where: { courseId: lesson.part.courseId, userId: reqUser.id },
       });
       return res.status(200).json(done);
     } catch (e: any) {

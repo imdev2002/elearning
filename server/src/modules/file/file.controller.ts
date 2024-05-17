@@ -8,6 +8,8 @@ import HttpException from '../../exceptions/http-exception';
 import passport from '../../configs/passport';
 import { CoursedPaidStatus } from '@prisma/client';
 import { JwtPayload, verify } from 'jsonwebtoken';
+import { videoUpload } from '../../configs/multer';
+import checkRoleMiddleware from '../../middlewares/checkRole.middleware';
 
 export default class FileController extends BaseController {
   public path = '/api/v1/files';
@@ -19,7 +21,26 @@ export default class FileController extends BaseController {
 
   public initializeRoutes() {
     this.router.get(`${this.path}/:filename`, this.getFile);
+    this.router.post(
+      `${this.path}`,
+      passport.authenticate('jwt', { session: false }),
+      checkRoleMiddleware([RoleEnum.ADMIN, RoleEnum.AUTHOR]),
+      videoUpload.fields([{ name: 'image', maxCount: 1 }]),
+      this.uploadFile,
+    );
   }
+  uploadFile = async (req: Request, res: Response) => {
+    try {
+      const files = req.files as any;
+      const image = files.image[0];
+      return res.status(200).json({ path: image.path });
+    } catch (e: any) {
+      console.log(e);
+      return res
+        .status(e.status || 500)
+        .json({ status: e.status, message: e.message });
+    }
+  };
   getFile = async (req: Request, res: Response) => {
     try {
       const filename = req.params.filename;
@@ -64,6 +85,9 @@ export default class FileController extends BaseController {
         });
         const lesson = await this.prisma.lesson.findFirst({
           where: { filename },
+          include: {
+            part: true,
+          },
         });
         if (!lesson) {
           throw new NotFoundException('file', filename);
@@ -74,7 +98,7 @@ export default class FileController extends BaseController {
             reqUser.roles.find((_) => _.role.name === RoleEnum.ADMIN) ||
             user?.coursedPaid.find(
               (_) =>
-                _.courseId === lesson.courseId &&
+                _.courseId === lesson.part.courseId &&
                 _.status === CoursedPaidStatus.SUCCESS,
             ) ||
             lesson.trialAllowed
