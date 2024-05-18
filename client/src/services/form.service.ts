@@ -8,6 +8,7 @@ export const formApiRequest = {
     http.get<SubmitForm[]>('/forms', {
       headers: {
         Authorization: `Bearer ${access_token}`,
+        cache: 'no-store',
       },
     }),
 

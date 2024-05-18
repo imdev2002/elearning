@@ -19,7 +19,7 @@ export const userApiRequest = {
     }),
 
   verifyUser: (verifyCode: string) =>
-    http.post('/users/verify', { verifyCode }),
+    http.post<User>('/users/verify', { verifyCode }),
 
   verifyInstructor: (body: any) => http.post('/users/author/verify', body),
 
@@ -35,4 +35,14 @@ export const userApiRequest = {
   getCourseBought: () => http.get('/users/actions/bought'),
 
   getWishList: () => http.get('/users/actions/hearted'),
+
+  getForm: (access_token: string) =>
+    http.get('/users/actions/forms', {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        cache: 'no-store',
+      },
+    }),
+
+  editForm: (body: any) => http.patch('/users/actions/forms', body),
 }

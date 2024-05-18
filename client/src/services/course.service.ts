@@ -62,7 +62,7 @@ export const coursePublicApiRequests = {
     http.post('-public/courses/actions/buy', { courseId }),
 
   toogleHeart: (courseId: number) =>
-    http.post('-public/courses/actions/heart', courseId),
+    http.post('-public/courses/actions/heart', { courseId }),
 
   rating: (body: any) => http.post('-public/courses/actions/rate', body),
 

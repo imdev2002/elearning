@@ -42,6 +42,11 @@ const menuItems = [
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { user } = useAccountContext()
+  const isManager =
+    user &&
+    user.roles.some(
+      (role) => role.role.name === 'ADMIN' || role.role.name === 'AUTHOR'
+    )
   return (
     <Navbar
       isBordered
@@ -126,11 +131,13 @@ const Header = () => {
             Customers
           </Link>
         </NavbarItem> */}
-        <NavbarItem>
-          <Link color="foreground" href="/dashboard">
-            Dashboard
-          </Link>
-        </NavbarItem>
+        {isManager && (
+          <NavbarItem>
+            <Link color="foreground" href="/dashboard">
+              Dashboard
+            </Link>
+          </NavbarItem>
+        )}
         <NavbarItem>
           <SearchCourse />
         </NavbarItem>

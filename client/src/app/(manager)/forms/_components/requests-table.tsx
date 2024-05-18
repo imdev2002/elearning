@@ -47,7 +47,7 @@ const RequestsTable = ({ data }: Props) => {
             </TableCell>
             <TableCell>{form.category}</TableCell>
             <TableCell>
-              {formatDate(new Date(form.timestamp), 'MM/dd/yyyy')}
+              {formatDate(new Date(form.updatedAt), 'MM/dd/yyyy')}
             </TableCell>
             <TableCell>
               <ActionRequestModal data={form} />

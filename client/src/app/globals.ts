@@ -81,7 +81,7 @@ export type User = {
   roles: UserRole[]
   phone?: string
   avatar?: string
-  birthday?: Date
+  birthday?: Date | string
   isVerified: boolean
   verifyCode?: string
   platform: Platform

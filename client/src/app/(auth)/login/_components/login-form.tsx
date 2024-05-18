@@ -60,6 +60,7 @@ const LoginForm = () => {
         control={form.control}
         render={({ field }) => (
           <Input
+            size="lg"
             label="Email"
             variant="bordered"
             placeholder="Enter your email"

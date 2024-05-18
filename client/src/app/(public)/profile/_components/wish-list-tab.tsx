@@ -1,6 +1,7 @@
 'use client'
 
 import CourseCard from '@/components/course/course-card'
+import Empty from '@/components/empty'
 import { cn } from '@/lib/utils'
 import { userApiRequest } from '@/services/user.service'
 import React, { useEffect, useState } from 'react'
@@ -17,11 +18,13 @@ const WishListTab = () => {
   }, [])
   return (
     <div className={cn('', courses.length > 0 ? 'grid grid-cols-4 gap-4' : '')}>
-      {courses.length > 0
-        ? courses.map((course: any) => (
-            <CourseCard key={course.courseId} data={course.course} />
-          ))
-        : 'Empty hihi'}
+      {courses.length > 0 ? (
+        courses.map((course: any) => (
+          <CourseCard key={course.courseId} data={course.course} />
+        ))
+      ) : (
+        <Empty />
+      )}
     </div>
   )
 }

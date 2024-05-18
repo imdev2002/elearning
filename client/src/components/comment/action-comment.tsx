@@ -31,6 +31,7 @@ const ActionComment = ({
   placeholder = 'Enter your comment here...',
 }: Props) => {
   const { user } = useAccountContext()
+  const isAuth = !!user?.email
   const { refresh } = useRouter()
   const [comment, setComment] = React.useState(defaultValue)
   const handleComment = async () => {
@@ -70,7 +71,7 @@ const ActionComment = ({
       }
     } catch (error) {}
   }
-
+  if (!isAuth) return null
   return (
     <>
       <div className="flex gap-2">

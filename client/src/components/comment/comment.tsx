@@ -2,6 +2,7 @@
 
 import { Comment as CommentType } from '@/app/globals'
 import ActionComment from '@/components/comment/action-comment'
+import { useAccountContext } from '@/contexts/account'
 import { cn, displayFullname, generateMediaLink } from '@/lib/utils'
 import { coursePublicApiRequests } from '@/services/course.service'
 import { lessonPublicApiRequest } from '@/services/lesson.service'
@@ -31,12 +32,19 @@ type Props = {
 }
 
 const Comment = ({ data, comment, type = 'course' }: Props) => {
+  const { user } = useAccountContext()
+  const isAuth = !!user?.email
+  const isOwner = user?.id === comment.user.id
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [showReplies, setShowReplies] = useState(false)
   const [isReply, setIsReply] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const childrenComments = data.filter((c) => c.parentId === comment.id)
   const handleReply = () => {
+    if (!isAuth) {
+      toast.error('You need to login to reply')
+      return
+    }
     setIsReply(true)
     setShowReplies(true)
   }
@@ -135,29 +143,31 @@ const Comment = ({ data, comment, type = 'course' }: Props) => {
                     <MessagesSquare size={16} />
                     REPPLY
                   </Button>
-                  <Dropdown>
-                    <DropdownTrigger>
-                      <Button size="sm" className="!w-fit px-2 !min-w-0">
-                        <Ellipsis size={16} />
-                      </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu aria-label="Static Actions">
-                      <DropdownItem
-                        key="edit"
-                        onClick={() => setIsEditing(true)}
-                      >
-                        Edit
-                      </DropdownItem>
-                      <DropdownItem
-                        key="delete"
-                        className="text-danger"
-                        color="danger"
-                        onClick={() => onOpen()}
-                      >
-                        Delete
-                      </DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
+                  {isOwner && (
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button size="sm" className="!w-fit px-2 !min-w-0">
+                          <Ellipsis size={16} />
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu aria-label="Static Actions">
+                        <DropdownItem
+                          key="edit"
+                          onClick={() => setIsEditing(true)}
+                        >
+                          Edit
+                        </DropdownItem>
+                        <DropdownItem
+                          key="delete"
+                          className="text-danger"
+                          color="danger"
+                          onClick={() => onOpen()}
+                        >
+                          Delete
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
+                  )}
                 </div>
 
                 {childrenComments.length > 0 && (

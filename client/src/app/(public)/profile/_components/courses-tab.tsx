@@ -2,6 +2,7 @@
 
 import { User } from '@/app/globals'
 import CourseCard from '@/components/course/course-card'
+import Empty from '@/components/empty'
 import { useAccountContext } from '@/contexts/account'
 import { cn } from '@/lib/utils'
 import { coursePublicApiRequests } from '@/services/course.service'
@@ -49,11 +50,13 @@ const CoursesTab = ({ profile }: Props) => {
   // }, [])
   return (
     <div className={cn('', courses.length > 0 ? 'grid grid-cols-4 gap-4' : '')}>
-      {courses.length > 0
-        ? courses.map((course: any) => (
-            <CourseCard key={course.id} data={course} />
-          ))
-        : 'Empty hihi'}
+      {courses.length > 0 ? (
+        courses.map((course: any) => (
+          <CourseCard key={course.id} data={course} />
+        ))
+      ) : (
+        <Empty />
+      )}
     </div>
   )
 }

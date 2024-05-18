@@ -19,12 +19,17 @@ const CourseSidebar = ({ data }: Props) => {
   const { refresh } = useRouter()
   const { thumbnail, courseName, priceAmount, id, parts } = data
   const { user } = useAccountContext()
+  const isAuth = !!user?.email
   // const isHearted =
   const isBought = data.coursedPaid.some(
     (item) => item.userId === user?.id && item.status === 'SUCCESS'
   )
-  const heartCourse = async () => {
+  const heartCourseToggle = async () => {
     try {
+      if (!isAuth) {
+        toast.error('You need to login to heart course')
+        return
+      }
       const res = await coursePublicApiRequests.toogleHeart(id)
       if (res.status === 200) {
         refresh()
@@ -33,6 +38,10 @@ const CourseSidebar = ({ data }: Props) => {
   }
   const buyCourseHandler = async () => {
     try {
+      if (!isAuth) {
+        toast.error('You need to login to buy course')
+        return
+      }
       const res = await coursePublicApiRequests.buy(id)
       if (res.status === 200) {
         if ((res.payload as { url: string }).url) {
@@ -56,7 +65,12 @@ const CourseSidebar = ({ data }: Props) => {
         className="w-full object-cover rounded-md"
       />
       <p className="text-xl">{'$' + priceAmount}</p>
-      <Button className="w-full" color="secondary" variant="bordered">
+      <Button
+        className="w-full"
+        color="secondary"
+        variant="bordered"
+        onClick={heartCourseToggle}
+      >
         Add to favourite list
       </Button>
       {isBought ? (

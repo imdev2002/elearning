@@ -15,25 +15,32 @@ type Props = {
 
 const ProfileHeader = ({ data }: Props) => {
   const { user } = useAccountContext()
+  const isInstructor = data.roles.some(
+    (role) => role.role.name === 'ADMIN' || role.role.name === 'AUTHOR'
+  )
   return (
     <>
-      <div className="flex gap-4 items-center">
+      <div className="flex gap-4 items-center py-8">
         <Image
           src={generateMediaLink(data.avatar ?? '')}
           alt={data.firstName ?? ''}
           width={160}
           height={160}
-          className="object-cover rounded-full"
+          className="object-cover rounded-full aspect-square"
         />
-        <div>
-          <p>{displayFullname(data.firstName, data.lastName)}</p>
-          {data.roles.map((role) => (
-            <Chip key={role.id} variant="dot" color="secondary">
-              {role.role.name}
-            </Chip>
-          ))}
+        <div className="space-y-4">
+          <p className="text-xl font-semibold">
+            {displayFullname(data.firstName, data.lastName)}
+          </p>
+          <div className="space-x-2">
+            {data.roles.map((role) => (
+              <Chip key={role.id} variant="dot" color="secondary">
+                {role.role.name}
+              </Chip>
+            ))}
+          </div>
         </div>
-        {user?.email === data.email && (
+        {user?.email === data.email && !isInstructor && (
           <Button
             as={Link}
             href="/become-instructor"

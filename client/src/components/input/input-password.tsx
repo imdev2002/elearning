@@ -25,6 +25,7 @@ const InputPassword = ({
       errorMessage={errorMsg}
       labelPlacement="outside"
       isRequired
+      size="lg"
       endContent={
         <button
           className="focus:outline-none"

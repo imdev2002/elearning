@@ -41,7 +41,7 @@ const RegisterForm = () => {
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
-      className="flex-1 p-10 space-y-4 max-w-2xl mx-auto w-full"
+      className="p-10 flex flex-col gap-y-4 max-w-2xl mx-auto w-full"
       autoComplete="off"
       // {...form}
     >
@@ -52,6 +52,9 @@ const RegisterForm = () => {
           <Input
             label="Email"
             variant="bordered"
+            labelPlacement="outside"
+            isRequired
+            size="lg"
             placeholder="Enter your email"
             errorMessage={errors.email?.message}
             {...field}
@@ -90,7 +93,7 @@ const RegisterForm = () => {
         size="lg"
         variant="solid"
         color="secondary"
-        className="!mt-8 w-full"
+        className="!mt-4 w-full"
       >
         Register
       </Button>

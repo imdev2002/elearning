@@ -15,6 +15,7 @@ import { coursePublicApiRequests } from '@/services/course.service'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useClickOutside } from '@/hooks/useClickOutside'
 import { useAccountContext } from '@/contexts/account'
+import { toast } from 'react-toastify'
 
 type Props = {
   data: any
@@ -25,7 +26,7 @@ const ReactionsSection = ({ data, postId }: Props) => {
   const searchParams = useSearchParams()
   console.log('ReactionsSection  searchParams:', searchParams.get('courseId'))
   const { user } = useAccountContext()
-  const emojiPickerRef = React.useRef<any>()
+  const isAuth = !!user?.email
   const { refresh } = useRouter()
   const [isOpen, setIsOpen] = React.useState(false)
   const [emojis, setEmojis] = React.useState<any>([])
@@ -40,9 +41,12 @@ const ReactionsSection = ({ data, postId }: Props) => {
       isReacted,
     }
   })
-  useClickOutside(emojiPickerRef, () => setIsOpen(false))
   async function postEmoji(emojiId: number) {
     try {
+      if (!isAuth) {
+        toast.error('You need to login to react')
+        return
+      }
       const res = await coursePublicApiRequests.reactAction({
         courseId: postId,
         emojiIconId: emojiId,
@@ -94,36 +98,38 @@ const ReactionsSection = ({ data, postId }: Props) => {
               </div>
             )
         )}
-        <Popover placement="bottom" showArrow={true}>
-          <PopoverTrigger>
-            <SmilePlus
-              className="stroke-default-400 cursor-pointer"
-              size={32}
-              strokeWidth={1.5}
-            />
-          </PopoverTrigger>
-          <PopoverContent>
-            <div className="grid grid-cols-8 gap-2 max-w-screen-md p-3">
-              {emojis.map((emoji: any) => (
-                <Tooltip
-                  key={emoji.id}
-                  content={emoji.name}
-                  className=""
-                  delay={0}
-                  closeDelay={0}
-                >
-                  <Image
-                    onClick={() => postEmoji(emoji.id)}
-                    src={generateMediaLink(emoji.emojiHandle ?? '')}
-                    alt={emoji.name}
-                    width={32}
-                    className="object-cover cursor-pointer hover:scale-125 transition-all"
-                  />
-                </Tooltip>
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
+        {isAuth && (
+          <Popover placement="bottom" showArrow={true}>
+            <PopoverTrigger>
+              <SmilePlus
+                className="stroke-default-400 cursor-pointer"
+                size={32}
+                strokeWidth={1.5}
+              />
+            </PopoverTrigger>
+            <PopoverContent>
+              <div className="grid grid-cols-8 gap-2 max-w-screen-md p-3">
+                {emojis.map((emoji: any) => (
+                  <Tooltip
+                    key={emoji.id}
+                    content={emoji.name}
+                    className=""
+                    delay={0}
+                    closeDelay={0}
+                  >
+                    <Image
+                      onClick={() => postEmoji(emoji.id)}
+                      src={generateMediaLink(emoji.emojiHandle ?? '')}
+                      alt={emoji.name}
+                      width={32}
+                      className="object-cover cursor-pointer hover:scale-125 transition-all"
+                    />
+                  </Tooltip>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+        )}
       </div>
     </div>
   )

@@ -19,13 +19,11 @@ const page = async () => {
   const cookieStore = cookies()
   const accessToken = cookieStore.get('accessToken')?.value as string
   const { payload } = await formApiRequest.getList(accessToken)
-  const pendingRequests = payload.filter(
-    (form: any) => form.status === 'REJECTED'
-  )
+
   return (
     <>
       <Heading icon={<UpgradeRole />} title="Form request" />
-      <RequestsTable data={pendingRequests} />
+      <RequestsTable data={payload} />
     </>
   )
 }
