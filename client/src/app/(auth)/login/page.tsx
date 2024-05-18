@@ -29,14 +29,20 @@ const LoginPage = () => {
             className="w-3/4 object-cover"
           />
         </div>
-        <div className="flex flex-col p-20">
+        <div className="flex flex-col p-20 flex-1">
           <h3 className="text-4xl font-semibold text-center">Login</h3>
-          <p className="text-center">
+          {/* <p className="text-center">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus,
             doloremque. Aliquid accusamus voluptas natus aperiam esse fugit
             rerum hic consectetur?
-          </p>
+          </p> */}
           <LoginForm />
+          <div className="relative mx-auto w-full">
+            <span className="block absolute h-1 top-2/4 -translate-y-2/4 inset-x-10 bg-default-200 z-0"></span>
+            <div className="relative flex justify-center">
+              <span className="mx-auto text-center p-2 bg-background">OR</span>
+            </div>
+          </div>
           <GoogleLogin />
         </div>
       </div>

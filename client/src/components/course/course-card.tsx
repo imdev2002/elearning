@@ -1,4 +1,5 @@
 'use client'
+import { CATEGORIES } from '@/lib/constants'
 import { generateMediaLink } from '@/lib/utils'
 import { CourseResType } from '@/schemaValidations/course.schema'
 import { courseManagerApiRequests } from '@/services/course.service'
@@ -19,7 +20,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { toast } from 'react-toastify'
-import slugify from 'slugify'
 
 type CourseType = {
   data: CourseResType
@@ -38,6 +38,7 @@ const CourseCard = ({ data, isAuth = false }: CourseType) => {
     priceAmount,
     status,
   } = data
+  const categoryName = CATEGORIES.find((cat) => cat.value === category)?.name
   const deleteCourse = async () => {
     try {
       const res = await courseManagerApiRequests.delete(id)
@@ -92,7 +93,7 @@ const CourseCard = ({ data, isAuth = false }: CourseType) => {
       </div>
       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
         <Chip variant="faded" className="capitalize text-xs" size="sm">
-          {category.toLowerCase()}
+          {categoryName ?? ''}
         </Chip>
         <p className="text-tiny uppercase font-bold text-green-500">
           {priceAmount ? `${priceAmount} ${currency}` : 'Free'}

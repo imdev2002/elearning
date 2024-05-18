@@ -2,6 +2,7 @@
 
 import { Course } from '@/app/globals'
 import FileUpload from '@/components/input/file-upload'
+import QuillEditor from '@/components/input/quill-editor'
 import { categories } from '@/lib/constants'
 import { convertObjectToFormData } from '@/lib/utils'
 import {
@@ -21,6 +22,7 @@ import {
 } from '@nextui-org/react'
 import { Globe, Lock } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
+import { use, useState } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 
@@ -29,6 +31,7 @@ type Props = {
 }
 
 const CourseForm = ({ defaultValues }: Props) => {
+  const [desc, setDesc] = useState(defaultValues?.descriptionMD ?? '')
   const { courseId } = useParams()
   const { refresh } = useRouter()
   const form = useForm<CourseBodyType>({
@@ -54,6 +57,7 @@ const CourseForm = ({ defaultValues }: Props) => {
       values.isPublic = JSON.parse(values.isPublic)
       // console.log(typeof values.isPublic)
       values.knowledgeGained = JSON.stringify(values.knowledgeGained)
+      values.descriptionMD = desc
       const payload: any = convertObjectToFormData(values)
       // return
       const res = await courseManagerApiRequests.update(
@@ -105,7 +109,7 @@ const CourseForm = ({ defaultValues }: Props) => {
       </div>
       <div className="flex gap-8 mb-10">
         <FileUpload name="thumbnail" form={form} />
-        <Controller
+        {/* <Controller
           name="descriptionMD"
           control={form.control}
           render={({ field }) => (
@@ -120,8 +124,9 @@ const CourseForm = ({ defaultValues }: Props) => {
               {...field}
             />
           )}
-        />
+        /> */}
       </div>
+      <QuillEditor content={desc} setContent={setDesc} />
       <div className="relative">
         <label
           htmlFor=""

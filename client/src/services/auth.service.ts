@@ -31,4 +31,29 @@ export const authApiRequest = {
     http.post<RefreshTokenResType>('/auth/refresh', body),
 
   changePassword: (body: any) => http.post('/auth/local/password', body),
+
+  logoutFromNextServerToServer: (sessionToken: string) =>
+    http.post(
+      '/auth/logout',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      }
+    ),
+  logoutFromNextClientToNextServer: (
+    force?: boolean | undefined,
+    signal?: AbortSignal | undefined
+  ) =>
+    http.post(
+      '/api/auth/logout',
+      {
+        force,
+      },
+      {
+        baseUrl: '',
+        signal,
+      }
+    ),
 }

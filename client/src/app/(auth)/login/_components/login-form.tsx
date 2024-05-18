@@ -52,7 +52,7 @@ const LoginForm = () => {
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
-      className="flex-1 p-10 space-y-4 max-w-2xl mx-auto w-full flex flex-col gap-y-8"
+      className="p-10 pb-6 max-w-2xl mx-auto w-full flex flex-col gap-y-6"
       autoComplete="off"
     >
       <Controller
@@ -91,7 +91,7 @@ const LoginForm = () => {
         size="lg"
         variant="solid"
         color="primary"
-        className="!mt-8 w-full"
+        className="!mt-2 w-full"
       >
         Login
       </Button>

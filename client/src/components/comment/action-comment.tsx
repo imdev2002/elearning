@@ -1,8 +1,10 @@
 'use client'
 
+import { useAccountContext } from '@/contexts/account'
+import { generateMediaLink } from '@/lib/utils'
 import { coursePublicApiRequests } from '@/services/course.service'
 import { lessonPublicApiRequest } from '@/services/lesson.service'
-import { Button, Textarea } from '@nextui-org/react'
+import { Avatar, Button, Textarea } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { toast } from 'react-toastify'
@@ -15,6 +17,7 @@ type Props = {
   onCancel?: () => void
   action?: 'create' | 'edit'
   type?: 'course' | 'lesson'
+  placeholder?: string
 }
 
 const ActionComment = ({
@@ -25,7 +28,9 @@ const ActionComment = ({
   onCancel,
   action = 'create',
   type = 'course',
+  placeholder = 'Enter your comment here...',
 }: Props) => {
+  const { user } = useAccountContext()
   const { refresh } = useRouter()
   const [comment, setComment] = React.useState(defaultValue)
   const handleComment = async () => {
@@ -67,14 +72,23 @@ const ActionComment = ({
   }
 
   return (
-    <div>
-      <Textarea
-        variant="faded"
-        placeholder="Enter your comment here..."
-        className="w-full mb-2"
-        value={comment}
-        onValueChange={setComment}
-      />
+    <>
+      <div className="flex gap-2">
+        <div>
+          <Avatar
+            size="sm"
+            className={level > 0 ? 'scale-85' : ''}
+            src={generateMediaLink(user?.avatar ?? '')}
+          />
+        </div>
+        <Textarea
+          variant="faded"
+          placeholder={placeholder}
+          className="w-full mb-2"
+          value={comment}
+          onValueChange={setComment}
+        />
+      </div>
       {action === 'create' ? (
         <Button
           className="ml-auto block"
@@ -91,7 +105,7 @@ const ActionComment = ({
           </Button>
         </div>
       )}
-    </div>
+    </>
   )
 }
 

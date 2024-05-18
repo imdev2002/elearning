@@ -6,6 +6,7 @@ import EditLessonModal from '@/app/(manager)/my-courses/_components/edit-lesson-
 import PartCourseForm from '@/app/(manager)/my-courses/_components/part-course-form'
 import { Course, Lesson, Part } from '@/app/globals'
 import { cn, formatDuration, formatVideoDuration } from '@/lib/utils'
+import { courseManagerApiRequests } from '@/services/course.service'
 import { userApiRequest } from '@/services/user.service'
 import {
   Accordion,
@@ -38,6 +39,7 @@ import {
   useSearchParams,
 } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 type Props = {
   data: Part[]
@@ -45,7 +47,7 @@ type Props = {
 }
 
 const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
-  const { push } = useRouter()
+  const { push, refresh } = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [listLessonFinished, setListLessonFinished] = useState([])
   const [partData, setPartData] = useState()
@@ -61,6 +63,33 @@ const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
       currentPartId = part.id
     }
   })
+  const createPartNumber = async (values: any) => {
+    try {
+      const res = await courseManagerApiRequests.ceateParts(
+        Number(courseId),
+        values
+      )
+      if (res.status === 200) {
+        toast.success('Part number created successfully')
+        onClose()
+        refresh()
+      }
+    } catch (error) {}
+  }
+  const editPartNumber = async (values: any) => {
+    try {
+      const res = await courseManagerApiRequests.updatePart(
+        Number(courseId),
+        Number((partData as any).id),
+        values
+      )
+      if (res.status === 200) {
+        toast.success('Part number updated successfully')
+        onClose()
+        refresh()
+      }
+    } catch (error) {}
+  }
   // useEffect(() => {
   //   ;(async function fetchProgress() {
   //     try {
@@ -91,19 +120,11 @@ const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
                 </ModalHeader>
                 <ModalBody>
                   {action === 'edit' ? (
-                    <PartCourseForm data={partData} />
+                    <PartCourseForm data={partData} onSubmit={editPartNumber} />
                   ) : (
-                    <PartCourseForm />
+                    <PartCourseForm onSubmit={createPartNumber} />
                   )}
                 </ModalBody>
-                <ModalFooter>
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Cancel
-                  </Button>
-                  <Button color="primary" onPress={onClose}>
-                    Save
-                  </Button>
-                </ModalFooter>
               </>
             )}
           </ModalContent>

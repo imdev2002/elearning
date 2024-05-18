@@ -19,9 +19,18 @@ const CourseSidebar = ({ data }: Props) => {
   const { refresh } = useRouter()
   const { thumbnail, courseName, priceAmount, id, parts } = data
   const { user } = useAccountContext()
-  const isBought = data.coursedPaid.find(
+  // const isHearted =
+  const isBought = data.coursedPaid.some(
     (item) => item.userId === user?.id && item.status === 'SUCCESS'
   )
+  const heartCourse = async () => {
+    try {
+      const res = await coursePublicApiRequests.toogleHeart(id)
+      if (res.status === 200) {
+        refresh()
+      }
+    } catch (error) {}
+  }
   const buyCourseHandler = async () => {
     try {
       const res = await coursePublicApiRequests.buy(id)
@@ -53,7 +62,11 @@ const CourseSidebar = ({ data }: Props) => {
       {isBought ? (
         <Button
           as={Link}
-          href={`/learning/${id}?lesson=${parts[0].lessons[0].id}`}
+          href={
+            parts && parts.length > 0
+              ? `/learning/${id}?lesson=${parts[0].lessons[0].id}`
+              : '#'
+          }
           className="w-full"
           color="primary"
           onClick={buyCourseHandler}

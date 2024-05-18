@@ -13,13 +13,10 @@ import ImageUploader from 'quill-image-uploader'
 import { Button, Input, Switch } from '@nextui-org/react'
 import { useMemo, useState } from 'react'
 import { fileApiRequest } from '@/services/file.service'
-import { convertObjectToFormData, generateMediaLink } from '@/lib/utils'
-import { lessonManagerApiRequest } from '@/services/lesson.service'
-import { toast } from 'react-toastify'
+import { generateMediaLink } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import { Globe, Lock } from 'lucide-react'
-
-Quill.register('modules/imageUploader', ImageUploader)
+import QuillEditor from '@/components/input/quill-editor'
 
 type Props = {
   data?: any
@@ -30,29 +27,7 @@ const TextLessonForm = ({ data, onSubmit }: Props) => {
   const [content, setContent] = useState(data?.content ?? '')
   const [loading, setLoading] = useState(false)
   const { refresh } = useRouter()
-  const modules = useMemo(
-    () => ({
-      toolbar: [
-        ['bold', 'italic', 'underline', 'strike'],
-        ['blockquote'],
-        [{ header: 1 }, { header: 2 }], // custom button values
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        [{ header: [1, 2, 3, 4, 5, 6, false] }],
-        ['link', 'image'],
-      ],
-      imageUploader: {
-        // imgbbAPI
-        upload: async (file: any) => {
-          const bodyFormData = new FormData()
-          bodyFormData.append('image', file)
-          const response = await fileApiRequest.upload(bodyFormData)
-          console.log('upload:  response:', response)
-          return generateMediaLink(response.payload.path)
-        },
-      },
-    }),
-    []
-  )
+
   const form = useForm<LessonTextBodyType>({
     resolver: zodResolver(LessonTextBody),
     defaultValues: {
@@ -94,13 +69,7 @@ const TextLessonForm = ({ data, onSubmit }: Props) => {
           />
         )}
       />
-      <ReactQuill
-        modules={modules}
-        theme="snow"
-        value={content}
-        // @ts-ignore
-        onChange={setContent}
-      />
+      <QuillEditor content={content} setContent={setContent} />
       <Controller
         control={form.control}
         name="trialAllowed"

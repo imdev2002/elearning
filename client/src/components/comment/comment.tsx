@@ -2,7 +2,7 @@
 
 import { Comment as CommentType } from '@/app/globals'
 import ActionComment from '@/components/comment/action-comment'
-import { displayFullname, generateMediaLink } from '@/lib/utils'
+import { cn, displayFullname, generateMediaLink } from '@/lib/utils'
 import { coursePublicApiRequests } from '@/services/course.service'
 import { lessonPublicApiRequest } from '@/services/lesson.service'
 import {
@@ -87,11 +87,17 @@ const Comment = ({ data, comment, type = 'course' }: Props) => {
       </Modal>
       <div className="mt-4">
         <div className="flex gap-2">
-          <Avatar
-            src={generateMediaLink(comment.user.avatar ?? '')}
-            size="sm"
-            className={comment.level === 0 ? '' : 'scale-85'}
-          />
+          <div className="relative">
+            <Avatar
+              src={generateMediaLink(comment.user.avatar ?? '')}
+              size="sm"
+              className={cn(
+                'aspect-square',
+                comment.level === 0 ? '' : 'scale-85'
+              )}
+            />
+            {/* <span className="absolute w-[2px] inset-y-0 bg-default-300 -translate-x-2/4 left-2/4"></span> */}
+          </div>
 
           {isEditing ? (
             <ActionComment
@@ -182,7 +188,7 @@ const Comment = ({ data, comment, type = 'course' }: Props) => {
                   ))}
                   {comment.level < 2 && (
                     <div
-                      style={{ marginLeft: (comment.level + 1) * 20 + 'px' }}
+                    // style={{ marginLeft: (comment.level + 1) * 20 + 'px' }}
                     >
                       <ActionComment
                         postId={
@@ -201,6 +207,10 @@ const Comment = ({ data, comment, type = 'course' }: Props) => {
                               )}`
                             : undefined
                         }
+                        placeholder={`Reply to @${displayFullname(
+                          comment.user.firstName,
+                          comment.user.lastName
+                        )}...`}
                       />
                     </div>
                   )}

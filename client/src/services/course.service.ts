@@ -6,7 +6,7 @@ import {
   GetCoursesPublicParamsType,
 } from '@/schemaValidations/course.schema'
 
-export const courseManagerApiRequests = {
+export const courseManagerApiRequests: any = {
   create: () => http.post('/courses', undefined),
 
   get: (id: number, access_token: string) =>
@@ -37,8 +37,8 @@ export const courseManagerApiRequests = {
   getPart: (courseId: number, partId: number) =>
     http.get(`/courses/${courseId}/${partId}`),
 
-  updatePart: (courseId: number, partId: number, body: CoursePartsBodyType) =>
-    http.patch(`/courses/${courseId}/${partId}`, body),
+  updatePart: (courseId: number, partId: number, body: any) =>
+    http.patch(`/courses/${courseId}/parts/${partId}`, body),
 
   deletePart: (courseId: number, partId: number) =>
     http.delete(`/courses/${courseId}/${partId}`),
@@ -61,7 +61,7 @@ export const coursePublicApiRequests = {
   buy: (courseId: number) =>
     http.post('-public/courses/actions/buy', { courseId }),
 
-  like: (courseId: number) =>
+  toogleHeart: (courseId: number) =>
     http.post('-public/courses/actions/heart', courseId),
 
   rating: (body: any) => http.post('-public/courses/actions/rate', body),

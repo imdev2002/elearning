@@ -28,15 +28,16 @@ export default function AccountProvider({
     accessToken: '',
     refreshToken: '',
   },
-  user: userProp,
+  initialUser = null,
 }: {
   children: React.ReactNode
   inititalTokens?: TokensType
-  user?: User | null
+  initialUser?: User | null
 }) {
   const initUser = useReadLocalStorage<any>('user')?.value
 
   const [user, setUser] = useState<User | null>(initUser)
+
   useState(() => {
     if (typeof window !== 'undefined') {
       clientTokens.value = inititalTokens
@@ -70,3 +71,67 @@ export default function AccountProvider({
     </AccountContext.Provider>
   )
 }
+
+// 'use client'
+// import { isClient } from '@/lib/utils'
+// import { AccountResType } from '@/schemaValidations/account.schema'
+// import {
+//   createContext,
+//   useCallback,
+//   useContext,
+//   useEffect,
+//   useState,
+// } from 'react'
+// import { User } from '@/app/globals'
+
+// const AccountContext = createContext<{
+//   user: User | null
+//   setUser: (user: User | null) => void
+//   isAuthenticated: boolean
+// }>({
+//   user: null,
+//   setUser: () => {},
+//   isAuthenticated: false,
+// })
+// export const useAccountContext = () => {
+//   const context = useContext(AccountContext)
+//   return context
+// }
+// export default function AccountProvider({
+//   children,
+// }: {
+//   children: React.ReactNode
+// }) {
+//   const [user, setUserState] = useState<User | null>(() => {
+//     // if (isClient()) {
+//     //   const _user = localStorage.getItem('user')
+//     //   return _user ? JSON.parse(_user) : null
+//     // }
+//     return null
+//   })
+//   const isAuthenticated = Boolean(user)
+//   const setUser = useCallback(
+//     (user: User | null) => {
+//       setUserState(user)
+//       localStorage.setItem('user', JSON.stringify(user))
+//     },
+//     [setUserState]
+//   )
+
+//   useEffect(() => {
+//     const _user = localStorage.getItem('user')
+//     setUserState(_user ? JSON.parse(_user) : null)
+//   }, [setUserState])
+
+//   return (
+//     <AccountContext.Provider
+//       value={{
+//         user,
+//         setUser,
+//         isAuthenticated,
+//       }}
+//     >
+//       {children}
+//     </AccountContext.Provider>
+//   )
+// }

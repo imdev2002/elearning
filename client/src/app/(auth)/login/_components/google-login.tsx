@@ -1,5 +1,6 @@
 'use client'
 
+import { useAccountContext } from '@/contexts/account'
 import { authApiRequest } from '@/services/auth.service'
 import { setItem } from '@/utils/localStorage'
 import { Button } from '@nextui-org/react'
@@ -9,6 +10,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 
 const GoogleLogin = () => {
+  const { setUser } = useAccountContext()
   const router = useRouter()
   const params = useParams()
   const loginByGooogleHandler = useGoogleLogin({
@@ -25,7 +27,9 @@ const GoogleLogin = () => {
       await authApiRequest.auth({ accessToken, refreshToken })
       setItem('tokens', { accessToken, refreshToken })
       setItem('user', res.data.data)
+      setUser(res.data.data)
       router.push('/')
+      router.refresh()
       // if (params.next) {
       //   router.replace(params.next.toString())
       // } else {
@@ -36,7 +40,7 @@ const GoogleLogin = () => {
   return (
     <Button
       size="lg"
-      className="max-w-xs mx-auto"
+      className="max-w-xs mx-auto mt-4"
       color="secondary"
       onClick={() => loginByGooogleHandler()}
     >

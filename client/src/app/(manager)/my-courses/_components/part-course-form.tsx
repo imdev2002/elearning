@@ -6,25 +6,35 @@ import {
 } from '@/schemaValidations/course.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Input } from '@nextui-org/react'
-import { Check, Pencil, Trash2 } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 
 type Props = {
   data?: any
   action?: 'create' | 'edit'
+  onSubmit?: any
 }
 
-const PartCourseForm = ({ data, action = 'create' }: Props) => {
+const PartCourseForm = ({ data, action = 'create', onSubmit }: Props) => {
   const form = useForm<CoursePartsBodyType>({
     resolver: zodResolver(CoursePartsBody),
     defaultValues: {
-      partNumber: data?.partNumber ?? '',
+      partNumber: String(data?.partNumber) ?? '',
       partName: data?.partName ?? '',
     },
   })
+
   const { errors } = form.formState
+  const submit = async (values: any) => {
+    try {
+      values.partNumber = parseInt(values.partNumber)
+      await onSubmit(values)
+    } catch (error) {}
+  }
   return (
-    <form className="flex gap-2 items-end bg-neutral-700/30 p-4 rounded-xl">
+    <form
+      className="flex gap-2 items-end bg-neutral-700/30 p-4 rounded-xl"
+      onSubmit={form.handleSubmit(submit)}
+    >
       {/* <div className="flex gap-4 w-[90%]"> */}
       <Controller
         name="partNumber"
@@ -57,6 +67,10 @@ const PartCourseForm = ({ data, action = 'create' }: Props) => {
           />
         )}
       />
+
+      <Button color="primary" type="submit" className="block ml-auto">
+        Save
+      </Button>
     </form>
   )
 }

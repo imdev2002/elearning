@@ -2,6 +2,7 @@
 
 import { GraduationCap } from '@/components/icons/graduation-cap'
 import { SearchIcon } from '@/components/icons/searchicon'
+import SearchCourse from '@/components/search/search-course'
 import { ThemeSwitcher } from '@/components/theme-swicher'
 import UserDropdown from '@/components/user-dropdown'
 import { useAccountContext } from '@/contexts/account'
@@ -131,16 +132,7 @@ const Header = () => {
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Input
-            startContent={<SearchIcon />}
-            isClearable
-            className="w-full"
-            classNames={{
-              input: 'w-full',
-              mainWrapper: 'w-full',
-            }}
-            placeholder="Search..."
-          />
+          <SearchCourse />
         </NavbarItem>
       </NavbarContent>
 

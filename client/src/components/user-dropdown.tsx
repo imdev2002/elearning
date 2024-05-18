@@ -1,4 +1,5 @@
 'use client'
+import ButtonLogout from '@/components/logout-button'
 import { useAccountContext } from '@/contexts/account'
 import { generateMediaLink } from '@/lib/utils'
 import {
@@ -48,7 +49,7 @@ const UserDropdown = () => {
         <DropdownItem key="configurations">Configurations</DropdownItem>
         <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
         <DropdownItem key="logout" color="danger">
-          Log Out
+          <ButtonLogout />
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>

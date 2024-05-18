@@ -77,7 +77,7 @@ class Tokens {
 }
 
 export const clientTokens = new Tokens()
-// let clientLogoutRequest: null | Promise<any> = null
+let clientLogoutRequest: null | Promise<any> = null
 
 const request = async <Response>(
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
@@ -135,35 +135,33 @@ const request = async <Response>(
           payload: EntityErrorPayload
         }
       )
-    }
-    // else if (res.status === AUTHENTICATION_ERROR_STATUS) {
-    //   if (typeof window !== 'undefined') {
-    //     if (!clientLogoutRequest) {
-    //       clientLogoutRequest = fetch('/api/auth/logout', {
-    //         method: 'POST',
-    //         body: JSON.stringify({ force: true }),
-    //         headers: {
-    //           ...baseHeaders,
-    //         } as any,
-    //       })
+    } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
+      if (typeof window !== 'undefined') {
+        if (!clientLogoutRequest) {
+          clientLogoutRequest = fetch('/api/auth/logout', {
+            method: 'POST',
+            body: JSON.stringify({ force: true }),
+            headers: {
+              ...baseHeaders,
+            } as any,
+          })
 
-    //       await clientLogoutRequest
-    //       clientTokens.value = {
-    //         accessToken: '',
-    //         refreshToken: '',
-    //       }
-    //       // clientTokens.expiresAt = new Date().toISOString()
-    //       clientLogoutRequest = null
-    //       location.href = '/login'
-    //     }
-    //   } else {
-    //     const sessionToken = (options?.headers as any)?.Authorization.split(
-    //       'Bearer '
-    //     )[1]
-    //     redirect(`/logout?sessionToken=${sessionToken}`)
-    //   }
-    // }
-    else {
+          await clientLogoutRequest
+          clientTokens.value = {
+            accessToken: '',
+            refreshToken: '',
+          }
+          // clientTokens.expiresAt = new Date().toISOString()
+          clientLogoutRequest = null
+          location.href = '/login'
+        }
+      } else {
+        const sessionToken = (options?.headers as any)?.Authorization.split(
+          'Bearer '
+        )[1]
+        redirect(`/logout?sessionToken=${sessionToken}`)
+      }
+    } else {
       throw new HttpError(data)
     }
   }
