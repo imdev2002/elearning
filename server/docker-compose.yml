@@ -9,7 +9,7 @@ services:
       options:
         max-size: 5m
     ports:
-      - 3008:3008
+      - 3008:3000
     environment:
       - NODE_ENV=production
     volumes:

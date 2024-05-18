@@ -15,9 +15,12 @@ const stripeUtil = {
     if (!coursedPaid) {
       return;
     }
-    await stripeUtil.prisma.coursedPaid.updateMany({
+    // await stripeUtil.prisma.coursedPaid.updateMany({
+    //   where: { checkoutSessionId: checkoutSessionId },
+    //   data: { status: CoursedPaidStatus.FAILED },
+    // });
+    await stripeUtil.prisma.coursedPaid.deleteMany({
       where: { checkoutSessionId: checkoutSessionId },
-      data: { status: CoursedPaidStatus.FAILED },
     });
   },
   checkoutSessionAsyncPaymentSucceeded: async (
@@ -65,10 +68,10 @@ const stripeUtil = {
     if (!coursedPaid) {
       return;
     }
-    await stripeUtil.prisma.coursedPaid.updateMany({
-      where: { checkoutSessionId: checkoutSessionId },
-      data: { status: CoursedPaidStatus.EXPIRED },
-    });
+    // await stripeUtil.prisma.coursedPaid.updateMany({
+    //   where: { checkoutSessionId: checkoutSessionId },
+    //   data: { status: CoursedPaidStatus.EXPIRED },
+    // });
     await stripeUtil.prisma.coursedPaid.deleteMany({
       where: { checkoutSessionId: checkoutSessionId },
     });

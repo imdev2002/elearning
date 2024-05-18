@@ -7,7 +7,6 @@ import {
   CourseCategory,
   CoursedPaidStatus,
   FormStatus,
-  LessonDone,
   ReqUser,
   RoleEnum,
 } from '../../global';
@@ -168,7 +167,9 @@ export default class UserController extends BaseController {
           platform: Platform.GOOGLE,
         },
       });
-
+      await this.prisma.cart.create({
+        data: { user: { connect: { email } } },
+      });
       res.status(201).send(user);
     } catch (e: any) {
       console.log(e);

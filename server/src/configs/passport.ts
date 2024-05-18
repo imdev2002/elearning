@@ -42,6 +42,9 @@ const googleStrategy = new GoogleStrategy(
             isVerified: true,
           },
         });
+        await prisma.cart.create({
+          data: { user: { connect: { email } } },
+        });
         const emailHtml = render(
           Welcome({ userFirstName: profile._json.given_name || '' }),
         );

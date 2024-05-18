@@ -13,6 +13,7 @@ import PublicLessonController from './modules/public/lesson/lesson.controller';
 import FormController from './modules/form/form.controller';
 import BookmarkController from './modules/public/bookmark/bookmark.controller';
 import TestController from './modules/test/test.controller';
+import CartController from './modules/public/cart/cart.controller';
 
 const controllers = [
   new UserController(),
@@ -26,6 +27,7 @@ const controllers = [
   new FormController(),
   new BookmarkController(),
   new TestController(),
+  new CartController(),
 ];
 
 class App {

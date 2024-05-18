@@ -35,9 +35,6 @@ export const DeleteUtil = {
         });
         await DeleteUtil.prisma.part.delete({ where: { id: part.id } });
       }
-      await DeleteUtil.prisma.certificate.deleteMany({
-        where: { courseId: id },
-      });
       await DeleteUtil.prisma.rating.deleteMany({ where: { courseId: id } });
       await DeleteUtil.prisma.bookmark.deleteMany({ where: { courseId: id } });
       await DeleteUtil.prisma.coursedPaid.deleteMany({

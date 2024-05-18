@@ -25,6 +25,7 @@ const runner = async () => {
       },
     });
   }
+
   const user = await prisma.user.findFirst({
     where: { email: 'nguyendangkhai20@gmail.com' },
   });
@@ -35,6 +36,15 @@ const runner = async () => {
         role: { connect: { name: RoleEnum.ADMIN } },
       },
     });
+  }
+  const users = await prisma.user.findMany();
+  for (const _ of users) {
+    const cart = await prisma.cart.findFirst({ where: { userId: _.id } });
+    if (!cart) {
+      await prisma.cart.create({
+        data: { user: { connect: { id: _.id } } },
+      });
+    }
   }
 };
 

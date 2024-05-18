@@ -169,6 +169,13 @@ export default class PublicCourseController extends BaseController {
         mode: 'payment',
         success_url: `${process.env.PUBLIC_URL}`,
       });
+      await this.prisma.coursedPaid.create({
+        data: {
+          user: { connect: { id: reqUser.id } },
+          course: { connect: { id } },
+          checkoutSessionId: checkout.id,
+        },
+      });
       return res.status(200).json(checkout);
     } catch (e: any) {
       console.log(e);
@@ -534,19 +541,6 @@ export default class PublicCourseController extends BaseController {
               },
             },
           },
-          certificates: {
-            include: {
-              student: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true,
-                  avatar: true,
-                },
-              },
-            },
-          },
           parts: {
             include: {
               lessons: {
@@ -674,19 +668,6 @@ export default class PublicCourseController extends BaseController {
           emojis: {
             include: {
               user: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true,
-                  avatar: true,
-                },
-              },
-            },
-          },
-          certificates: {
-            include: {
-              student: {
                 select: {
                   id: true,
                   firstName: true,

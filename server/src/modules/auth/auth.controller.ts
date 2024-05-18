@@ -87,6 +87,9 @@ export default class AuthController extends BaseController {
           isVerified: true,
         },
       });
+      await this.prisma.cart.create({
+        data: { user: { connect: { email } } },
+      });
       const emailHtml = render(Welcome({ userFirstName: given_name || '' }));
       await sendEmail(emailHtml, email, 'Your Adventure Begins with DKE!');
     } else {
@@ -316,6 +319,9 @@ export default class AuthController extends BaseController {
           isVerified: false,
           verifyCode,
         },
+      });
+      await this.prisma.cart.create({
+        data: { user: { connect: { email } } },
       });
       res.status(200).json({ email });
       const emailHtml = render(

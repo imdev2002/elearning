@@ -399,9 +399,14 @@ export default class CourseController extends BaseController {
       const reqUser = req.user as ReqUser;
       const courseId = Number(req.params.id);
       const partId = Number(req.params.partId);
-      const { partName, partNumber } = req.body;
+      const { partName } = req.body;
+      let { partNumber } = req.body;
       if (!partName || !courseId || !partId || !partNumber) {
         throw new Error('Missing required fields');
+      }
+      partNumber = parseInt(partNumber || '-1');
+      if (partNumber < 0) {
+        throw new Error('Invalid part number');
       }
       const course = await this.prisma.course.findFirst({
         where: { id: courseId },

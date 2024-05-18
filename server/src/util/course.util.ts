@@ -110,19 +110,6 @@ const courseUtil = {
               },
             },
           },
-          certificates: {
-            include: {
-              student: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true,
-                  avatar: true,
-                },
-              },
-            },
-          },
           parts: {
             include: {
               lessons: {
@@ -232,19 +219,6 @@ const courseUtil = {
         emojis: {
           include: {
             user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-                avatar: true,
-              },
-            },
-          },
-        },
-        certificates: {
-          include: {
-            student: {
               select: {
                 id: true,
                 firstName: true,
@@ -383,19 +357,6 @@ const courseUtil = {
               },
             },
           },
-          certificates: {
-            include: {
-              student: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true,
-                  avatar: true,
-                },
-              },
-            },
-          },
           parts: {
             include: {
               lessons: {
@@ -507,19 +468,6 @@ const courseUtil = {
         emojis: {
           include: {
             user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-                avatar: true,
-              },
-            },
-          },
-        },
-        certificates: {
-          include: {
-            student: {
               select: {
                 id: true,
                 firstName: true,

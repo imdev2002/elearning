@@ -7,7 +7,7 @@ const StripeChecker = new CronJob(
   '0 */5 * * * *',
   async function () {
     const coursedPaids = await stripeUtil.prisma.coursedPaid.findMany({
-      where: { status: CoursedPaidStatus.PENDING },
+      where: { status: { not: CoursedPaidStatus.SUCCESS } },
     });
     for (const _ of coursedPaids) {
       const session = await xtripe.checkout.sessions.retrieve(
@@ -19,7 +19,7 @@ const StripeChecker = new CronJob(
       }
       if (session.payment_status === 'unpaid') {
         if (session.expires_at > Date.now()) {
-          await stripeUtil.checkoutSessionExpired(session);
+          return await stripeUtil.checkoutSessionExpired(session);
         }
         await stripeUtil.checkoutSessionAsyncPaymentFailed(session);
       }

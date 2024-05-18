@@ -34,12 +34,12 @@ model User {
 
   timestamp DateTime @default(now())
 
-  comments     Comment[]
-  emojis       Emoji[]
-  hearts       Heart[]
-  certificates Certificate[]
-  lessons      Lesson[]
-  courses      Course[]
+  comments Comment[]
+  emojis   Emoji[]
+  hearts   Heart[]
+
+  lessons Lesson[]
+  courses Course[]
 
   coursedPaid CoursedPaid[]
   submitForms SubmitForm[]
@@ -49,6 +49,7 @@ model User {
   courseDones CourseDone[]
 
   lastReset DateTime?
+  cart      Cart?
 }
 
 model Role {
@@ -132,23 +133,6 @@ model Lesson {
   lessonDones LessonDone[]
 }
 
-model Certificate {
-  id        Int      @id @default(autoincrement())
-  timestamp DateTime @default(now())
-
-  name              String
-  description       String?
-  issuedAt          DateTime?
-  isPublic          Boolean   @default(false)
-  certificateNumber BigInt
-
-  student   User @relation(fields: [studentId], references: [id])
-  studentId Int
-
-  course   Course @relation(fields: [courseId], references: [id])
-  courseId Int
-}
-
 enum Currency {
   USD
   EUR
@@ -202,16 +186,16 @@ model Course {
   userId Int
 
   // lessons      Lesson[]
-  comments     Comment[]
-  emojis       Emoji[]
-  hearts       Heart[]
-  parts        Part[]
-  certificates Certificate[]
+  comments Comment[]
+  emojis   Emoji[]
+  hearts   Heart[]
+  parts    Part[]
 
-  coursedPaid CoursedPaid[]
-  rating      Rating[]
-  bookmarks   Bookmark[]
-  courseDones CourseDone[]
+  coursedPaid    CoursedPaid[]
+  rating         Rating[]
+  bookmarks      Bookmark[]
+  courseDones    CourseDone[]
+  coursesOnCarts CoursesOnCarts[]
 }
 
 enum CoursedPaidStatus {
@@ -227,10 +211,36 @@ model CoursedPaid {
   user     User   @relation(fields: [userId], references: [id])
   userId   Int
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   checkoutSessionId String?
   status            CoursedPaidStatus @default(PENDING)
 
   @@id([courseId, userId])
+}
+
+model Cart {
+  id Int @id @default(autoincrement())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  coursesOnCarts CoursesOnCarts[]
+}
+
+model CoursesOnCarts {
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+
+  addedAt DateTime @default(now())
+
+  cart   Cart @relation(fields: [cartId], references: [id])
+  cartId Int
+
+  @@id([courseId, cartId])
 }
 
 model Part {

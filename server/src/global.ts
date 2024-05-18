@@ -92,7 +92,6 @@ export type User = {
   comments: Comment[];
   emojis: Emoji[];
   hearts: Heart[];
-  certificates: Certificate[];
   lessons: Lesson[];
   courses: Course[];
   coursedPaid: CoursedPaid[];
@@ -101,6 +100,7 @@ export type User = {
   bookmarks: Bookmark[];
   lessonDones: LessonDone[];
   courseDones: CourseDone[];
+  cart: Cart;
 };
 export type LessonDone = {
   lesson: Lesson;
@@ -155,20 +155,6 @@ export type Lesson = {
   lessonDones: LessonDone[];
 };
 
-export type Certificate = {
-  id: number;
-  timestamp: Date;
-  name: string;
-  description?: string;
-  issuedAt?: Date;
-  isPublic: boolean;
-  certificateNumber: bigint;
-  student: User;
-  studentId: number;
-  course: Course;
-  courseId: number;
-};
-
 export type Course = {
   id: number;
   timestamp: Date;
@@ -193,7 +179,6 @@ export type Course = {
   emojis: Emoji[];
   hearts: Heart[];
   parts: Part[];
-  certificates: Certificate[];
   coursedPaid: CoursedPaid[];
   rating: Rating[];
   bookmarks: Bookmark[];
@@ -296,4 +281,25 @@ export type Bookmark = {
   lessonId?: number;
   course?: Course;
   courseId?: number;
+};
+
+export type CoursesOnCarts = {
+  course: Course;
+  courseId: number;
+
+  addedAt: Date;
+
+  cart: Cart;
+  cartId: number;
+};
+
+export type Cart = {
+  id: number;
+
+  user: User;
+  userId: number;
+
+  createdAt: Date;
+  updatedAt: Date;
+  coursesOnCarts: CoursesOnCarts[];
 };
