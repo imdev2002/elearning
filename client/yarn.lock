@@ -1552,6 +1552,14 @@
     "@react-types/shared" "^3.22.1"
     "@swc/helpers" "^0.5.0"
 
+"@react-stately/data@^3.11.3":
+  version "3.11.3"
+  resolved "https://registry.yarnpkg.com/@react-stately/data/-/data-3.11.3.tgz#3ab66c43f515bca34e4a6dce888b1ae6088470ab"
+  integrity sha512-iyg27s3uUquxvX5AXckAgOPszG6uX7fCOIg0D/GJXxdFxLv1gFSupIeIJhM+kXufPgpaLiugaQxoYlO5y65shA==
+  dependencies:
+    "@react-types/shared" "^3.23.0"
+    "@swc/helpers" "^0.5.0"
+
 "@react-stately/flags@^3.0.1":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@react-stately/flags/-/flags-3.0.1.tgz#ff80eb77cff942e50dd20a61995480b71775b351"
@@ -1826,6 +1834,11 @@
   version "3.22.1"
   resolved "https://registry.yarnpkg.com/@react-types/shared/-/shared-3.22.1.tgz#4e5de032fcb0b7bca50f6a9f8e133fd882821930"
   integrity sha512-PCpa+Vo6BKnRMuOEzy5zAZ3/H5tnQg1e80khMhK2xys0j6ZqzkgQC+fHMNZ7VDFNLqqNMj/o0eVeSBDh2POjkw==
+
+"@react-types/shared@^3.23.0":
+  version "3.23.0"
+  resolved "https://registry.yarnpkg.com/@react-types/shared/-/shared-3.23.0.tgz#59c9d2683d131b81a8f775b56408782fc70bc79b"
+  integrity sha512-GQm/iPiii3ikcaMNR4WdVkJ4w0mKtV3mLqeSfSqzdqbPr6vONkqXbh3RhPlPmAJs1b4QHnexd/wZQP3U9DHOwQ==
 
 "@react-types/slider@^3.7.1":
   version "3.7.1"

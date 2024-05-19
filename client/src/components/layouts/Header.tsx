@@ -1,5 +1,6 @@
 'use client'
 
+import CartPopover from '@/components/cart/cart-popover'
 import { GraduationCap } from '@/components/icons/graduation-cap'
 import { SearchIcon } from '@/components/icons/searchicon'
 import SearchCourse from '@/components/search/search-course'
@@ -145,6 +146,7 @@ const Header = () => {
 
       <NavbarContent justify="end">
         <ThemeSwitcher />
+        <CartPopover />
         {user ? (
           <NavbarItem>
             <UserDropdown />

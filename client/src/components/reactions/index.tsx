@@ -24,13 +24,11 @@ type Props = {
 
 const ReactionsSection = ({ data, postId }: Props) => {
   const searchParams = useSearchParams()
-  console.log('ReactionsSection  searchParams:', searchParams.get('courseId'))
   const { user } = useAccountContext()
   const isAuth = !!user?.email
   const { refresh } = useRouter()
   const [isOpen, setIsOpen] = React.useState(false)
   const [emojis, setEmojis] = React.useState<any>([])
-  console.log('ReactionsSection  emojis:', emojis)
   const listReactions = emojis.map((emoji: any) => {
     const result = data.filter((reaction: any) => reaction.emojiId === emoji.id)
     console.log('listReactions  result:', result)

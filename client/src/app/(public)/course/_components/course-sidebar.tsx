@@ -3,6 +3,7 @@
 import { Course } from '@/app/globals'
 import { useAccountContext } from '@/contexts/account'
 import { generateMediaLink } from '@/lib/utils'
+import { cartApiRequest } from '@/services/cart.service'
 import { coursePublicApiRequests } from '@/services/course.service'
 import { Button, Divider } from '@nextui-org/react'
 import { FileBadge } from 'lucide-react'
@@ -16,6 +17,7 @@ type Props = {
 }
 
 const CourseSidebar = ({ data }: Props) => {
+  const { coursesHearted, setCoursesHearted } = useAccountContext()
   const { refresh } = useRouter()
   const { thumbnail, courseName, priceAmount, id, parts } = data
   const { user } = useAccountContext()
@@ -32,6 +34,7 @@ const CourseSidebar = ({ data }: Props) => {
       }
       const res = await coursePublicApiRequests.toogleHeart(id)
       if (res.status === 200) {
+        setCoursesHearted(res.payload)
         refresh()
       }
     } catch (error) {}
@@ -54,6 +57,20 @@ const CourseSidebar = ({ data }: Props) => {
     } catch (error) {}
   }
 
+  const addToCart = async () => {
+    try {
+      if (!isAuth) {
+        toast.error('You need to login to add course to cart')
+        return
+      }
+      const res = await cartApiRequest.add(id)
+      if (res.status === 200) {
+        toast.success('Added course to cart')
+        refresh()
+      }
+    } catch (error) {}
+  }
+
   return (
     <div className="flex-1 p-3 lg:-mt-28 ml-4 border rounded-lg bg-background h-fit space-y-2">
       <Image
@@ -72,6 +89,9 @@ const CourseSidebar = ({ data }: Props) => {
         onClick={heartCourseToggle}
       >
         Add to favourite list
+      </Button>
+      <Button className="w-full" color="secondary" onClick={addToCart}>
+        Add to cart
       </Button>
       {isBought ? (
         <Button

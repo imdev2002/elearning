@@ -13,7 +13,6 @@ import {
   Tooltip,
 } from '@nextui-org/react'
 import { formatDate } from 'date-fns'
-import { EyeIcon } from 'lucide-react'
 
 type Props = {
   data: any
@@ -26,7 +25,7 @@ const RequestsTable = ({ data }: Props) => {
         <TableColumn>NAME</TableColumn>
         <TableColumn>CATEGORY</TableColumn>
         <TableColumn>REQUEST AT</TableColumn>
-        <TableColumn>STATUS</TableColumn>
+        <TableColumn>ACTIONS</TableColumn>
       </TableHeader>
       <TableBody emptyContent={'No pending request'}>
         {data.map((form: any, index: number) => (

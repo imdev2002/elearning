@@ -1,3 +1,4 @@
+import FormTabs from '@/app/(manager)/forms/_components/form-tabs'
 import RequestsTable from '@/app/(manager)/forms/_components/requests-table'
 import { Heading } from '@/components/heading'
 import { UpgradeRole } from '@/components/icons/sidebar/updarade-role'
@@ -23,7 +24,7 @@ const page = async () => {
   return (
     <>
       <Heading icon={<UpgradeRole />} title="Form request" />
-      <RequestsTable data={payload} />
+      <FormTabs data={payload} />
     </>
   )
 }

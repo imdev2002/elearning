@@ -14,9 +14,17 @@ import { useReadLocalStorage } from 'usehooks-ts'
 const AccountContext = createContext<{
   user: User | null
   setUser: (user: User | null) => void
+  coursesBought: any
+  setCoursesBought: (courses: any) => void
+  coursesHearted: any
+  setCoursesHearted: (courses: any) => void
 }>({
   user: null,
   setUser: () => {},
+  coursesBought: [],
+  setCoursesBought: () => {},
+  coursesHearted: [],
+  setCoursesHearted: () => {},
 })
 export const useAccountContext = () => {
   const context = useContext(AccountContext)
@@ -37,6 +45,9 @@ export default function AccountProvider({
   const initUser = useReadLocalStorage<any>('user')?.value
 
   const [user, setUser] = useState<User | null>(initUser)
+  const [coursesBought, setCoursesBought] = useState<any>([])
+  const [coursesHearted, setCoursesHearted] = useState<any>([])
+  console.log('coursesHearted:', coursesHearted)
 
   useState(() => {
     if (typeof window !== 'undefined') {
@@ -57,14 +68,47 @@ export default function AccountProvider({
         }
       } catch (error) {}
     }
-    if (!user?.avatar) fetchUser()
-  }, [user?.id])
+    async function getCoursesBought() {
+      try {
+        if (user?.id) {
+          const res = await userApiRequest.getCourseBought()
+          if (res.status === 200) {
+            setCoursesBought(res.payload)
+          }
+        }
+      } catch (error) {}
+    }
+    async function getCoursesHearted() {
+      try {
+        if (user?.id) {
+          const res = await userApiRequest.getWishList()
+          if (res.status === 200) {
+            setCoursesHearted(res.payload)
+          }
+        }
+      } catch (error) {}
+    }
+    if (!user?.avatar) {
+      fetchUser()
+      getCoursesBought()
+      getCoursesHearted()
+    }
+  }, [
+    user?.avatar,
+    user?.id,
+    JSON.stringify(coursesBought),
+    JSON.stringify(coursesHearted),
+  ])
 
   return (
     <AccountContext.Provider
       value={{
         user,
         setUser,
+        coursesBought,
+        setCoursesBought,
+        coursesHearted,
+        setCoursesHearted,
       }}
     >
       {children}
