@@ -30,7 +30,7 @@ export const courseManagerApiRequests: any = {
 
   delete: (courseId: number) => http.delete(`/courses/${courseId}`),
 
-  ceateParts: (courseId: number, body: CoursePartsBodyType) =>
+  ceateParts: (courseId: number, body: any) =>
     http.post(`/courses/${courseId}/parts`, body),
   getListParts: (courseId: number) => http.get(`/courses/${courseId}/parts`),
 

@@ -239,7 +239,7 @@ const HeadingPart = ({ part }: { part: Part }) => {
   }, 0)
   return (
     <div className="flex justify-between items-center">
-      {part.partName}
+      <span className="max-w-[65%]">{part.partName}</span>
       <ul className="flex gap-2 text-sm">
         <li className="flex items-center gap-1">
           <SquarePlay size={16} />

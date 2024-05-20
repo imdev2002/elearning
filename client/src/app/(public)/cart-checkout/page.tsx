@@ -122,7 +122,7 @@ const CartCheckoutPage = () => {
         <div>
           <span>Total: $109</span>
         </div>
-        <Button color="primary">Checkout now</Button>
+        <Button color="primary">Pay now</Button>
       </div>
     </div>
   )

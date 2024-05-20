@@ -78,24 +78,33 @@ const LoginForm = () => {
           <InputPassword field={field} errorMsg={errors.password?.message} />
         )}
       />
-      <div className="flex text-sm gap-1 font-normal ml-auto w-fit">
-        You dont have account?{' '}
+
+      <div className="w-full">
+        <div className="flex text-sm gap-1 font-normal ml-auto w-fit">
+          You dont have account?{' '}
+          <Link
+            href="/register"
+            className="underline text-primary-500 font-semibold"
+          >
+            Register now!
+          </Link>
+        </div>
+        <Button
+          type="submit"
+          size="lg"
+          variant="solid"
+          color="primary"
+          className="!mt-2 mb-1 w-full"
+        >
+          Login
+        </Button>
         <Link
           href="/register"
-          className="underline text-primary-500 font-semibold"
+          className="underline text-primary-500 text-sm ml-auto w-fit block"
         >
-          Register now!
+          Forgot password?
         </Link>
       </div>
-      <Button
-        type="submit"
-        size="lg"
-        variant="solid"
-        color="primary"
-        className="!mt-2 w-full"
-      >
-        Login
-      </Button>
     </form>
   )
 }

@@ -50,7 +50,10 @@ export default class CartController extends BaseController {
       if (!cart) {
         throw new NotFoundException('cart', reqUser.id);
       }
-      const { courseId } = req.body;
+      const courseId = parseInt(req.body.courseId || '-1');
+      if (courseId === -1) {
+        throw new HttpException(400, 'Course id is required');
+      }
       const course = await this.prisma.course.findFirst({
         where: { id: courseId },
       });

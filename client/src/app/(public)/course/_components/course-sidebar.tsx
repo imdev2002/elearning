@@ -23,6 +23,7 @@ const CourseSidebar = ({ data }: Props) => {
   const { user } = useAccountContext()
   const isAuth = !!user?.email
   // const isHearted =
+  console.log(data.parts)
   const isBought = data.coursedPaid.some(
     (item) => item.userId === user?.id && item.status === 'SUCCESS'
   )
@@ -98,7 +99,7 @@ const CourseSidebar = ({ data }: Props) => {
           as={Link}
           href={
             parts && parts.length > 0
-              ? `/learning/${id}?lesson=${parts[0].lessons[0].id}`
+              ? `/learning/${id}?lesson=${parts[0]?.lessons[0]?.id}`
               : '#'
           }
           className="w-full"

@@ -14,7 +14,10 @@ const page = () => {
           className="object-cover mx-auto"
         />
       </div>
-      <RegisterForm />
+      <div className="flex flex-col p-20 flex-1">
+        <h3 className="text-4xl font-semibold text-center">Register</h3>
+        <RegisterForm />
+      </div>
     </div>
   )
 }

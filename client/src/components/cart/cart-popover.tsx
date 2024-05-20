@@ -16,7 +16,6 @@ import Link from 'next/link'
 
 const CartPopover = () => {
   const { cart } = useCart()
-  console.log('CartPopover  cart:', cart)
   return (
     <Popover placement="bottom" showArrow>
       <Badge

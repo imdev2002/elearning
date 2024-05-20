@@ -1,6 +1,6 @@
 import React from 'react'
 import { Sidebar } from './sidebar.styles'
-import { Avatar, NavbarBrand, Tooltip } from '@nextui-org/react'
+import { Avatar, Chip, NavbarBrand, Tooltip } from '@nextui-org/react'
 import { CompaniesDropdown } from './companies-dropdown'
 import { HomeIcon } from '../icons/sidebar/home-icon'
 import { PaymentsIcon } from '../icons/sidebar/payments-icon'
@@ -22,10 +22,14 @@ import { useSidebarContext } from '@/components/layouts/layout-manager-context'
 import { GraduationCap } from '@/components/icons/graduation-cap'
 import { dashboardNavigation } from '@/lib/constants'
 import Link from 'next/link'
+import { Power } from 'lucide-react'
+import { useAccountContext } from '@/contexts/account'
+import { generateMediaLink } from '@/lib/utils'
 
 export const SidebarWrapper = () => {
   const pathname = usePathname()
   const { collapsed, setCollapsed } = useSidebarContext()
+  const { user } = useAccountContext()
 
   return (
     <aside className="h-screen z-[20] sticky top-0">
@@ -100,24 +104,42 @@ export const SidebarWrapper = () => {
               />
             </SidebarMenu>
           </div>
-          <div className={Sidebar.Footer()}>
-            <Tooltip content={'Settings'} color="primary">
-              <div className="max-w-fit">
-                <SettingsIcon />
-              </div>
-            </Tooltip>
-            <Tooltip content={'Adjustments'} color="primary">
-              <div className="max-w-fit">
-                <FilterIcon />
-              </div>
-            </Tooltip>
-            <Tooltip content={'Profile'} color="primary">
+          {user && (
+            <div className="shadow-xl border dark:border-none dark:bg-neutral-800 rounded-xl p-3 flex gap-3 w-full">
               <Avatar
-                src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-                size="sm"
+                size="md"
+                src={generateMediaLink(user.avatar ?? '')}
+                showFallback
+                isBordered
+                classNames={{
+                  base: 'ring-gold shrink-0',
+                }}
               />
-            </Tooltip>
-          </div>
+              <div className="-mt-1 flex-1">
+                <div className="font-bold line-clamp-1">{user.username}</div>
+                <div>
+                  <div className="flex gap-2 items-center">
+                    <span>{`${user.firstName ? user.firstName : ''} ${
+                      user.lastName ? user.lastName : ''
+                    }`}</span>
+                    <Tooltip content="Logout">
+                      <div className="text-gold cursor-pointer">
+                        <Power size={18} />
+                      </div>
+                    </Tooltip>
+                  </div>
+
+                  <div className="flex gap-1 mt-[2px]">
+                    {user.roles.map((role, index) => (
+                      <Chip size="sm" key={index} color="primary" variant="dot">
+                        {role.role.name}
+                      </Chip>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </aside>

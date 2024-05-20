@@ -49,7 +49,10 @@ const CreateTabs = ({ courseData }: Props) => {
           </div>
         }
       >
-        <ListPartsAccordion isAuth data={courseData.parts} />
+        <ListPartsAccordion
+          isAuth
+          data={courseData.parts.sort((a, b) => a.partNumber - b.partNumber)}
+        />
       </Tab>
     </Tabs>
   )

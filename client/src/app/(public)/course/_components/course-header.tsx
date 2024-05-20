@@ -4,6 +4,7 @@ import { Course } from '@/app/globals'
 import FiveStars from '@/components/course/five-stars'
 import { displayFullname, generateMediaLink } from '@/lib/utils'
 import { Avatar } from '@nextui-org/react'
+import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
 type Props = {
@@ -37,7 +38,10 @@ const CourseHeader = ({ data }: Props) => {
       >
         <h3 className="text-2xl lg:text-4xl font-bold">{courseName}</h3>
         <div className="flex justify-between items-center">
-          <div className="flex gap-2 items-center">
+          <Link
+            href={`/profile/${user.id}`}
+            className="flex gap-2 items-center"
+          >
             <Avatar
               src={generateMediaLink(user.avatar ?? '')}
               size="sm"
@@ -47,7 +51,7 @@ const CourseHeader = ({ data }: Props) => {
             <span className="text-sm">
               {displayFullname(user.firstName, user.lastName)}
             </span>
-          </div>
+          </Link>
           <FiveStars starRated={avgRating} />
         </div>
       </div>

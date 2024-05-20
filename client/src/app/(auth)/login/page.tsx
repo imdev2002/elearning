@@ -17,7 +17,7 @@ const LoginPage = () => {
   const { setUser } = useAccountContext()
   console.log(process.env.NEXT_PUBLIC_CLIENT_ID)
   return (
-    <div className="flex justify-center items-center mt-20">
+    <div className="flex justify-center items-center mt-20 h-screen">
       <div className="w-[80vw] h-[80vh] flex">
         <div className="w-2/4 bg-white h-full flex justify-center items-center">
           <Image

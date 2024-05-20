@@ -20,7 +20,6 @@ const page = async ({ params }: Props) => {
   const { payload: courseData } = await coursePublicApiRequests.get(
     Number(courseId)
   )
-  console.log('page  courseData:', courseData)
   const {
     id,
     courseName,
@@ -38,7 +37,7 @@ const page = async ({ params }: Props) => {
     totalPart,
     emojis,
   } = courseData
-
+  const partsData = parts.sort((a, b) => a.partNumber - b.partNumber)
   return (
     <>
       <CourseHeader data={courseData} />
@@ -90,7 +89,7 @@ const page = async ({ params }: Props) => {
                   </span>
                 </div>
               </div>
-              <ListPartsAccordion data={parts} />
+              <ListPartsAccordion data={partsData} />
             </div>
           )}
           <div className="space-y-4">

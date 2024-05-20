@@ -1,4 +1,5 @@
 'use client'
+import FiveStars from '@/components/course/five-stars'
 import { CATEGORIES } from '@/lib/constants'
 import { generateMediaLink } from '@/lib/utils'
 import { CourseResType } from '@/schemaValidations/course.schema'
@@ -15,7 +16,7 @@ import {
   DropdownTrigger,
   Image,
 } from '@nextui-org/react'
-import { Ellipsis } from 'lucide-react'
+import { Ellipsis, UsersRound } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -37,6 +38,8 @@ const CourseCard = ({ data, isAuth = false }: CourseType) => {
     thumbnail,
     priceAmount,
     status,
+    coursedPaid,
+    avgRating,
   } = data
   const categoryName = CATEGORIES.find((cat) => cat.value === category)?.name
   const deleteCourse = async () => {
@@ -92,16 +95,30 @@ const CourseCard = ({ data, isAuth = false }: CourseType) => {
         )}
       </div>
       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-        <Chip variant="faded" className="capitalize text-xs" size="sm">
-          {categoryName ?? ''}
-        </Chip>
-        <p className="text-tiny uppercase font-bold text-green-500">
-          {priceAmount ? `${priceAmount} ${currency}` : 'Free'}
-        </p>
-        <small className="text-default-500">12 Tracks</small>
+        <div className="flex justify-between items-center w-full">
+          <Chip
+            variant="faded"
+            className="capitalize text-xs rounded-md"
+            color="warning"
+            size="sm"
+          >
+            {categoryName ?? ''}
+          </Chip>
+          <p className="text-tiny uppercase font-bold text-green-500">
+            {priceAmount ? `${priceAmount} ${currency}` : 'Free'}
+          </p>
+        </div>
+        {/* <small className="text-default-500">12 Tracks</small> */}
         <h4 className="font-bold text-sm lg:text-large line-clamp-1">
           {courseName}
         </h4>
+        <div className="flex justify-between items-center w-full text-sm">
+          <FiveStars starRated={avgRating ?? 0} />
+          <div className="flex gap-2 items-center">
+            <UsersRound size={14} />
+            <span>{coursedPaid?.length ?? 0}</span>
+          </div>
+        </div>
       </CardHeader>
       <CardBody className="overflow-visible py-2">
         {isAuth && (

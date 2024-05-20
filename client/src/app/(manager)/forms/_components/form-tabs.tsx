@@ -19,13 +19,19 @@ const FormTabs = ({ data }: Props) => {
       color="primary"
     >
       <Tab key="photos" title="PENDING">
-        <RequestsTable data={data} />
+        <RequestsTable
+          data={data.filter((item: any) => item?.status === 'PENDING')}
+        />
       </Tab>
       <Tab key="music" title="REJECTED">
-        <RequestsTable data={data} />
+        <RequestsTable
+          data={data.filter((item: any) => item?.status === 'REJECTED')}
+        />
       </Tab>
       <Tab key="videos" title="ACCEPTED">
-        <RequestsTable data={data} />
+        <RequestsTable
+          data={data.filter((item: any) => item?.status === 'ACCEPTED')}
+        />
       </Tab>
     </Tabs>
   )

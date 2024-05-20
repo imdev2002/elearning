@@ -32,9 +32,9 @@ const TextLessonForm = ({ data, onSubmit }: Props) => {
     resolver: zodResolver(LessonTextBody),
     defaultValues: {
       lessonName: data?.lessonName ?? '',
-      title: data?.title ?? '',
+      title: data?.title ?? 'abc',
       content: data?.content ?? '',
-      descriptionMD: data?.descriptionMD ?? '',
+      descriptionMD: data?.descriptionMD ?? 'abc',
     },
   })
   const { errors } = form.formState

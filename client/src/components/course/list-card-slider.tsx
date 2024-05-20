@@ -1,7 +1,9 @@
 'use client'
 
 import CourseCard from '@/components/course/course-card'
+import NavigationSwiper from '@/components/navigation-swiper'
 import { CourseResType } from '@/schemaValidations/course.schema'
+import { Navigation, Pagination, A11y } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 type Props = {
@@ -10,15 +12,24 @@ type Props = {
 
 const ListCardSlider = ({ data }: Props) => {
   return (
-    <div className="slider-cards">
-      <Swiper grabCursor={true} spaceBetween={16} slidesPerView="auto">
-        {data.map((course) => (
-          <SwiperSlide key={course.id}>
-            <CourseCard data={course} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </div>
+    <>
+      <div className="slider-cards relative">
+        <Swiper
+          modules={[Navigation, Pagination, A11y]}
+          grabCursor={true}
+          spaceBetween={16}
+          slidesPerView="auto"
+          // navigation
+        >
+          {data.map((course) => (
+            <SwiperSlide key={course.id}>
+              <CourseCard data={course} />
+            </SwiperSlide>
+          ))}
+          <NavigationSwiper />
+        </Swiper>
+      </div>
+    </>
   )
 }
 
