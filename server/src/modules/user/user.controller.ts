@@ -5,7 +5,7 @@ import HttpException from '../../exceptions/http-exception';
 import NotFoundException from '../../exceptions/not-found';
 import {
   CourseCategory,
-  CoursedPaidStatus,
+  CoursesPaidStatus,
   FormStatus,
   ReqUser,
   RoleEnum,
@@ -426,10 +426,10 @@ export default class UserController extends BaseController {
   };
   getBought = async (req: Request, res: Response) => {
     try {
-      const course = await this.prisma.coursedPaid.findMany({
+      const course = await this.prisma.coursesPaid.findMany({
         where: {
           userId: (req.user as ReqUser).id,
-          status: CoursedPaidStatus.SUCCESS,
+          status: CoursesPaidStatus.SUCCESS,
         },
         include: { course: true },
       });

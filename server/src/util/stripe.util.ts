@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import Stripe from 'stripe';
-import { CoursedPaidStatus } from '../global';
+import { CoursesPaidStatus } from '../global';
 
 const stripeUtil = {
   prisma: new PrismaClient(),
@@ -9,18 +9,15 @@ const stripeUtil = {
   ) => {
     // Then define and call a function to handle the event checkout.session.async_payment_failed
     const checkoutSessionId = checkoutSessionAsyncPaymentFailed.id;
-    const coursedPaid = await stripeUtil.prisma.coursedPaid.findFirst({
+    const coursesPaid = await stripeUtil.prisma.coursesPaid.findFirst({
       where: { checkoutSessionId: checkoutSessionId },
     });
-    if (!coursedPaid) {
+    if (!coursesPaid) {
       return;
     }
-    // await stripeUtil.prisma.coursedPaid.updateMany({
-    //   where: { checkoutSessionId: checkoutSessionId },
-    //   data: { status: CoursedPaidStatus.FAILED },
-    // });
-    await stripeUtil.prisma.coursedPaid.deleteMany({
+    await stripeUtil.prisma.coursesPaid.updateMany({
       where: { checkoutSessionId: checkoutSessionId },
+      data: { status: CoursesPaidStatus.FAILED },
     });
   },
   checkoutSessionAsyncPaymentSucceeded: async (
@@ -28,15 +25,15 @@ const stripeUtil = {
   ) => {
     // Then define and call a function to handle the event checkout.session.async_payment_succeeded
     const checkoutSessionId = checkoutSessionAsyncPaymentSucceeded.id;
-    const coursedPaid = await stripeUtil.prisma.coursedPaid.findFirst({
+    const coursesPaid = await stripeUtil.prisma.coursesPaid.findFirst({
       where: { checkoutSessionId: checkoutSessionId },
     });
-    if (!coursedPaid) {
+    if (!coursesPaid) {
       return;
     }
-    await stripeUtil.prisma.coursedPaid.updateMany({
+    await stripeUtil.prisma.coursesPaid.updateMany({
       where: { checkoutSessionId: checkoutSessionId },
-      data: { status: CoursedPaidStatus.SUCCESS },
+      data: { status: CoursesPaidStatus.SUCCESS },
     });
   },
   checkoutSessionCompleted: async (
@@ -45,15 +42,15 @@ const stripeUtil = {
     // Then define and call a function to handle the event checkout.session.completed
     const checkoutSessionId = checkoutSessionCompleted.id;
 
-    const coursedPaid = await stripeUtil.prisma.coursedPaid.findFirst({
+    const coursesPaid = await stripeUtil.prisma.coursesPaid.findFirst({
       where: { checkoutSessionId: checkoutSessionId },
     });
-    if (!coursedPaid) {
+    if (!coursesPaid) {
       return;
     }
-    await stripeUtil.prisma.coursedPaid.updateMany({
+    await stripeUtil.prisma.coursesPaid.updateMany({
       where: { checkoutSessionId: checkoutSessionId },
-      data: { status: CoursedPaidStatus.SUCCESS },
+      data: { status: CoursesPaidStatus.SUCCESS },
     });
   },
   checkoutSessionExpired: async (
@@ -62,18 +59,15 @@ const stripeUtil = {
     // Then define and call a function to handle the event checkout.session.expired
     const checkoutSessionId = checkoutSessionExpired.id;
 
-    const coursedPaid = await stripeUtil.prisma.coursedPaid.findFirst({
+    const coursesPaid = await stripeUtil.prisma.coursesPaid.findFirst({
       where: { checkoutSessionId: checkoutSessionId },
     });
-    if (!coursedPaid) {
+    if (!coursesPaid) {
       return;
     }
-    // await stripeUtil.prisma.coursedPaid.updateMany({
-    //   where: { checkoutSessionId: checkoutSessionId },
-    //   data: { status: CoursedPaidStatus.EXPIRED },
-    // });
-    await stripeUtil.prisma.coursedPaid.deleteMany({
+    await stripeUtil.prisma.coursesPaid.updateMany({
       where: { checkoutSessionId: checkoutSessionId },
+      data: { status: CoursesPaidStatus.EXPIRED },
     });
   },
 };

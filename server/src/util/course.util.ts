@@ -58,7 +58,7 @@ const courseUtil = {
               },
             },
           },
-          coursedPaid: {
+          coursesPaid: {
             include: {
               user: {
                 select: {
@@ -177,7 +177,7 @@ const courseUtil = {
             },
           },
         },
-        coursedPaid: {
+        coursesPaid: {
           include: {
             user: {
               select: {
@@ -305,7 +305,7 @@ const courseUtil = {
               },
             },
           },
-          coursedPaid: {
+          coursesPaid: {
             include: {
               user: {
                 select: {
@@ -426,7 +426,7 @@ const courseUtil = {
             },
           },
         },
-        coursedPaid: {
+        coursesPaid: {
           include: {
             user: {
               select: {

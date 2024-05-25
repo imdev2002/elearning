@@ -37,7 +37,7 @@ export const DeleteUtil = {
       }
       await DeleteUtil.prisma.rating.deleteMany({ where: { courseId: id } });
       await DeleteUtil.prisma.bookmark.deleteMany({ where: { courseId: id } });
-      await DeleteUtil.prisma.coursedPaid.deleteMany({
+      await DeleteUtil.prisma.coursesPaid.deleteMany({
         where: { courseId: id },
       });
       await DeleteUtil.prisma.courseDone.deleteMany({

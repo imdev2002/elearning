@@ -4,7 +4,7 @@ import passport from '../../../configs/passport';
 import HttpException from '../../../exceptions/http-exception';
 import NotFoundException from '../../../exceptions/not-found';
 import {
-  CoursedPaidStatus,
+  CoursesPaidStatus,
   CourseStatus,
   LessonStatus,
   ReqUser,
@@ -334,11 +334,11 @@ export default class PublicLessonController extends BaseController {
       if (!lesson || lesson.status !== LessonStatus.APPROVED) {
         throw new NotFoundException('lesson', lessonId);
       }
-      const paid = await this.prisma.coursedPaid.findFirst({
+      const paid = await this.prisma.coursesPaid.findFirst({
         where: {
           courseId: lesson.part.courseId,
           userId: reqUser.id,
-          status: CoursedPaidStatus.SUCCESS,
+          status: CoursesPaidStatus.SUCCESS,
         },
       });
       if (!paid) {

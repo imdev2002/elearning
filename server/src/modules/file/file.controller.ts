@@ -6,7 +6,7 @@ import path from 'path';
 import { createReadStream, existsSync, statSync } from 'fs';
 import HttpException from '../../exceptions/http-exception';
 import passport from '../../configs/passport';
-import { CoursedPaidStatus } from '@prisma/client';
+import { CoursesPaidStatus } from '@prisma/client';
 import { JwtPayload, verify } from 'jsonwebtoken';
 import { videoUpload } from '../../configs/multer';
 import checkRoleMiddleware from '../../middlewares/checkRole.middleware';
@@ -53,8 +53,8 @@ export default class FileController extends BaseController {
       )
         ? 'image'
         : ['mp4', 'mov'].includes(filename.split('.')[1])
-        ? 'video'
-        : 'unknown';
+          ? 'video'
+          : 'unknown';
       if (fileType === 'unknown') {
         throw new NotFoundException('file', filename);
       }
@@ -80,7 +80,7 @@ export default class FileController extends BaseController {
         const user = await this.prisma.user.findFirst({
           where: { id: reqUser.id },
           include: {
-            coursedPaid: true,
+            coursesPaid: true,
           },
         });
         const lesson = await this.prisma.lesson.findFirst({
@@ -96,10 +96,10 @@ export default class FileController extends BaseController {
           !(
             reqUser.id === lesson.userId ||
             reqUser.roles.find((_) => _.role.name === RoleEnum.ADMIN) ||
-            user?.coursedPaid.find(
+            user?.coursesPaid.find(
               (_) =>
                 _.courseId === lesson.part.courseId &&
-                _.status === CoursedPaidStatus.SUCCESS,
+                _.status === CoursesPaidStatus.SUCCESS,
             ) ||
             lesson.trialAllowed
           )

@@ -41,7 +41,7 @@ model User {
   lessons Lesson[]
   courses Course[]
 
-  coursedPaid CoursedPaid[]
+  coursesPaid CoursesPaid[]
   submitForms SubmitForm[]
   rating      Rating[]
   bookmarks   Bookmark[]
@@ -191,21 +191,21 @@ model Course {
   hearts   Heart[]
   parts    Part[]
 
-  coursedPaid    CoursedPaid[]
+  coursesPaid    CoursesPaid[]
   rating         Rating[]
   bookmarks      Bookmark[]
   courseDones    CourseDone[]
   coursesOnCarts CoursesOnCarts[]
 }
 
-enum CoursedPaidStatus {
+enum CoursesPaidStatus {
   PENDING
   SUCCESS
   FAILED
   EXPIRED
 }
 
-model CoursedPaid {
+model CoursesPaid {
   course   Course @relation(fields: [courseId], references: [id])
   courseId Int
   user     User   @relation(fields: [userId], references: [id])
@@ -214,10 +214,10 @@ model CoursedPaid {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  checkoutSessionId String?
-  status            CoursedPaidStatus @default(PENDING)
+  checkoutSessionId String
+  status            CoursesPaidStatus @default(PENDING)
 
-  @@id([courseId, userId])
+  @@id([courseId, userId, checkoutSessionId])
 }
 
 model Cart {

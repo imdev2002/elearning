@@ -1,15 +1,15 @@
 import { CronJob } from 'cron';
 import xtripe from './xtripe';
 import stripeUtil from '../util/stripe.util';
-import { CoursedPaidStatus } from '../global';
+import { CoursesPaidStatus } from '../global';
 
 const StripeChecker = new CronJob(
   '0 */5 * * * *',
   async function () {
-    const coursedPaids = await stripeUtil.prisma.coursedPaid.findMany({
-      where: { status: { not: CoursedPaidStatus.SUCCESS } },
+    const coursesPaids = await stripeUtil.prisma.coursesPaid.findMany({
+      where: { status: { not: CoursesPaidStatus.SUCCESS } },
     });
-    for (const _ of coursedPaids) {
+    for (const _ of coursesPaids) {
       const session = await xtripe.checkout.sessions.retrieve(
         _.checkoutSessionId as string,
       );

@@ -10,7 +10,7 @@ import {
 import HttpException from '../../../exceptions/http-exception';
 import NotFoundException from '../../../exceptions/not-found';
 import xtripe from '../../../configs/xtripe';
-import { CoursedPaidStatus } from '@prisma/client';
+import { CoursesPaidStatus } from '@prisma/client';
 import { JwtPayload, verify } from 'jsonwebtoken';
 
 export default class PublicCourseController extends BaseController {
@@ -73,7 +73,7 @@ export default class PublicCourseController extends BaseController {
       if (!course) {
         throw new NotFoundException('course', courseId);
       }
-      const paid = await this.prisma.coursedPaid.findFirst({
+      const paid = await this.prisma.coursesPaid.findFirst({
         where: { userId: reqUser.id, courseId },
       });
       if (!paid) {
@@ -132,7 +132,7 @@ export default class PublicCourseController extends BaseController {
       const id = Number(req.body.courseId);
       const course = await this.prisma.course.findFirst({
         where: { id },
-        include: { coursedPaid: true },
+        include: { coursesPaid: true },
       });
       if (!course) {
         throw new NotFoundException('course', id);
@@ -143,23 +143,32 @@ export default class PublicCourseController extends BaseController {
 
       const user = await this.prisma.user.findFirst({
         where: { id: reqUser.id },
-        include: { coursedPaid: true },
+        include: { coursesPaid: true },
       });
       if (!user) {
         throw new NotFoundException('user', reqUser.id);
       }
 
-      for (const coursePaid of user.coursedPaid) {
+      for (const coursePaid of user.coursesPaid) {
         if (coursePaid.courseId === id) {
           throw new HttpException(400, 'You already bought this course');
         }
       }
       if (Number(course.priceAmount) === 0) {
-        const _ = await this.prisma.coursedPaid.create({
+        let uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        while (
+          await this.prisma.coursesPaid.findFirst({
+            where: { checkoutSessionId: `free-${uniqueSuffix}` },
+          })
+        ) {
+          uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        }
+        const _ = await this.prisma.coursesPaid.create({
           data: {
             user: { connect: { id: reqUser.id } },
             course: { connect: { id } },
-            status: CoursedPaidStatus.SUCCESS,
+            status: CoursesPaidStatus.SUCCESS,
+            checkoutSessionId: `free-${uniqueSuffix}`,
           },
         });
         return res.status(200).json(_);
@@ -169,7 +178,7 @@ export default class PublicCourseController extends BaseController {
         mode: 'payment',
         success_url: `${process.env.PUBLIC_URL}`,
       });
-      await this.prisma.coursedPaid.create({
+      await this.prisma.coursesPaid.create({
         data: {
           user: { connect: { id: reqUser.id } },
           course: { connect: { id } },
@@ -419,7 +428,7 @@ export default class PublicCourseController extends BaseController {
       }
       if (isBestSeller) {
         query.orderBy.push({
-          coursedPaid: {
+          coursesPaid: {
             _count: 'desc',
           },
         });
@@ -489,7 +498,7 @@ export default class PublicCourseController extends BaseController {
               avatar: true,
             },
           },
-          coursedPaid: {
+          coursesPaid: {
             include: {
               user: {
                 select: {
@@ -626,7 +635,7 @@ export default class PublicCourseController extends BaseController {
               avatar: true,
             },
           },
-          coursedPaid: {
+          coursesPaid: {
             include: {
               user: {
                 select: {

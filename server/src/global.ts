@@ -52,7 +52,7 @@ export enum CourseCategory {
   OTHER = 'OTHER',
 }
 
-export enum CoursedPaidStatus {
+export enum CoursesPaidStatus {
   PENDING = 'PENDING',
   SUCCESS = 'SUCCESS',
   FAILED = 'FAILED',
@@ -94,7 +94,7 @@ export type User = {
   hearts: Heart[];
   lessons: Lesson[];
   courses: Course[];
-  coursedPaid: CoursedPaid[];
+  coursesPaid: CoursesPaid[];
   submitForms: SubmitForm[];
   rating: Rating[];
   bookmarks: Bookmark[];
@@ -179,19 +179,19 @@ export type Course = {
   emojis: Emoji[];
   hearts: Heart[];
   parts: Part[];
-  coursedPaid: CoursedPaid[];
+  coursesPaid: CoursesPaid[];
   rating: Rating[];
   bookmarks: Bookmark[];
   courseDones: CourseDone[];
 };
 
-export type CoursedPaid = {
+export type CoursesPaid = {
   course: Course;
   courseId: number;
   user: User;
   userId: number;
   checkoutSessionId?: string;
-  status: CoursedPaidStatus;
+  status: CoursesPaidStatus;
 };
 
 export type Part = {

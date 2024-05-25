@@ -14,6 +14,7 @@ import FormController from './modules/form/form.controller';
 import BookmarkController from './modules/public/bookmark/bookmark.controller';
 import TestController from './modules/test/test.controller';
 import CartController from './modules/public/cart/cart.controller';
+import ReportController from './modules/report/report.controller';
 
 const controllers = [
   new UserController(),
@@ -28,6 +29,7 @@ const controllers = [
   new BookmarkController(),
   new TestController(),
   new CartController(),
+  new ReportController(),
 ];
 
 class App {

@@ -8,3 +8,4 @@ database/redis
 .DS_Store
 uploads
 emojis/*.svg
+yarn-error.log

@@ -1,7 +1,7 @@
 import { BaseController } from '../../../abstractions/base.controller';
 import passport from '../../../configs/passport';
 import { Request, Response } from 'express';
-import { CoursedPaidStatus, CourseStatus, ReqUser } from '../../../global';
+import { CoursesPaidStatus, CourseStatus, ReqUser } from '../../../global';
 import NotFoundException from '../../../exceptions/not-found';
 import HttpException from '../../../exceptions/http-exception';
 import xtripe from '../../../configs/xtripe';
@@ -69,11 +69,11 @@ export default class CartController extends BaseController {
       if (cOC) {
         throw new Error('Course already added to cart');
       }
-      const isBought = await this.prisma.coursedPaid.findFirst({
+      const isBought = await this.prisma.coursesPaid.findFirst({
         where: {
           courseId,
           userId: reqUser.id,
-          status: CoursedPaidStatus.SUCCESS,
+          status: CoursesPaidStatus.SUCCESS,
         },
       });
       if (isBought) {
@@ -193,7 +193,10 @@ export default class CartController extends BaseController {
       if (cart.coursesOnCarts.length === 0) {
         throw new HttpException(400, 'Cart is empty');
       }
-      const { courseIds } = req.body;
+      let { courseIds } = req.body;
+      if (courseIds instanceof String) {
+        courseIds = JSON.parse(courseIds as string);
+      }
       const gonnaCheckout = [];
       for (const _ of courseIds) {
         const courseId = parseInt(_);
@@ -212,11 +215,11 @@ export default class CartController extends BaseController {
         if (!cOC) {
           continue;
         }
-        const isBought = await this.prisma.coursedPaid.findFirst({
+        const isBought = await this.prisma.coursesPaid.findFirst({
           where: {
             courseId: courseId,
             userId: reqUser.id,
-            status: CoursedPaidStatus.SUCCESS,
+            status: CoursesPaidStatus.SUCCESS,
           },
         });
         if (isBought) {
@@ -230,6 +233,37 @@ export default class CartController extends BaseController {
       if (gonnaCheckout.length === 0) {
         throw new HttpException(400, 'No course to checkout');
       }
+      for (let i = 0; i < gonnaCheckout.length; i++) {
+        const _ = gonnaCheckout[i];
+        if (_.priceAmount !== 0) {
+          continue;
+        }
+        let uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        while (
+          await this.prisma.coursesPaid.findFirst({
+            where: { checkoutSessionId: `free-${uniqueSuffix}` },
+          })
+        ) {
+          uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        }
+        await this.prisma.coursesPaid.create({
+          data: {
+            course: { connect: { id: _.id } },
+            user: { connect: { id: reqUser.id } },
+            checkoutSessionId: `free-${uniqueSuffix}`,
+            status: CoursesPaidStatus.SUCCESS,
+          },
+        });
+        const cOC = await this.prisma.coursesOnCarts.findFirst({
+          where: { courseId: _.id, cartId: cart.id },
+        });
+        if (cOC) {
+          await this.prisma.coursesOnCarts.deleteMany({
+            where: { courseId: _.id, cartId: cart.id },
+          });
+        }
+        gonnaCheckout.splice(i, 1);
+      }
       const line_items = gonnaCheckout.map((_) => ({
         price: _.priceId as string,
         quantity: 1,
@@ -240,12 +274,12 @@ export default class CartController extends BaseController {
         success_url: `${process.env.PUBLIC_URL}`,
       });
       for (const _ of gonnaCheckout) {
-        await this.prisma.coursedPaid.create({
+        await this.prisma.coursesPaid.create({
           data: {
             course: { connect: { id: _.id } },
             user: { connect: { id: reqUser.id } },
             checkoutSessionId: checkout.id,
-            status: CoursedPaidStatus.PENDING,
+            status: CoursesPaidStatus.PENDING,
           },
         });
         const cOC = await this.prisma.coursesOnCarts.findFirst({
