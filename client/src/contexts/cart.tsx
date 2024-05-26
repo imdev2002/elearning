@@ -25,7 +25,7 @@ function CartProvider({ children }: { children: React.ReactNode }) {
         const res = await cartApiRequest.get()
         if (res.status === 200) setCart(res.payload)
       })()
-  }, [cartRefresh])
+  }, [cartRefresh, setCart])
   return (
     <CartContext.Provider value={{ cart, setCart, setCartRefresh }}>
       {children}

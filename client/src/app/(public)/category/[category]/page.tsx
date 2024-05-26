@@ -12,7 +12,7 @@ type Props = {
 const CoursesByCategory = async ({ params }: Props) => {
   const { category } = params
   const categoryParam = category.replace(/-/g, '_').toUpperCase()
-  const { payload: courses } = await coursePublicApiRequests.getList(
+  const { payload } = await coursePublicApiRequests.getList(
     `?categories=${categoryParam}`
   )
   const header = CATEGORIES.find((c) => c.path.includes(category))
@@ -27,7 +27,7 @@ const CoursesByCategory = async ({ params }: Props) => {
         <SearchCourse />
       </div>
       <div className="grid grid-cols-4 gap-4">
-        {courses.map((course: any) => (
+        {payload.courses.map((course: any) => (
           <CourseCard key={course.id} data={course} />
         ))}
       </div>
