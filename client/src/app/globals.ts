@@ -182,7 +182,7 @@ export type Course = {
   hearts: Heart[]
   parts: Part[]
   certificates: Certificate[]
-  coursedPaid: CoursedPaid[]
+  coursesPaid: CoursedPaid[]
   rating: Rating[]
   bookmarks: Bookmark[]
   Lesson: Lesson[]

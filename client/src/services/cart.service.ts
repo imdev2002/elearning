@@ -1,16 +1,21 @@
 import http from '@/lib/http'
 
 export const cartApiRequest = {
-  get: () => http.get('-public/carts'),
+  get: () =>
+    http.get('-public/carts', {
+      headers: {
+        cache: 'no-store',
+      },
+    }),
 
   add: (courseId: number) =>
     http.post('-public/carts/actions/add', { courseId }),
 
-  remove: (courseId: number) =>
-    http.post('-public/carts/actions/remove', { courseId }),
+  remove: (courseIds: number[]) =>
+    http.post('-public/carts/actions/remove', { courseIds }),
 
   clear: () => http.post('-public/carts/actions/clear', {}),
 
-  checkout: (coursesId: number[]) =>
-    http.post('-public/carts/actions/checkout', { coursesId }),
+  checkout: (courseIds: number[]) =>
+    http.post('-public/carts/actions/checkout', { courseIds }),
 }

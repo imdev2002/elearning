@@ -2,6 +2,7 @@
 
 import { Course } from '@/app/globals'
 import { useAccountContext } from '@/contexts/account'
+import { useCart } from '@/contexts/cart'
 import { generateMediaLink } from '@/lib/utils'
 import { cartApiRequest } from '@/services/cart.service'
 import { coursePublicApiRequests } from '@/services/course.service'
@@ -18,13 +19,14 @@ type Props = {
 
 const CourseSidebar = ({ data }: Props) => {
   const { coursesHearted, setCoursesHearted } = useAccountContext()
+  const { setCartRefresh } = useCart()
   const { refresh } = useRouter()
   const { thumbnail, courseName, priceAmount, id, parts } = data
   const { user } = useAccountContext()
   const isAuth = !!user?.email
   // const isHearted =
   console.log(data.parts)
-  const isBought = data.coursedPaid.some(
+  const isBought = data?.coursesPaid?.some(
     (item) => item.userId === user?.id && item.status === 'SUCCESS'
   )
   const heartCourseToggle = async () => {
@@ -67,7 +69,7 @@ const CourseSidebar = ({ data }: Props) => {
       const res = await cartApiRequest.add(id)
       if (res.status === 200) {
         toast.success('Added course to cart')
-        refresh()
+        setCartRefresh((prevState: boolean) => !prevState)
       }
     } catch (error) {}
   }

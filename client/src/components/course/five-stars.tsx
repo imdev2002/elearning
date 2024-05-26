@@ -2,13 +2,19 @@
 
 import { cn } from '@/lib/utils'
 import { Star } from 'lucide-react'
+import { useRef, useState } from 'react'
 
 type FiveStarsProps = {
   starRated?: number
   className?: string
+  isControlled?: boolean
 }
 
-const FiveStars = ({ starRated = 0, className }: FiveStarsProps) => {
+const FiveStars = ({
+  starRated = 0,
+  className,
+  isControlled = false,
+}: FiveStarsProps) => {
   const widthPercentage = (starRated / 5) * 100
   return (
     <div className={cn('flex justify-center relative w-fit', className)}>

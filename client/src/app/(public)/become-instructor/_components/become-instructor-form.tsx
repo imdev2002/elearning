@@ -30,10 +30,9 @@ const BecomeInstructorForm = ({ data }: Props) => {
     )
   const isDisabledInput =
     differenceInDays(new Date(data?.updatedAt), new Date()) >= 15 ||
-    !data ||
-    !isManager
-      ? false
-      : true
+    !!data.id ||
+    (!isManager ? false : true)
+  console.log('BecomeInstructorForm  isDisabledInput:', isDisabledInput)
   const { refresh } = useRouter()
   const form = useForm<BecomeInstructorBodyType>({
     resolver: zodResolver(BecomeInstructorBody),

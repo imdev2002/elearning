@@ -1,15 +1,9 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { Pagination, PaginationItemType } from '@nextui-org/react'
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronUpIcon,
-  ChevronsUpIcon,
-} from 'lucide-react'
+import { Button, Pagination, PaginationItemType } from '@nextui-org/react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { use } from 'react'
 
 const MyCoursePagination = () => {
   return (
@@ -18,7 +12,7 @@ const MyCoursePagination = () => {
       showControls
       total={10}
       initialPage={1}
-      className="gap-2"
+      className="gap-2 rounded-md"
       radius="full"
       renderItem={RenderItem}
       variant="light"
@@ -36,56 +30,58 @@ const RenderItem = ({
   onNext,
   onPrevious,
   setPage,
-  className,
+  className = '!rounded-md',
 }: any) => {
-  const { push } = useRouter()
+  const { replace } = useRouter()
   const searchParams = useSearchParams()
   const currentPage = searchParams.get('page') || 1
+  const params = new URLSearchParams()
   if (value === PaginationItemType.NEXT) {
     return (
-      <button
+      <Button
         key={key}
         className={cn(className, 'bg-default-200/50 min-w-8 w-8 h-8')}
         onClick={onNext}
+        isIconOnly
       >
-        <ChevronLeft className="rotate-180" />
-      </button>
+        <ChevronRight />
+      </Button>
     )
   }
 
   if (value === PaginationItemType.PREV) {
     return (
-      <button
+      <Button
         key={key}
         className={cn(className, 'bg-default-200/50 min-w-8 w-8 h-8')}
         onClick={onPrevious}
+        isIconOnly
       >
-        <ChevronRight />
-      </button>
+        <ChevronLeft />
+      </Button>
     )
   }
 
   if (value === PaginationItemType.DOTS) {
     return (
-      <button key={key} className={className}>
+      <Button key={key} className={className}>
         ...
-      </button>
+      </Button>
     )
   }
 
   // cursor is the default item
   return (
-    <button
+    <Button
       ref={ref}
       key={key}
-      className={cn(
-        className,
-        isActive &&
-          'text-white bg-gradient-to-br from-indigo-500 to-pink-500 font-bold'
-      )}
-      onClick={() => setPage(value)}
+      className={cn(className, isActive && 'text-white bg-primary font-bold')}
+      onClick={() => {
+        setPage(value)
+        replace(`?page=${value}`)
+      }}
     >
       {value}
-    </button>
+    </Button>
   )
 }

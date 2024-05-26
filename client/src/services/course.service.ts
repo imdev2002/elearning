@@ -17,8 +17,8 @@ export const courseManagerApiRequests: any = {
       },
     }),
 
-  getList: (access_token: string) =>
-    http.get('/courses', {
+  getList: (access_token: string, params?: string) =>
+    http.get(`/courses?${params}`, {
       headers: {
         Authorization: `Bearer ${access_token}`,
         cache: 'no-store',
@@ -49,7 +49,7 @@ export const courseManagerApiRequests: any = {
 
 export const coursePublicApiRequests = {
   getList: (params: string = '') =>
-    http.get<CourseResType[]>(`-public/courses` + params, {
+    http.get<CourseResType>(`-public/courses` + params, {
       cache: 'no-store',
     }),
 

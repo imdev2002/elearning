@@ -13,7 +13,7 @@ const NavigationSwiper = () => {
       <Button
         onClick={() => swiper.slidePrev()}
         isIconOnly
-        className="rounded-full absolute top-2/4 -translate-y-2/4 -translate-x-2/4 left-0 z-50"
+        className="rounded-full absolute top-2/4 -translate-y-2/4 -translate-x-2/4 left-0 z-10"
         color="primary"
         // disabled={!swiper.allowSlidePrev}
       >
@@ -22,7 +22,7 @@ const NavigationSwiper = () => {
       <Button
         onClick={() => swiper.slideNext()}
         isIconOnly
-        className="rounded-full absolute top-2/4 -translate-y-2/4 translate-x-2/4 right-0 z-50"
+        className="rounded-full absolute top-2/4 -translate-y-2/4 translate-x-2/4 right-0 z-10"
         color="primary"
         // disabled={!swiper.allowSlideNext}
       >

@@ -143,6 +143,7 @@ const CourseForm = ({ defaultValues }: Props) => {
               render={({ field }) => (
                 <Input
                   isRequired
+                  autoFocus
                   // label="Knowledge Gained"
                   // labelPlacement="outside"
                   placeholder="Enter your description"

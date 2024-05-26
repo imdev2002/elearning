@@ -8,6 +8,7 @@ import { Progress } from '@nextui-org/react'
 import { CircleCheckBig, Clock, FolderOpen, SquarePlay } from 'lucide-react'
 import CourseSidebar from '@/app/(public)/course/_components/course-sidebar'
 import ReactionsSection from '@/components/reactions'
+import RatingCourseModal from '@/app/(public)/course/_components/rating-course-modal'
 
 type Props = {
   params: {
@@ -95,10 +96,13 @@ const page = async ({ params }: Props) => {
           <div className="space-y-4">
             <p className="text-2xl font-semibold">Ratings</p>
             <div className="flex gap-8 w-full">
-              <div className="aspect-square p-8 border rounded-md space-y-1 text-center">
-                <p className="text-6xl font-bold">{avgRating?.toFixed(1)}</p>
-                <FiveStars className="mx-auto" starRated={avgRating} />
-                <p className="text-nowrap">Course Rating</p>
+              <div>
+                <div className="aspect-square p-8 border rounded-md space-y-1 text-center">
+                  <p className="text-6xl font-bold">{avgRating?.toFixed(1)}</p>
+                  <FiveStars className="mx-auto" starRated={avgRating} />
+                  <p className="text-nowrap">Course Rating</p>
+                </div>
+                <RatingCourseModal />
               </div>
               <div className="w-full flex flex-col justify-around">
                 {Array(5)

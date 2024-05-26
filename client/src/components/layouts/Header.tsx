@@ -43,11 +43,11 @@ const menuItems = [
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { user } = useAccountContext()
-  const isManager =
-    user &&
-    user.roles.some(
-      (role) => role.role.name === 'ADMIN' || role.role.name === 'AUTHOR'
-    )
+  const isManager = user?.roles
+    ? user.roles.some(
+        (role) => role.role.name === 'ADMIN' || role.role.name === 'AUTHOR'
+      )
+    : false
   return (
     <Navbar
       isBordered
@@ -146,7 +146,7 @@ const Header = () => {
 
       <NavbarContent justify="end">
         <ThemeSwitcher />
-        <CartPopover />
+        {user && <CartPopover />}
         {user ? (
           <NavbarItem>
             <UserDropdown />

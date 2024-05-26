@@ -2,8 +2,10 @@
 
 import ActionRequestModal from '@/app/(manager)/forms/_components/action-request-modal'
 import { displayFullname, generateMediaLink } from '@/lib/utils'
+import { formApiRequest } from '@/services/form.service'
 import {
   Avatar,
+  Button,
   Table,
   TableBody,
   TableCell,
@@ -13,12 +15,25 @@ import {
   Tooltip,
 } from '@nextui-org/react'
 import { formatDate } from 'date-fns'
+import { Check, X } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
 
 type Props = {
   data: any
 }
 
 const RequestsTable = ({ data }: Props) => {
+  const { refresh } = useRouter()
+  const updateRequest = async (id: number, status: string) => {
+    try {
+      const res = await formApiRequest.update(id, { status })
+      if (res.status === 200) {
+        toast.success('Request updated successfully')
+        refresh()
+      }
+    } catch (error) {}
+  }
   return (
     <Table aria-label="Example empty table">
       <TableHeader>
@@ -48,8 +63,30 @@ const RequestsTable = ({ data }: Props) => {
             <TableCell>
               {formatDate(new Date(form.updatedAt), 'MM/dd/yyyy')}
             </TableCell>
-            <TableCell>
+            <TableCell className="flex gap-2 items-center">
               <ActionRequestModal data={form} />
+              <Tooltip content="Accept">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  color="success"
+                  onClick={() => updateRequest(form.id, 'APPROVED')}
+                >
+                  <Check size={16} />
+                </Button>
+              </Tooltip>
+              <Tooltip content="Reject">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  isIconOnly
+                  color="danger"
+                  onClick={() => updateRequest(form.id, 'REJECTED')}
+                >
+                  <X size={16} />
+                </Button>
+              </Tooltip>
             </TableCell>
           </TableRow>
         ))}

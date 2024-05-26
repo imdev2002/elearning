@@ -23,7 +23,7 @@ import React from 'react'
 import { toast } from 'react-toastify'
 
 type CourseType = {
-  data: CourseResType
+  data: any
   isAuth?: boolean
 }
 
@@ -38,7 +38,7 @@ const CourseCard = ({ data, isAuth = false }: CourseType) => {
     thumbnail,
     priceAmount,
     status,
-    coursedPaid,
+    coursesPaid,
     avgRating,
   } = data
   const categoryName = CATEGORIES.find((cat) => cat.value === category)?.name
@@ -116,7 +116,10 @@ const CourseCard = ({ data, isAuth = false }: CourseType) => {
           <FiveStars starRated={avgRating ?? 0} />
           <div className="flex gap-2 items-center">
             <UsersRound size={14} />
-            <span>{coursedPaid?.length ?? 0}</span>
+            <span>
+              {coursesPaid?.filter((item: any) => item.status === 'SUCCESS')
+                ?.length ?? 0}
+            </span>
           </div>
         </div>
       </CardHeader>

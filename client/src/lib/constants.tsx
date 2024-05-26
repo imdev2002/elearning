@@ -131,7 +131,7 @@ export const CATEGORIES = [
     name: 'Photography',
     value: 'PHOTOGRAPHY',
     icon: <Camera />,
-    path: '/category/',
+    path: '/category/photography',
     description:
       'Capture moments beautifully and master the art of photography in the Photography category! 📸🌅',
   },
@@ -139,7 +139,7 @@ export const CATEGORIES = [
     name: 'Music',
     value: 'MUSIC',
     icon: <BoomBox />,
-    path: '/category/',
+    path: '/category/music',
     description:
       'Dive into the world of music and express yourself through rhythm and melodies in the Music category! 🎵🎶',
   },
@@ -147,7 +147,7 @@ export const CATEGORIES = [
     name: 'Health',
     value: 'HEALTH',
     icon: <HandHeart />,
-    path: '/category/',
+    path: '/category/health',
     description:
       'Prioritize your well-being and learn how to maintain a healthy lifestyle in the Health category! 🍏🏋️‍♂️',
   },
@@ -155,7 +155,7 @@ export const CATEGORIES = [
     name: 'Fitness',
     value: 'FITNESS',
     icon: <Dumbbell />,
-    path: '/category/',
+    path: '/category/fitness',
     description:
       'Break a sweat and stay active with fitness routines and exercise tips in the Fitness category! 💪🏃‍♀️',
   },
@@ -163,7 +163,7 @@ export const CATEGORIES = [
     name: 'Lifestyle',
     value: 'LIFESTYLE',
     icon: <Split />,
-    path: '/category/',
+    path: '/category/lifestyle',
     description:
       'Explore various aspects of modern living and find inspiration for a fulfilling lifestyle in the Lifestyle category! 🌿🛋️',
   },
@@ -171,7 +171,7 @@ export const CATEGORIES = [
     name: 'Teaching',
     value: 'TEACHING',
     icon: <School />,
-    path: '/category/',
+    path: '/category/teaching',
     description:
       'Share knowledge and empower others through effective teaching strategies in the Teaching category! 📚👩‍🏫',
   },
@@ -179,7 +179,7 @@ export const CATEGORIES = [
     name: 'Academics',
     value: 'ACADEMICS',
     icon: <BookText />,
-    path: '/category/',
+    path: '/category/academics',
     description:
       'Expand your knowledge and excel in your academic pursuits with resources in the Academics category! 📖🎓',
   },
@@ -187,7 +187,7 @@ export const CATEGORIES = [
     name: 'Language',
     value: 'LANGUAGE',
     icon: <Languages />,
-    path: '/category/',
+    path: '/category/language',
     description:
       'Immerse yourself in new languages and broaden your communication skills in the Language category! 🗣️🌍',
   },
@@ -195,7 +195,7 @@ export const CATEGORIES = [
     name: 'Other',
     value: 'OTHER',
     icon: <GitBranchPlus />,
-    path: '/category/',
+    path: '/category/other',
     description:
       'Discover diverse topics and explore a variety of interests in the Other category! 🌐🔍',
   },

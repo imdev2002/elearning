@@ -23,7 +23,7 @@ const SearchCourse = () => {
         placeholder="Search..."
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            push(`/search?search=${keyword}`)
+            push(`/search?keyword=${keyword}&orderby=newest`)
           }
         }}
       />

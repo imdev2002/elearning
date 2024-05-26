@@ -30,7 +30,7 @@ const FormTabs = ({ data }: Props) => {
       </Tab>
       <Tab key="videos" title="ACCEPTED">
         <RequestsTable
-          data={data.filter((item: any) => item?.status === 'ACCEPTED')}
+          data={data.filter((item: any) => item?.status === 'APPROVED')}
         />
       </Tab>
     </Tabs>

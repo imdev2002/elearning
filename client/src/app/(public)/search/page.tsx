@@ -1,40 +1,20 @@
-'use client'
-
-import { Select, SelectItem } from '@nextui-org/react'
-import Link from 'next/link'
+import Filter from '@/app/(public)/search/_components/filter'
+import { coursePublicApiRequests } from '@/services/course.service'
 
 type Props = {
+  params: { slug: string }
   searchParams: { [key: string]: string | string[] | undefined }
 }
-const page = ({ searchParams }: Props) => {
-  const { search } = searchParams
-  const params = new URLSearchParams()
-  params.append('search', search as string)
-  params.append('tesst', 'ac')
+
+const page = async ({ searchParams }: Props) => {
+  const { categories, keyword } = searchParams
+  console.log('page  categories:', categories)
+  const { payload } = await coursePublicApiRequests.getList(
+    `?search=${keyword}&categories=${categories ?? ''}`
+  )
   return (
     <div>
-      <Select
-        label="Favorite Animal"
-        placeholder="Select an animal"
-        disabledKeys={[
-          'zebra',
-          'tiger',
-          'lion',
-          'elephant',
-          'crocodile',
-          'whale',
-        ]}
-        className="max-w-xs"
-      >
-        <SelectItem key="newest" value="">
-          Newest
-        </SelectItem>
-        <SelectItem key="newest" value="">
-          Newest
-        </SelectItem>
-      </Select>
-      keyword: {search}
-      <Link href={params.toString()}>click</Link>
+      <Filter data={payload} />
     </div>
   )
 }

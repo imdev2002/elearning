@@ -125,12 +125,12 @@ export default async function Home() {
       </div>
       <div className="w-full space-y-4">
         <Heading title="Best selling courses" />
-        <ListCardSlider data={listCourses} />
+        <ListCardSlider data={listCourses.courses} />
       </div>
       <div className="space-y-4">
         <Heading title="Recent courses" />
         <div className="grid grid-cols-4 gap-4">
-          {listCourses.map((course, index) => (
+          {listCourses.courses.map((course, index) => (
             <CourseCard key={index} data={course} />
           ))}
         </div>

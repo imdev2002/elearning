@@ -4,7 +4,7 @@ import CreateLessonModal from '@/app/(manager)/my-courses/_components/create-les
 import DeleteLessonModal from '@/app/(manager)/my-courses/_components/delete-lesson-modal'
 import EditLessonModal from '@/app/(manager)/my-courses/_components/edit-lesson-modal'
 import PartCourseForm from '@/app/(manager)/my-courses/_components/part-course-form'
-import { Course, Lesson, Part } from '@/app/globals'
+import { Course, Lesson, LessonType, Part } from '@/app/globals'
 import { cn, formatDuration, formatVideoDuration } from '@/lib/utils'
 import { courseManagerApiRequests } from '@/services/course.service'
 import { userApiRequest } from '@/services/user.service'
@@ -17,6 +17,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  ScrollShadow,
   useDisclosure,
 } from '@nextui-org/react'
 import {
@@ -130,6 +131,7 @@ const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
           </ModalContent>
         </Modal>
       )}
+
       <Accordion
         variant="bordered"
         selectionMode="multiple"
@@ -160,60 +162,63 @@ const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
               ) : null
             }
           >
-            {part.lessons.map((lesson: Lesson, index: number) => (
-              <div
-                key={lesson.id}
-                className={cn(
-                  'flex justify-between px-4 py-1 rounded-sm',
-                  Number(lessonId) === lesson.id && 'bg-default-300'
-                )}
-                onClick={() => {
-                  if (lessonId) push(`?lesson=${lesson.id}`)
-                }}
-              >
-                <div className="flex gap-2 items-center group">
-                  {lesson.lessonType === 'VIDEO' ? (
-                    Number(lessonId) === lesson.id ? (
-                      <Pause size={14} />
-                    ) : (
-                      <Play size={14} />
-                    )
-                  ) : (
-                    <File size={14} />
+            {part.lessons
+              .sort((a: Lesson, b: Lesson) => a.lessonNumber - b.lessonNumber)
+              .map((lesson: Lesson, index: number) => (
+                <div
+                  key={lesson.id}
+                  className={cn(
+                    'flex justify-between px-4 py-1 rounded-sm',
+                    Number(lessonId) === lesson.id && 'bg-default-300'
                   )}
-                  {lesson.lessonName}
-                  {!lessonId &&
-                    (isAuth ? (
-                      <div className="flex items-center gap-2">
-                        <EditLessonModal data={lesson} />
-                        <DeleteLessonModal lessonId={lesson.id} />
-                      </div>
+                  onClick={() => {
+                    if (lessonId) push(`?lesson=${lesson.id}`)
+                  }}
+                >
+                  <div className="flex gap-2 items-center group">
+                    {lesson.lessonType === 'VIDEO' ? (
+                      Number(lessonId) === lesson.id ? (
+                        <Pause size={14} />
+                      ) : (
+                        <Play size={14} />
+                      )
                     ) : (
-                      <span
-                        className={cn(
-                          'opacity-0 transition-all group-hover:opacity-100',
-                          lesson.trialAllowed ? 'cursor-pointer' : ''
-                        )}
-                      >
-                        {lesson.trialAllowed ? (
-                          <Eye size={16} />
-                        ) : (
-                          <Lock size={16} />
-                        )}
-                      </span>
-                    ))}
+                      <File size={14} />
+                    )}
+                    {lesson.lessonName}
+                    {!lessonId &&
+                      (isAuth ? (
+                        <div className="flex items-center gap-2">
+                          <EditLessonModal data={lesson} />
+                          <DeleteLessonModal lessonId={lesson.id} />
+                        </div>
+                      ) : (
+                        <span
+                          className={cn(
+                            'opacity-0 transition-all group-hover:opacity-100',
+                            lesson.trialAllowed ? 'cursor-pointer' : ''
+                          )}
+                        >
+                          {lesson.trialAllowed ? (
+                            <Eye size={16} />
+                          ) : (
+                            <Lock size={16} />
+                          )}
+                        </span>
+                      ))}
+                  </div>
+                  <span className="text-slate-400">
+                    {lesson.lessonType === 'VIDEO'
+                      ? formatVideoDuration(lesson.duration)
+                      : '5.3 MB'}
+                  </span>
                 </div>
-                <span className="text-slate-400">
-                  {lesson.lessonType === 'VIDEO'
-                    ? formatVideoDuration(lesson.duration)
-                    : '5.3 MB'}
-                </span>
-              </div>
-            ))}
+              ))}
             {isAuth && <CreateLessonModal data={part} />}
           </AccordionItem>
         ))}
       </Accordion>
+
       {isAuth && (
         <Button
           className="w-full flex items-center gap-x-2 mt-4"

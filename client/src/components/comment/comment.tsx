@@ -22,6 +22,7 @@ import {
 } from '@nextui-org/react'
 import { formatDistanceToNow } from 'date-fns'
 import { ChevronUp, Ellipsis, MessagesSquare, Reply } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 
@@ -32,6 +33,7 @@ type Props = {
 }
 
 const Comment = ({ data, comment, type = 'course' }: Props) => {
+  const { refresh } = useRouter()
   const { user } = useAccountContext()
   const isAuth = !!user?.email
   const isOwner = user?.id === comment.user.id
@@ -60,6 +62,7 @@ const Comment = ({ data, comment, type = 'course' }: Props) => {
           : await lessonPublicApiRequest.deleteComment(comment.id)
       if (res.status === 200) {
         toast.success('Deleted comment!')
+        refresh()
       }
     } catch (error) {}
   }
@@ -172,7 +175,7 @@ const Comment = ({ data, comment, type = 'course' }: Props) => {
 
                 {childrenComments.length > 0 && (
                   <div
-                    className="cursor-pointer flex gap-1 items-center"
+                    className="cursor-pointer flex gap-1 items-center w-fit"
                     onClick={toggleReplies}
                   >
                     {showReplies ? (

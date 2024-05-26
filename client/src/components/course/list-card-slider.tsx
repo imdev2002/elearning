@@ -7,7 +7,7 @@ import { Navigation, Pagination, A11y } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 type Props = {
-  data: CourseResType[]
+  data: any
 }
 
 const ListCardSlider = ({ data }: Props) => {
@@ -21,7 +21,7 @@ const ListCardSlider = ({ data }: Props) => {
           slidesPerView="auto"
           // navigation
         >
-          {data.map((course) => (
+          {data.map((course: any) => (
             <SwiperSlide key={course.id}>
               <CourseCard data={course} />
             </SwiperSlide>
