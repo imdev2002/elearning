@@ -164,11 +164,12 @@ const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
                   key={lesson.id}
                   className={cn(
                     'flex justify-between px-4 py-1 rounded-sm cursor-pointer',
-                    (Number(lessonId) === lesson.id && 'bg-default-300') ||
-                      ((lesson.lessonNumber >=
-                        part.lessons[part.lessons.length - 1].lessonNumber ||
-                        !isAuth) &&
-                        'pointer-events-none opacity-50')
+                    Number(lessonId) === lesson.id && 'bg-default-300'
+                    // ||
+                    //   ((lesson.lessonNumber >
+                    //     part.lessons[part.lessons.length - 1].lessonNumber ||
+                    //     !isAuth) &&
+                    //     'pointer-events-none opacity-50')
                   )}
                   onClick={() => {
                     if (lessonId) push(`?lesson=${lesson.id}`)
@@ -217,7 +218,7 @@ const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
                   <span className="text-slate-400">
                     {lesson.lessonType === 'VIDEO'
                       ? formatVideoDuration(lesson.duration)
-                      : '5.3 MB'}
+                      : ''}
                   </span>
                 </div>
               ))}

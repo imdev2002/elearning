@@ -34,7 +34,7 @@ export const userApiRequest = {
 
   getCourseBought: () => http.get('/users/actions/bought'),
 
-  getWishList: () => http.get('/users/actions/hearted'),
+  getWishList: () => http.get('/users/actions/hearted', { cache: 'no-store' }),
 
   getForm: (access_token: string) =>
     http.get('/users/actions/forms', {

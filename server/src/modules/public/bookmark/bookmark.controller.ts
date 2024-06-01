@@ -41,6 +41,9 @@ export default class BookmarkController extends BaseController {
           course: { select: { thumbnail: true, courseName: true } },
           lesson: {
             select: {
+              part: {
+                select: { courseId: true },
+              },
               thumbnailPath: true,
               lessonName: true,
             },

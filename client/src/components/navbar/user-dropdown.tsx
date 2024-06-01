@@ -51,6 +51,9 @@ export const UserDropdown = () => {
         >
           My Profile
         </DropdownItem>
+        <DropdownItem key="bookmarks" onClick={() => push(`/bookmarks`)}>
+          Lessons bookmarked
+        </DropdownItem>
         {/* <DropdownItem key="analytics">Analytics</DropdownItem>
         <DropdownItem key="system">System</DropdownItem>
         <DropdownItem key="configurations">Configurations</DropdownItem> */}

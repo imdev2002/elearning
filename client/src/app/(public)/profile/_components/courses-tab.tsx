@@ -25,7 +25,7 @@ const CoursesTab = ({ profile }: Props) => {
         const res = await coursePublicApiRequests.getList(
           `?byAuthor=${profile.id}&myOwn=${isMe}`
         )
-        if (res.status === 200) setCourses(res.payload)
+        if (res.status === 200) setCourses(res.payload.courses)
       } catch (error) {}
     }
     async function fetchCoursesBought() {
@@ -33,7 +33,7 @@ const CoursesTab = ({ profile }: Props) => {
         const res = await userApiRequest.getCourseBought()
         if (res.status === 200) {
           const result = (res.payload as any).map((item: any) => item.course)
-          setCourses(result)
+          setCourses(result.courses)
         }
       } catch (error) {}
     }

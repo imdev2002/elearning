@@ -31,6 +31,10 @@ export const SidebarWrapper = () => {
   const { collapsed, setCollapsed } = useSidebarContext()
   const { user } = useAccountContext()
 
+  const isAdmin = user?.roles
+    ? user.roles.some((role) => role.role.name === 'ADMIN')
+    : false
+
   return (
     <aside className="h-screen z-[20] sticky top-0">
       {collapsed ? (
@@ -47,60 +51,43 @@ export const SidebarWrapper = () => {
         </Link>
         <div className="flex flex-col justify-between h-full">
           <div className={Sidebar.Body()}>
-            <SidebarItem
-              title="Dashboard"
-              icon={<HomeIcon />}
-              isActive={pathname === '/dashboard'}
-              href="/dashboard"
-            />
-            <SidebarMenu title="Manage">
-              {dashboardNavigation.map((item, index) => (
+            {isAdmin ? (
+              <>
                 <SidebarItem
-                  key={index}
-                  isActive={pathname === item.pathname}
-                  title={item.title}
-                  icon={item.icon}
-                  href={item.pathname}
+                  title="Dashboard"
+                  icon={<HomeIcon />}
+                  isActive={pathname === '/dashboard'}
+                  href="/dashboard"
                 />
-              ))}
-              {/* <SidebarItem
-                isActive={pathname === '/accounts'}
-                title="Accounts"
-                icon={<AccountsIcon />}
-                href="accounts"
-              /> */}
-              {/* <SidebarItem
-                isActive={pathname === '/payments'}
-                title="Payments"
-                icon={<PaymentsIcon />}
-              />
-              <CollapseItems
-                icon={<BalanceIcon />}
-                items={['Banks Accounts', 'Credit Cards', 'Loans']}
-                title="Balances"
-              />
-              <SidebarItem
-                isActive={pathname === '/customers'}
-                title="Customers"
-                icon={<CustomersIcon />}
-              />
-              <SidebarItem
-                isActive={pathname === '/products'}
-                title="Products"
-                icon={<ProductsIcon />}
-              />
-              <SidebarItem
-                isActive={pathname === '/reports'}
-                title="Reports"
-                icon={<ReportsIcon />}
-              /> */}
-            </SidebarMenu>
+                <SidebarMenu title="Manage">
+                  {dashboardNavigation.map((item, index) => (
+                    <SidebarItem
+                      key={index}
+                      isActive={pathname === item.pathname}
+                      title={item.title}
+                      icon={item.icon}
+                      href={item.pathname}
+                    />
+                  ))}
+                </SidebarMenu>
+              </>
+            ) : (
+              <SidebarMenu title="Manage">
+                <SidebarItem
+                  isActive={pathname === '/my-courses'}
+                  title="My courses"
+                  icon={<ViewIcon />}
+                  href="/my-courses"
+                />
+              </SidebarMenu>
+            )}
 
             <SidebarMenu title="General">
               <SidebarItem
                 isActive={pathname === '/settings'}
                 title="Settings"
                 icon={<SettingsIcon />}
+                href={`profile/${user?.id}`}
               />
             </SidebarMenu>
           </div>

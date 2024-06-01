@@ -18,7 +18,7 @@ const CartContext = createContext<BookmarksContextType>({
 function BookmarksProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAccountContext()
   const [bookmarksRefresh, setBookmarksRefresh] = useState(false)
-  const [bookmarks, setBookmarks] = useState<any>()
+  const [bookmarks, setBookmarks] = useState<any>([])
   useEffect(() => {
     if (user?.email)
       (async () => {

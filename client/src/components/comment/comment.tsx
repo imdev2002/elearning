@@ -22,6 +22,7 @@ import {
 } from '@nextui-org/react'
 import { formatDistanceToNow } from 'date-fns'
 import { ChevronUp, Ellipsis, MessagesSquare, Reply } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
@@ -98,7 +99,7 @@ const Comment = ({ data, comment, type = 'course' }: Props) => {
       </Modal>
       <div className="mt-4">
         <div className="flex gap-2">
-          <div className="relative">
+          <Link href={`/profile/${comment.userId}`} className="relative">
             <Avatar
               src={generateMediaLink(comment.user.avatar ?? '')}
               size="sm"
@@ -108,7 +109,7 @@ const Comment = ({ data, comment, type = 'course' }: Props) => {
               )}
             />
             {/* <span className="absolute w-[2px] inset-y-0 bg-default-300 -translate-x-2/4 left-2/4"></span> */}
-          </div>
+          </Link>
 
           {isEditing ? (
             <ActionComment
@@ -124,12 +125,15 @@ const Comment = ({ data, comment, type = 'course' }: Props) => {
             <div className="w-full">
               <div className="rounded-md bg-default-100 py-2 px-4">
                 <div className="flex items-center gap-2">
-                  <p className="font-semibold">
+                  <Link
+                    href={`/profile/${comment.userId}`}
+                    className="font-semibold"
+                  >
                     {displayFullname(
                       comment.user.firstName,
                       comment.user.lastName
                     )}
-                  </p>
+                  </Link>
                   <p className="text-xs">
                     {formatDistanceToNow(new Date(comment.timestamp)) + ' ago.'}
                   </p>

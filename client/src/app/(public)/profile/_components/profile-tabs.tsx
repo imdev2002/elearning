@@ -41,9 +41,11 @@ const ProfileTabs = ({ data }: Props) => {
         tabList: 'w-full max-w-full',
       }}
     >
-      <Tab key="courses" title="Courses">
-        <CoursesTab profile={data} />
-      </Tab>
+      {(isMe || isInstructor) && (
+        <Tab key="courses" title="Courses">
+          <CoursesTab profile={data} />
+        </Tab>
+      )}
       {isMe && (
         <Tab key="wish-list" title="Wish list">
           <WishListTab />

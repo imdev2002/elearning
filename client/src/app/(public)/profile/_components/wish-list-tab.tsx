@@ -5,19 +5,22 @@ import Empty from '@/components/empty'
 import { useAccountContext } from '@/contexts/account'
 import { cn } from '@/lib/utils'
 import { userApiRequest } from '@/services/user.service'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 
 const WishListTab = () => {
-  const { coursesHearted, setCoursesHearted } = useAccountContext()
-  useEffect(() => {
-    ;(async function () {
-      try {
-        const res = await userApiRequest.getWishList()
-        if (res.status === 200)
-          setCoursesHearted((res.payload as any)?.courseHearted)
-      } catch (error) {}
-    })()
-  }, [])
+  const { coursesHearted, setCoursesHearted, setRefreshAccountContex } =
+    useAccountContext()
+  // useEffect(() => {
+  //   ;(async function () {
+  //     try {
+  //       const res = await userApiRequest.getWishList()
+  //       if (res.status === 200) {
+  //         setCoursesHearted((res.payload as any)?.courseHearted)
+  //         setRefreshAccountContex((prev: boolean) => !prev)
+  //       }
+  //     } catch (error) {}
+  //   })()
+  // }, [])
   return (
     <div
       className={cn(

@@ -18,6 +18,7 @@ const AccountContext = createContext<{
   setCoursesBought: (courses: any) => void
   coursesHearted: any
   setCoursesHearted: (courses: any) => void
+  setRefreshAccountContex: (courses: any) => void
 }>({
   user: null,
   setUser: () => {},
@@ -25,6 +26,7 @@ const AccountContext = createContext<{
   setCoursesBought: () => {},
   coursesHearted: [],
   setCoursesHearted: () => {},
+  setRefreshAccountContex: () => {},
 })
 export const useAccountContext = () => {
   const context = useContext(AccountContext)
@@ -47,6 +49,7 @@ export default function AccountProvider({
   const [user, setUser] = useState<User | null>(initUser)
   const [coursesBought, setCoursesBought] = useState<any>([])
   const [coursesHearted, setCoursesHearted] = useState<any>([])
+  const [refreshAccountContex, setRefreshAccountContex] = useState(false)
 
   useState(() => {
     if (typeof window !== 'undefined') {
@@ -82,22 +85,17 @@ export default function AccountProvider({
         if (user?.id) {
           const res = await userApiRequest.getWishList()
           if (res.status === 200) {
-            setCoursesHearted(res.payload)
+            setCoursesHearted((res.payload as any).courseHearted)
           }
         }
       } catch (error) {}
     }
-    if (!user?.avatar) {
+    if (user?.avatar) {
       fetchUser()
       getCoursesBought()
       getCoursesHearted()
     }
-  }, [
-    user?.avatar,
-    user?.id,
-    JSON.stringify(coursesBought),
-    JSON.stringify(coursesHearted),
-  ])
+  }, [refreshAccountContex])
 
   return (
     <AccountContext.Provider
@@ -108,6 +106,7 @@ export default function AccountProvider({
         setCoursesBought,
         coursesHearted,
         setCoursesHearted,
+        setRefreshAccountContex,
       }}
     >
       {children}

@@ -41,7 +41,7 @@ const CourseCard = ({ data, isAuth = false }: CourseType) => {
     coursesPaid,
     avgRating,
   } = data
-  const amountBought = coursesPaid.reduce((acc: any, current: any) => {
+  const amountBought = coursesPaid?.reduce((acc: any, current: any) => {
     const x = acc.find((item: any) => item.userId === current.userId)
     if (!x) {
       return acc.concat([current])

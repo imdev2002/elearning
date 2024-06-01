@@ -252,7 +252,7 @@ export default class CourseController extends BaseController {
       });
       await xtripe.products.update(course.productId as string, {
         name: courseName,
-        description: descriptionMD,
+        // description: descriptionMD,
         default_price: _price.id,
       });
 

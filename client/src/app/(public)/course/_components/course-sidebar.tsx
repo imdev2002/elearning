@@ -6,11 +6,13 @@ import { useCart } from '@/contexts/cart'
 import { generateMediaLink } from '@/lib/utils'
 import { cartApiRequest } from '@/services/cart.service'
 import { coursePublicApiRequests } from '@/services/course.service'
+import { userApiRequest } from '@/services/user.service'
 import { Button, Divider } from '@nextui-org/react'
 import { FileBadge } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 
 type Props = {
@@ -18,13 +20,18 @@ type Props = {
 }
 
 const CourseSidebar = ({ data }: Props) => {
-  const { coursesHearted, setCoursesHearted } = useAccountContext()
+  const { coursesHearted, setCoursesHearted, setRefreshAccountContex } =
+    useAccountContext()
+  console.log('CourseSidebar  coursesHearted:', coursesHearted)
   const { setCartRefresh } = useCart()
   const { refresh } = useRouter()
   const { thumbnail, courseName, priceAmount, id, parts } = data
   const { user } = useAccountContext()
   const isAuth = !!user?.email
-  // const isHearted =
+  const isHearted =
+    coursesHearted.length > 0
+      ? coursesHearted?.some((item: any) => item.courseId === Number(id))
+      : false
   const isBought = data?.coursesPaid?.some(
     (item) => item.userId === user?.id && item.status === 'SUCCESS'
   )
@@ -36,7 +43,7 @@ const CourseSidebar = ({ data }: Props) => {
       }
       const res = await coursePublicApiRequests.toogleHeart(id)
       if (res.status === 200) {
-        setCoursesHearted(res.payload)
+        setRefreshAccountContex((prevState: boolean) => !prevState)
         refresh()
       }
     } catch (error) {}
@@ -90,11 +97,18 @@ const CourseSidebar = ({ data }: Props) => {
         variant="bordered"
         onClick={heartCourseToggle}
       >
-        Add to favourite list
+        {isHearted ? 'Remove from favourite list' : 'Add to favourite list'}
       </Button>
-      <Button className="w-full" color="secondary" onClick={addToCart}>
-        Add to cart
-      </Button>
+      {!isBought && (
+        <Button
+          className="w-full"
+          color="secondary"
+          onClick={addToCart}
+          disabled={isBought}
+        >
+          Add to cart
+        </Button>
+      )}
       {isBought ? (
         <Button
           as={Link}
