@@ -20,6 +20,7 @@ type Props = {
   data: any
 }
 const Filter = ({ data }: Props) => {
+  console.log('Filter  data:', data)
   const searchParams = useSearchParams()
   const params = new URLSearchParams()
   const pathname = usePathname()

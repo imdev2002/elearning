@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 5005",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 5005",
     "lint": "next lint"
   },
   "dependencies": {
@@ -37,6 +37,7 @@
     "react-quill": "^2.0.0",
     "react-toastify": "^10.0.5",
     "sass": "^1.77.1",
+    "sharp": "^0.33.4",
     "swiper": "^11.1.1",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",

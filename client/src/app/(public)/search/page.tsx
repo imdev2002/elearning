@@ -13,7 +13,7 @@ const page = async ({ searchParams }: Props) => {
   )
   return (
     <div>
-      <Filter data={payload} />
+      <Filter data={payload.courses} />
     </div>
   )
 }

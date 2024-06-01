@@ -165,8 +165,9 @@ const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
                   className={cn(
                     'flex justify-between px-4 py-1 rounded-sm cursor-pointer',
                     (Number(lessonId) === lesson.id && 'bg-default-300') ||
-                      (lesson.lessonNumber > maxLessonNumber &&
-                        !isAuth &&
+                      ((lesson.lessonNumber >=
+                        part.lessons[part.lessons.length - 1].lessonNumber ||
+                        !isAuth) &&
                         'pointer-events-none opacity-50')
                   )}
                   onClick={() => {

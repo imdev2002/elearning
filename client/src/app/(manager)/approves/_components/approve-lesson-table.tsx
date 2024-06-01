@@ -4,6 +4,7 @@ import CourseForm from '@/app/(manager)/my-courses/_components/course-form'
 import TextLessonForm from '@/app/(manager)/my-courses/_components/text-lesson-form'
 import VideoLessonForm from '@/app/(manager)/my-courses/_components/video-lesson-form'
 import { generateMediaLink } from '@/lib/utils'
+import { lessonManagerApiRequest } from '@/services/lesson.service'
 import {
   Button,
   Modal,
@@ -23,12 +24,24 @@ import {
 import { formatDate } from 'date-fns'
 import { Check, EyeIcon } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import React from 'react'
+import { toast } from 'react-toastify'
 type Props = {
   data: any
 }
 
 const ApprovesLessonsTable = ({ data }: Props) => {
+  const { refresh } = useRouter()
+  const approveLesson = async (lessonId: number) => {
+    try {
+      const res = await lessonManagerApiRequest.approve(lessonId)
+      if (res.status === 200) {
+        toast.success('Lesson approved successfully')
+        refresh()
+      }
+    } catch (error) {}
+  }
   return (
     <Table aria-label="Example empty table" className="w-full">
       <TableHeader>
@@ -53,7 +66,7 @@ const ApprovesLessonsTable = ({ data }: Props) => {
                 <Tooltip content="Approve">
                   <span
                     className="text-lg text-success-400 cursor-pointer active:opacity-50"
-                    onClick={() => null}
+                    onClick={() => approveLesson(Number(lesson.id))}
                   >
                     <Check />
                   </span>
@@ -71,6 +84,7 @@ export default ApprovesLessonsTable
 
 const LessonPreview = ({ data }: { data: any }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
   return (
     <>
       <Tooltip content="Details">

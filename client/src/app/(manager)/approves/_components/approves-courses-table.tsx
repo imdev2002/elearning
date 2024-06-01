@@ -2,6 +2,7 @@
 
 import CourseForm from '@/app/(manager)/my-courses/_components/course-form'
 import { generateMediaLink } from '@/lib/utils'
+import { courseManagerApiRequests } from '@/services/course.service'
 import {
   Button,
   Modal,
@@ -21,12 +22,24 @@ import {
 import { formatDate } from 'date-fns'
 import { Check, EyeIcon } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import React from 'react'
+import { toast } from 'react-toastify'
 type Props = {
   data: any
 }
 
 const ApprovesCoursesTable = ({ data }: Props) => {
+  const { refresh } = useRouter()
+  const approveCourse = async (courseId: number) => {
+    try {
+      const res = await courseManagerApiRequests.approve(courseId)
+      if (res.status === 200) {
+        toast.success('Course approved successfully')
+        refresh()
+      }
+    } catch (error) {}
+  }
   return (
     <Table aria-label="Example empty table" className="w-full">
       <TableHeader>
@@ -64,7 +77,7 @@ const ApprovesCoursesTable = ({ data }: Props) => {
                 <Tooltip content="Approve">
                   <span
                     className="text-lg text-success-400 cursor-pointer active:opacity-50"
-                    onClick={() => null}
+                    onClick={() => approveCourse(Number(course.id))}
                   >
                     <Check />
                   </span>

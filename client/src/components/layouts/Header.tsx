@@ -134,7 +134,14 @@ const Header = () => {
         </NavbarItem> */}
         {isManager && (
           <NavbarItem>
-            <Link color="foreground" href="/dashboard">
+            <Link
+              color="foreground"
+              href={
+                user?.roles.some((role) => role.role.name === 'ADMIN')
+                  ? '/dashboard'
+                  : '/my-courses'
+              }
+            >
               Dashboard
             </Link>
           </NavbarItem>
