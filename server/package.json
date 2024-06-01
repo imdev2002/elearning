@@ -44,7 +44,7 @@
     "lint": "eslint \"{src}/**/*.ts\" --fix",
     "dbup": "docker compose -f database/docker-compose.yml up -d",
     "dbdown": "docker compose -f database/docker-compose.yml down",
-    "rsdb": "yarn dbdown && rimraf database/postgres && rimraf uploads && rimraf emojis/*.svg && yarn dbup",
+    "rsdb": "yarn dbdown && rimraf database/postgres && yarn dbup",
     "migrate": "npx prisma migrate dev"
   },
   "keywords": [

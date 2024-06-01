@@ -12,8 +12,7 @@ import {
 } from '@nextui-org/react'
 import { cn, generateMediaLink } from '@/lib/utils'
 import { coursePublicApiRequests } from '@/services/course.service'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useClickOutside } from '@/hooks/useClickOutside'
+import { useRouter } from 'next/navigation'
 import { useAccountContext } from '@/contexts/account'
 import { toast } from 'react-toastify'
 
@@ -23,15 +22,12 @@ type Props = {
 }
 
 const ReactionsSection = ({ data, postId }: Props) => {
-  const searchParams = useSearchParams()
   const { user } = useAccountContext()
   const isAuth = !!user?.email
   const { refresh } = useRouter()
-  const [isOpen, setIsOpen] = React.useState(false)
   const [emojis, setEmojis] = React.useState<any>([])
   const listReactions = emojis.map((emoji: any) => {
     const result = data.filter((reaction: any) => reaction.emojiId === emoji.id)
-    console.log('listReactions  result:', result)
     const isReacted = result.some((item: any) => item.userId === user?.id)
     return {
       ...emoji,

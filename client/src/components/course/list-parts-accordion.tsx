@@ -5,6 +5,7 @@ import DeleteLessonModal from '@/app/(manager)/my-courses/_components/delete-les
 import EditLessonModal from '@/app/(manager)/my-courses/_components/edit-lesson-modal'
 import PartCourseForm from '@/app/(manager)/my-courses/_components/part-course-form'
 import { Course, Lesson, LessonType, Part } from '@/app/globals'
+import { useCourse } from '@/contexts/course'
 import { cn, formatDuration, formatVideoDuration } from '@/lib/utils'
 import { courseManagerApiRequests } from '@/services/course.service'
 import { userApiRequest } from '@/services/user.service'
@@ -18,9 +19,11 @@ import {
   ModalFooter,
   ModalHeader,
   ScrollShadow,
+  Tooltip,
   useDisclosure,
 } from '@nextui-org/react'
 import {
+  CircleCheck,
   Clock,
   Eye,
   File,
@@ -50,13 +53,15 @@ type Props = {
 const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
   const { push, refresh } = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [listLessonFinished, setListLessonFinished] = useState([])
+  const { courseId } = useParams()
+  const { progress } = useCourse()
   const [partData, setPartData] = useState()
   const [action, setAction] = useState<'create' | 'edit'>('create')
   const searchParams = useSearchParams()
   const lessonId = searchParams.get('lesson')
-  const { courseId } = useParams()
-  console.log('ListPartsAccordion  pathname:', courseId)
+  const courseProgress = progress?.find(
+    (course: any) => course.courseId === Number(courseId)
+  )
   let currentPartId = 1
   data.forEach((part) => {
     const lesson = part.lessons.find((lesson) => lesson.id === Number(lessonId))
@@ -91,35 +96,25 @@ const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
       }
     } catch (error) {}
   }
-  // useEffect(() => {
-  //   ;(async function fetchProgress() {
-  //     try {
-  //       const res = await userApiRequest.getCourseProgress()
-  //       if (res.status === 200 && lessonId) {
-  //         const course = (res.payload as any[]).find(
-  //           (course: any) => course.id === data.id
-  //         )
-  //         const lisLessonFinished = course.lessons.map(
-  //           (item: any) => item.lesson.lessonNumber
-  //         )
-  //         const isFinished = lisLessonFinished.includes(parseInt(lessonId))
-  //         setCanNext(isFinished)
-  //         setCanPrev(isFinished)
-  //       }
-  //     } catch (error) {}
-  //   })()
-  // }, [lessonId])
+  const maxLessonNumber =
+    courseProgress?.lessons?.length > 0
+      ? Math.max(
+          ...courseProgress?.lessons.map(
+            (lesson: any) => lesson.lesson.lessonNumber
+          )
+        )
+      : 0
   return (
     <>
       {isAuth && (
         <Modal backdrop="blur" isOpen={isOpen} onClose={onClose}>
-          <ModalContent>
+          <ModalContent className="w-full max-w-screen-md">
             {(onClose) => (
               <>
                 <ModalHeader className="flex flex-col gap-1">
                   {`${action === 'edit' ? 'Edit' : 'Create'} Part number`}
                 </ModalHeader>
-                <ModalBody>
+                <ModalBody className="py-10">
                   {action === 'edit' ? (
                     <PartCourseForm data={partData} onSubmit={editPartNumber} />
                   ) : (
@@ -168,8 +163,11 @@ const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
                 <div
                   key={lesson.id}
                   className={cn(
-                    'flex justify-between px-4 py-1 rounded-sm',
-                    Number(lessonId) === lesson.id && 'bg-default-300'
+                    'flex justify-between px-4 py-1 rounded-sm cursor-pointer',
+                    (Number(lessonId) === lesson.id && 'bg-default-300') ||
+                      (lesson.lessonNumber > maxLessonNumber &&
+                        !isAuth &&
+                        'pointer-events-none opacity-50')
                   )}
                   onClick={() => {
                     if (lessonId) push(`?lesson=${lesson.id}`)
@@ -185,7 +183,15 @@ const ListPartsAccordion = ({ data, isAuth = false }: Props) => {
                     ) : (
                       <File size={14} />
                     )}
+                    {isAuth ? `[${lesson.lessonNumber}] ` : ''}
                     {lesson.lessonName}
+                    {courseProgress?.lessons.some(
+                      (l: any) => l.lessonId === lesson.id
+                    ) && (
+                      <Tooltip content="Finished">
+                        <CircleCheck className="fill-green-500" size={18} />
+                      </Tooltip>
+                    )}
                     {!lessonId &&
                       (isAuth ? (
                         <div className="flex items-center gap-2">
@@ -245,7 +251,7 @@ const HeadingPart = ({ part }: { part: Part }) => {
   return (
     <div className="flex justify-between items-center">
       <span className="max-w-[65%]">{part.partName}</span>
-      <ul className="flex gap-2 text-sm">
+      <ul className="flex gap-2 text-sm flex-shrink-0">
         <li className="flex items-center gap-1">
           <SquarePlay size={16} />
           {part.lessons.length + ' lectures'}

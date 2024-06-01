@@ -3,12 +3,12 @@ import http from '@/lib/http'
 import { AccountResType } from '@/schemaValidations/account.schema'
 
 export const userApiRequest = {
-  getList: (params: any, access_token: string) =>
-    http.get<any>(`/users?limit=${params.limit}&offset=${params.offset}`, {
+  getList: (params: string, access_token: string) =>
+    http.get<any>(`/users?${params}`, {
       headers: {
         Authorization: `Bearer ${access_token}`,
-        cache: 'no-store',
       },
+      cache: 'no-store',
     }),
 
   get: (userId: number, access_token?: string) =>
@@ -40,8 +40,8 @@ export const userApiRequest = {
     http.get('/users/actions/forms', {
       headers: {
         Authorization: `Bearer ${access_token}`,
-        cache: 'no-store',
       },
+      cache: 'no-store',
     }),
 
   editForm: (body: any) => http.patch('/users/actions/forms', body),

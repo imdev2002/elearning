@@ -3,9 +3,9 @@
 import CartPopover from '@/components/cart/cart-popover'
 import { GraduationCap } from '@/components/icons/graduation-cap'
 import { SearchIcon } from '@/components/icons/searchicon'
+import { UserDropdown } from '@/components/navbar/user-dropdown'
 import SearchCourse from '@/components/search/search-course'
 import { ThemeSwitcher } from '@/components/theme-swicher'
-import UserDropdown from '@/components/user-dropdown'
 import { useAccountContext } from '@/contexts/account'
 import { CATEGORIES } from '@/lib/constants'
 import {

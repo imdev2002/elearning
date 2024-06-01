@@ -9,6 +9,7 @@ import { CircleCheckBig, Clock, FolderOpen, SquarePlay } from 'lucide-react'
 import CourseSidebar from '@/app/(public)/course/_components/course-sidebar'
 import ReactionsSection from '@/components/reactions'
 import RatingCourseModal from '@/app/(public)/course/_components/rating-course-modal'
+import RatingModal from '@/components/course/rating-modal'
 
 type Props = {
   params: {
@@ -23,14 +24,10 @@ const page = async ({ params }: Props) => {
   )
   const {
     id,
-    courseName,
-    user,
     knowledgeGained,
     descriptionMD,
     parts,
     rating,
-    thumbnail,
-    priceAmount,
     comments,
     avgRating,
     totalDuration,
@@ -38,6 +35,7 @@ const page = async ({ params }: Props) => {
     totalPart,
     emojis,
   } = courseData
+
   const partsData = parts.sort((a, b) => a.partNumber - b.partNumber)
   return (
     <>
@@ -102,7 +100,9 @@ const page = async ({ params }: Props) => {
                   <FiveStars className="mx-auto" starRated={avgRating} />
                   <p className="text-nowrap">Course Rating</p>
                 </div>
-                <RatingCourseModal />
+                {/* <RatingCourseModal />
+                 */}
+                <RatingModal />
               </div>
               <div className="w-full flex flex-col justify-around">
                 {Array(5)

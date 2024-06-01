@@ -172,8 +172,16 @@
   z-index: 10;
 }
 
+.quill .ql-editor {
+  min-height: 160px;
+}
+
 .quill .ql-container {
   @apply !border-2 rounded-b-md !border-default-200;
+}
+
+.apexcharts-tooltip {
+  @apply text-black;
 }
 
 @keyframes floating-y {

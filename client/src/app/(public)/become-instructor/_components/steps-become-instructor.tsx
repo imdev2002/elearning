@@ -36,7 +36,6 @@ const StepsBecomeInstructor = () => {
   const ref = useRef<any>(null)
   const [height, setHeight] = useState(0)
   const [offsetTop, setOffsetTop] = useState(0)
-  console.log(offsetTop)
 
   useEffect(() => {
     if (ref.current) {

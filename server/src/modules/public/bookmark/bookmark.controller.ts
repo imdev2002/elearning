@@ -37,6 +37,15 @@ export default class BookmarkController extends BaseController {
       const bookmarks = await this.prisma.bookmark.findMany({
         where: { userId },
         orderBy: { timestamp: 'desc' },
+        include: {
+          course: { select: { thumbnail: true, courseName: true } },
+          lesson: {
+            select: {
+              thumbnailPath: true,
+              lessonName: true,
+            },
+          },
+        },
       });
       return res.status(200).json(bookmarks);
     } catch (e: any) {

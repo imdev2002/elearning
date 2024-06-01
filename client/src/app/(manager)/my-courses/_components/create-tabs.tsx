@@ -4,10 +4,8 @@ import CourseForm from '@/app/(manager)/my-courses/_components/course-form'
 import { Course } from '@/app/globals'
 import ListPartsAccordion from '@/components/course/list-parts-accordion'
 import { Chip, Tab, Tabs } from '@nextui-org/react'
-import { File, ListOrdered, Presentation } from 'lucide-react'
+import { File, ListOrdered } from 'lucide-react'
 import React from 'react'
-import VideoLessonForm from '@/app/(manager)/my-courses/_components/video-lesson-form'
-import TextLessonForm from '@/app/(manager)/my-courses/_components/text-lesson-form'
 type Props = {
   courseData: Course
 }
@@ -31,7 +29,7 @@ const CreateTabs = ({ courseData }: Props) => {
         title={
           <div className="flex items-center space-x-2">
             <File />
-            <span>Course ifomation</span>
+            <span>Course iformation</span>
           </div>
         }
       >

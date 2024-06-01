@@ -1,8 +1,9 @@
 'use client'
 
+import { useCourse } from '@/contexts/course'
 import { userApiRequest } from '@/services/user.service'
 import { Button } from '@nextui-org/react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect } from 'react'
 
 type Props = {
@@ -10,7 +11,12 @@ type Props = {
 }
 
 const LearningControl = ({ data }: Props) => {
-  // const { push } = useRouter()
+  const { progress } = useCourse()
+  const { replace } = useRouter()
+  const { courseId } = useParams()
+  const searchParams = useSearchParams()
+  const lessonId = searchParams.get('lesson')
+
   // const searchParams = useSearchParams()
   // const lessonId = searchParams.get('lesson')
   // const [canPrev, setCanPrev] = React.useState(false)
@@ -46,7 +52,7 @@ const LearningControl = ({ data }: Props) => {
   //   }
   // }
   return (
-    <div className="flex justify-between h-full sticky bottom-0 bg-primary">
+    <div className="justify-between h-full sticky bottom-0 bg-primary hidden">
       <Button className="w-2/4 rounded-none border-r" color="primary">
         Prev
       </Button>

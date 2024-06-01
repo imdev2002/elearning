@@ -411,8 +411,6 @@ export default class PublicCourseController extends BaseController {
           isPublic: true,
           status: CourseStatus.APPROVED,
         },
-        take: limit,
-        skip: offset,
 
         orderBy: [
           {
@@ -425,13 +423,6 @@ export default class PublicCourseController extends BaseController {
         query.where.category = {
           in: category,
         };
-      }
-      if (isBestSeller) {
-        query.orderBy.push({
-          coursesPaid: {
-            _count: 'desc',
-          },
-        });
       }
       if (byAuthor !== -1) {
         query.where.userId = byAuthor;
@@ -473,6 +464,14 @@ export default class PublicCourseController extends BaseController {
           },
         ];
       }
+      const total = await this.prisma.course.count({
+        where: { ...query.where },
+      });
+      if (!isBestSeller) {
+        query.take = limit;
+        query.skip = offset;
+      }
+
       const courses = await this.prisma.course.findMany({
         ...query,
         include: {
@@ -499,6 +498,7 @@ export default class PublicCourseController extends BaseController {
             },
           },
           coursesPaid: {
+            where: { status: CoursesPaidStatus.SUCCESS },
             include: {
               user: {
                 select: {
@@ -599,7 +599,19 @@ export default class PublicCourseController extends BaseController {
           },
         },
       });
-      return res.status(200).json(courses);
+      let bestSellerCourses = [] as any[];
+      if (isBestSeller) {
+        courses.sort((a: any, b: any) => {
+          return b.coursesPaid.length - a.coursesPaid.length;
+        });
+        bestSellerCourses = courses.slice(offset, offset + limit);
+      }
+      return res.status(200).json({
+        courses: isBestSeller ? bestSellerCourses : courses,
+        total,
+        page: offset / limit + 1,
+        limit,
+      });
     } catch (e: any) {
       console.log(e);
       return res

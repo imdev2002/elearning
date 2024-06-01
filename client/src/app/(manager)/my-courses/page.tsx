@@ -5,13 +5,14 @@ import CreateCourseModal from '@/app/(manager)/my-courses/_components/create-cou
 import { Heading } from '@/components/heading'
 import { ViewIcon } from '@/components/icons/sidebar/view-icon'
 import MyCoursePagination from '@/app/(manager)/my-courses/_components/my-course-pagination'
+import DKEPagination from '@/components/pagination'
 
 type Props = {
-  searchParams: { [key: string]: string | undefined }
+  searchParams?: { [key: string]: string | undefined }
 }
 
 const MyCoursePage = async ({ searchParams }: Props) => {
-  const { page } = searchParams
+  const { page } = searchParams as { page: string }
   const cookieStore = cookies()
   const accessToken = cookieStore.get('accessToken')?.value as string
   const { payload } = await courseManagerApiRequests.getList(
@@ -36,7 +37,7 @@ const MyCoursePage = async ({ searchParams }: Props) => {
           <CourseCard isAuth key={index} data={course} />
         ))}
       </div>
-      <MyCoursePagination />
+      <DKEPagination totalItems={listCourses.total} itemsPerPage={8} />
     </>
   )
 }

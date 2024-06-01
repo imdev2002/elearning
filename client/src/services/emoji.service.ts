@@ -9,6 +9,7 @@ export const emojiApiRequest = {
       headers: {
         Authorization: `Bearer ${access_token}`,
       },
+      cache: 'no-store',
     }),
 
   delete: (emojiId: number) => http.delete(`/emojis/${emojiId}`),

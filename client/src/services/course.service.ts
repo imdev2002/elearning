@@ -5,23 +5,24 @@ import {
   CourseResType,
   GetCoursesPublicParamsType,
 } from '@/schemaValidations/course.schema'
+import { headers } from 'next/headers'
 
 export const courseManagerApiRequests: any = {
   create: () => http.post('/courses', undefined),
 
   get: (id: number, access_token: string) =>
     http.get<Course>(`/courses/${id}`, {
+      cache: 'no-store',
       headers: {
         Authorization: `Bearer ${access_token}`,
-        cache: 'no-store',
       },
     }),
 
   getList: (access_token: string, params?: string) =>
     http.get(`/courses?${params}`, {
+      cache: 'no-store',
       headers: {
         Authorization: `Bearer ${access_token}`,
-        cache: 'no-store',
       },
     }),
 
@@ -54,9 +55,7 @@ export const coursePublicApiRequests = {
     }),
 
   get: (courseId: number) =>
-    http.get<Course>(`-public/courses/${courseId}`, {
-      cache: 'no-store',
-    }),
+    http.get<Course>(`-public/courses/${courseId}`, { cache: 'no-store' }),
 
   buy: (courseId: number) =>
     http.post('-public/courses/actions/buy', { courseId }),

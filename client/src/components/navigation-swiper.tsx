@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from '@nextui-org/react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import React from 'react'

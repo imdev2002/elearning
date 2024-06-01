@@ -10,7 +10,12 @@ export const lessonManagerApiRequest = {
 
   get: (lessonId: number) => http.get(`/lessons/${lessonId}`),
 
-  getList: () => http.get(`/lessons`),
+  getList: (access_token: string) =>
+    http.get(`/lessons`, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    }),
 
   update: (lessonId: number, payload: any) =>
     http.patch(`/lessons/${lessonId}`, payload),
@@ -26,8 +31,8 @@ export const lessonPublicApiRequest = {
     http.get<Lesson>(`-public/lessons/${lessonId}`, {
       headers: {
         Authorization: `Bearer ${access_token}`,
-        cache: 'no-store',
       },
+      cache: 'no-store',
     }),
 
   heart: (body: any) => http.post('-public/lessons/actions/heart', body),

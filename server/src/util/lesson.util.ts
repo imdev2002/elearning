@@ -100,7 +100,8 @@ const lessonUtil = {
         },
       },
     });
-    return lessons;
+    const total = await prisma.lesson.count({ where: { userId: id } });
+    return { lessons, total };
   },
 };
 export default lessonUtil;

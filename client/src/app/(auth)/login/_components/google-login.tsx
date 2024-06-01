@@ -22,7 +22,6 @@ const GoogleLogin = () => {
           accessToken: tokenResponse.access_token,
         }
       )
-      console.log(res)
       const { accessToken, refreshToken } = res.data
       await authApiRequest.auth({ accessToken, refreshToken })
       setItem('tokens', { accessToken, refreshToken })

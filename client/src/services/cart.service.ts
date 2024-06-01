@@ -3,9 +3,7 @@ import http from '@/lib/http'
 export const cartApiRequest = {
   get: () =>
     http.get('-public/carts', {
-      headers: {
-        cache: 'no-store',
-      },
+      cache: 'no-store',
     }),
 
   add: (courseId: number) =>

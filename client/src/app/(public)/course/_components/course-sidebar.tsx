@@ -25,7 +25,6 @@ const CourseSidebar = ({ data }: Props) => {
   const { user } = useAccountContext()
   const isAuth = !!user?.email
   // const isHearted =
-  console.log(data.parts)
   const isBought = data?.coursesPaid?.some(
     (item) => item.userId === user?.id && item.status === 'SUCCESS'
   )

@@ -121,8 +121,11 @@ export default class UserController extends BaseController {
       };
       for (const userRole of userRoles) {
         if (userRole.role.name === RoleEnum.ADMIN) {
+          const total = await this.prisma.user.count();
           const users = await this.prisma.user.findMany(query);
-          return res.status(200).send(users);
+          return res
+            .status(200)
+            .send({ users, total, page: offset / limit + 1 });
         }
       }
       throw new HttpException(401, 'Unauthorized');
@@ -170,7 +173,7 @@ export default class UserController extends BaseController {
       await this.prisma.cart.create({
         data: { user: { connect: { email } } },
       });
-      res.status(201).send(user);
+      res.status(200).send(user);
     } catch (e: any) {
       console.log(e);
       return res

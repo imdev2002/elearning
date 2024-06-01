@@ -8,8 +8,8 @@ export const formApiRequest = {
     http.get<SubmitForm[]>('/forms', {
       headers: {
         Authorization: `Bearer ${access_token}`,
-        cache: 'no-store',
       },
+      cache: 'no-store',
     }),
 
   update: (formId: number, body: any) => http.patch(`/forms/${formId}`, body),

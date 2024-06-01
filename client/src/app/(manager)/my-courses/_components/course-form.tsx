@@ -3,6 +3,7 @@
 import { Course } from '@/app/globals'
 import FileUpload from '@/components/input/file-upload'
 import QuillEditor from '@/components/input/quill-editor'
+import Label from '@/components/label'
 import { categories } from '@/lib/constants'
 import { convertObjectToFormData } from '@/lib/utils'
 import {
@@ -28,9 +29,10 @@ import { toast } from 'react-toastify'
 
 type Props = {
   defaultValues?: Course
+  isReadOnly?: boolean
 }
 
-const CourseForm = ({ defaultValues }: Props) => {
+const CourseForm = ({ defaultValues, isReadOnly = false }: Props) => {
   const [desc, setDesc] = useState(defaultValues?.descriptionMD ?? '')
   const { courseId } = useParams()
   const { refresh } = useRouter()
@@ -52,10 +54,8 @@ const CourseForm = ({ defaultValues }: Props) => {
     name: 'knowledgeGained',
   })
   const submitCourseForm = async (values: any) => {
-    console.log('submitCourseForm  values:', values)
     try {
       values.isPublic = JSON.parse(values.isPublic)
-      // console.log(typeof values.isPublic)
       values.knowledgeGained = JSON.stringify(values.knowledgeGained)
       values.descriptionMD = desc
       const payload: any = convertObjectToFormData(values)
@@ -72,69 +72,62 @@ const CourseForm = ({ defaultValues }: Props) => {
       toast.error('Failed to update')
     }
   }
-  console.log('CourseForm  form:', form)
   return (
     <form onSubmit={form.handleSubmit(submitCourseForm)}>
-      <div className="flex gap-8 mb-10">
-        <Controller
-          name="courseName"
-          control={form.control}
-          render={({ field }) => (
-            <Input
-              isRequired
-              label="Course name"
-              variant="bordered"
-              labelPlacement="outside"
-              placeholder="Enter your course name"
-              errorMessage={errors.courseName?.message}
-              {...field}
-            />
-          )}
+      <div className="flex gap-8 mb-10 items-center flex-row-reverse">
+        <FileUpload
+          name="thumbnail"
+          form={form}
+          placeholder="."
+          disabled={isReadOnly}
         />
-        <Controller
-          name="priceAmount"
-          control={form.control}
-          render={({ field }) => (
-            <Input
-              isRequired
-              label="Price"
-              variant="bordered"
-              labelPlacement="outside"
-              placeholder="eg, 189"
-              errorMessage={errors.priceAmount?.message}
-              {...field}
-            />
-          )}
-        />
+
+        <div className="w-2/4 flex-shrink-0 flex flex-col gap-y-4">
+          <Controller
+            name="courseName"
+            control={form.control}
+            render={({ field }) => (
+              <Input
+                disabled={isReadOnly}
+                isRequired
+                label="Course name"
+                variant="bordered"
+                labelPlacement="outside"
+                placeholder="Enter your course name"
+                errorMessage={errors.courseName?.message}
+                {...field}
+              />
+            )}
+          />
+          <Controller
+            name="priceAmount"
+            control={form.control}
+            render={({ field }) => (
+              <Input
+                disabled={isReadOnly}
+                isRequired
+                label="Price"
+                variant="bordered"
+                labelPlacement="outside"
+                placeholder="eg, 189"
+                errorMessage={errors.priceAmount?.message}
+                {...field}
+              />
+            )}
+          />
+        </div>
       </div>
-      <div className="flex gap-8 mb-10">
-        <FileUpload name="thumbnail" form={form} />
-        {/* <Controller
-          name="descriptionMD"
-          control={form.control}
-          render={({ field }) => (
-            <Textarea
-              isRequired
-              label="Description"
-              labelPlacement="outside"
-              placeholder="Enter your description"
-              className="max-w-md"
-              variant="bordered"
-              errorMessage={errors.descriptionMD?.message}
-              {...field}
-            />
-          )}
-        /> */}
-      </div>
-      <QuillEditor content={desc} setContent={setDesc} />
       <div className="relative">
-        <label
-          htmlFor=""
-          className=" pointer-events-none origin-top-left subpixel-antialiased block text-foreground-500 after:content-['*'] after:text-danger after:ml-0.5 will-change-auto !duration-200 !ease-out motion-reduce:transition-none transition-[transform,color,left,opacity] group-data-[filled-within=true]:text-foreground group-data-[filled-within=true]:pointer-events-auto pb-0 z-20 top-1/2 -translate-y-1/2 group-data-[filled-within=true]:left-0 left-3 text-small group-data-[filled-within=true]:-translate-y-[calc(100%_+_theme(fontSize.small)/2_+_20px)] pe-2 max-w-full text-ellipsis overflow-hidden"
-        >
-          Knowledge Gained
-        </label>
-        <div>
+        <Label isRequired title="Description" />
+        <QuillEditor
+          disabled={isReadOnly}
+          content={desc}
+          setContent={setDesc}
+        />
+      </div>
+      <div className="relative my-8">
+        <Label isRequired title="Knowledge Gained" />
+        <div className="grid grid-cols-2 gap-x-8 gap-y-4">
           {fields.map((fieldSection, index) => (
             <Controller
               key={fieldSection.id}
@@ -142,12 +135,11 @@ const CourseForm = ({ defaultValues }: Props) => {
               control={form.control}
               render={({ field }) => (
                 <Input
+                  disabled={isReadOnly}
                   isRequired
                   autoFocus
-                  // label="Knowledge Gained"
-                  // labelPlacement="outside"
                   placeholder="Enter your description"
-                  className="max-w-md"
+                  className="w-full"
                   variant="bordered"
                   errorMessage={errors.knowledgeGained?.message}
                   {...field}
@@ -155,44 +147,47 @@ const CourseForm = ({ defaultValues }: Props) => {
               )}
             />
           ))}
-          <Button onClick={() => append('')}>Add Knowledge Gained</Button>
+          <Button disabled={isReadOnly} onClick={() => append('')}>
+            Add Knowledge Gained
+          </Button>
         </div>
       </div>
-      <Controller
-        control={form.control}
-        name="category"
-        render={({ field }) => (
-          <Select
-            selectedKeys={[field.value]}
-            onChange={(value) => field.onChange(value)}
-            labelPlacement="outside"
-            label="Category"
-            placeholder="Select an category"
-            isRequired
-            // selectionMode="multiple"
-            errorMessage={errors.category?.message}
-            className="max-w-xs"
-          >
-            {categories.map((category) => (
-              <SelectItem
-                key={category}
-                value={category}
-                className="capitalize"
-              >
-                {category.replace('_', ' ')}
-              </SelectItem>
-            ))}
-          </Select>
-        )}
-      />
+      <div className="pt-0 pb-2">
+        <Controller
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <Select
+              disabled={isReadOnly}
+              selectedKeys={[field.value]}
+              onChange={(value) => field.onChange(value)}
+              labelPlacement="outside"
+              label="Category"
+              placeholder="Select an category"
+              isRequired
+              errorMessage={errors.category?.message}
+              className="max-w-xs"
+            >
+              {categories.map((category) => (
+                <SelectItem
+                  key={category}
+                  value={category}
+                  className="capitalize"
+                >
+                  {category.replace('_', ' ')}
+                </SelectItem>
+              ))}
+            </Select>
+          )}
+        />
+      </div>
 
       <Controller
         control={form.control}
         name="isPublic"
         render={({ field }) => (
           <Switch
-            // defaultSelected
-            // onChange={(value) => field.onChange(value)}
+            disabled={isReadOnly}
             isSelected={field.value}
             size="lg"
             color="primary"
@@ -203,11 +198,13 @@ const CourseForm = ({ defaultValues }: Props) => {
         )}
       />
 
-      <div className="w-full">
-        <Button color="primary" type="submit" className="ml-auto block">
-          Save
-        </Button>
-      </div>
+      {!isReadOnly && (
+        <div className="w-full">
+          <Button color="primary" type="submit" className="ml-auto block">
+            Save
+          </Button>
+        </div>
+      )}
     </form>
   )
 }

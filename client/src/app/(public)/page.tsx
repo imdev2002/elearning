@@ -1,6 +1,7 @@
 import CourseCard from '@/components/course/course-card'
 import ListCardSlider from '@/components/course/list-card-slider'
 import { Heading } from '@/components/heading'
+import DKEPagination from '@/components/pagination'
 import {
   courseManagerApiRequests,
   coursePublicApiRequests,
@@ -11,10 +12,22 @@ import { cookies } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default async function Home() {
+type Props = {
+  searchParams: { [key: string]: string | undefined }
+}
+
+export default async function Home({ searchParams }: Props) {
+  const { page } = searchParams
   const cookieStore = cookies()
   const token = cookieStore.get('accessToken')?.value
-  const { payload: listCourses } = await coursePublicApiRequests.getList()
+  const { payload: listCourses } = await coursePublicApiRequests.getList(
+    page
+      ? `?offset=${parseInt(page) > 1 ? (parseInt(page) - 1) * 12 : 0}&limit=12`
+      : ''
+  )
+  const { payload: bestSellers } = await coursePublicApiRequests.getList(
+    '?isBestSeller=true&limit=8'
+  )
   return (
     <main className="flex min-h-screen flex-col items-center justify-between mt-[120px] space-y-8">
       <div className="flex justify-between mb-20">
@@ -125,7 +138,7 @@ export default async function Home() {
       </div>
       <div className="w-full space-y-4">
         <Heading title="Best selling courses" />
-        <ListCardSlider data={listCourses.courses} />
+        <ListCardSlider data={bestSellers.courses} />
       </div>
       <div className="space-y-4">
         <Heading title="Recent courses" />
@@ -151,6 +164,7 @@ export default async function Home() {
           <Category icon={<PenNibIcon />} name="Design" href="/design" />
         </div>
       </div> */}
+      <DKEPagination totalItems={listCourses.total} />
     </main>
   )
 }

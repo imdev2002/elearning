@@ -191,13 +191,13 @@ export default class LessonController extends BaseController {
       const reqUser = req.user as ReqUser;
       const limit = Number(req.query.limit) || 12;
       const offset = Number(req.query.offset) || 0;
-      const lessons = await lessonUtil.getLessons(
+      const { lessons, total } = await lessonUtil.getLessons(
         this.prisma,
         reqUser.id,
         limit,
         offset,
       );
-      res.status(200).json(lessons);
+      res.status(200).json({ lessons, total, page: offset / limit + 1 });
     } catch (e: any) {
       console.log(e);
       return res

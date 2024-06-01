@@ -286,11 +286,16 @@ const courseUtil = {
     limit: number,
     offset: number,
     admin = false,
+    orderBy: string,
+    direction: string,
   ) => {
     if (admin) {
-      const course = await prisma.course.findMany({
+      const courses = await prisma.course.findMany({
         take: limit,
         skip: offset,
+        orderBy: {
+          [orderBy]: direction,
+        },
         include: {
           rating: {
             include: {
@@ -406,12 +411,16 @@ const courseUtil = {
           },
         },
       });
-      return course;
+      const total = await prisma.course.count();
+      return { courses, total };
     }
-    const course = await prisma.course.findMany({
+    const courses = await prisma.course.findMany({
       where: { userId: id },
       take: limit,
       skip: offset,
+      orderBy: {
+        [orderBy]: direction,
+      },
       include: {
         rating: {
           include: {
@@ -527,7 +536,8 @@ const courseUtil = {
         },
       },
     });
-    return course;
+    const total = await prisma.course.count({ where: { userId: id } });
+    return { courses, total };
   },
 };
 export default courseUtil;

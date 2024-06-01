@@ -47,7 +47,6 @@ export default function AccountProvider({
   const [user, setUser] = useState<User | null>(initUser)
   const [coursesBought, setCoursesBought] = useState<any>([])
   const [coursesHearted, setCoursesHearted] = useState<any>([])
-  console.log('coursesHearted:', coursesHearted)
 
   useState(() => {
     if (typeof window !== 'undefined') {

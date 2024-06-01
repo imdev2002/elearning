@@ -15,7 +15,6 @@ const LoginPage = () => {
   const router = useRouter()
   const params = useParams()
   const { setUser } = useAccountContext()
-  console.log(process.env.NEXT_PUBLIC_CLIENT_ID)
   return (
     <div className="flex justify-center items-center mt-20 h-screen">
       <div className="w-[80vw] h-[80vh] flex">

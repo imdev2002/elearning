@@ -1,6 +1,8 @@
 'use client'
 
 import { reportApiRequest } from '@/services/report.service'
+import { format } from 'date-fns'
+import { color } from 'framer-motion'
 import React, { useEffect, useState } from 'react'
 import Chart, { Props } from 'react-apexcharts'
 
@@ -34,12 +36,17 @@ const options: Props['options'] = {
     toolbar: {
       show: false,
     },
+    zoom: {
+      enabled: false,
+    },
   },
-
+  dataLabels: {
+    enabled: false,
+  },
   xaxis: {
     categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
     labels: {
-      // show: false,
+      show: true,
       style: {
         colors: 'hsl(var(--nextui-default-800))',
       },
@@ -60,7 +67,11 @@ const options: Props['options'] = {
     },
   },
   tooltip: {
-    enabled: false,
+    enabled: true,
+
+    marker: {
+      show: false,
+    },
   },
   grid: {
     show: true,
@@ -69,13 +80,13 @@ const options: Props['options'] = {
     position: 'back',
   },
   stroke: {
-    curve: 'smooth',
-    fill: {
-      colors: ['red'],
-    },
+    curve: 'straight',
+  },
+  legend: {
+    horizontalAlign: 'left',
   },
   // @ts-ignore
-  markers: false,
+  // markers: false,
 }
 
 type RevenueChartProps = {
@@ -83,16 +94,23 @@ type RevenueChartProps = {
 }
 
 const RevenueChart = ({ data }: RevenueChartProps) => {
+  const monthNames = Object.keys(data).map((key) => {
+    const [year, month] = key.split('-')
+    return format(new Date(parseInt(year), parseInt(month) - 1), 'MMMM')
+  })
   return (
     <>
       <div className="w-full z-20">
         <div id="chart">
           <Chart
-            options={options}
+            options={{
+              ...options,
+              xaxis: { ...options?.xaxis, categories: monthNames },
+            }}
             series={[
               {
                 name: 'Revenue',
-                data: data.map((month: any) => month.revenue),
+                data: Object.values(data).map((item: any) => item.revenue),
               },
             ]}
             type="area"

@@ -19,8 +19,13 @@ const DataUtil = {
         (a: any, b: any) => b.revenue - a.revenue,
       ).slice(0, limit);
     }
-
-    return result;
+    const sortedData = Object.keys(result)
+      .sort()
+      .reduce((obj: any, key: any) => {
+        obj[key] = result[key];
+        return obj;
+      }, {});
+    return sortedData;
   },
   processStarReport: async (data: any, prisma: PrismaClient) => {
     const total = {

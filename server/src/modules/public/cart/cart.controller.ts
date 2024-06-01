@@ -89,7 +89,7 @@ export default class CartController extends BaseController {
         where: { id: cart.id },
         include: { coursesOnCarts: { include: { course: true } } },
       });
-      return res.status(201).json(_);
+      return res.status(200).json(_);
     } catch (e: any) {
       console.log(e);
       return res
@@ -291,7 +291,7 @@ export default class CartController extends BaseController {
           });
         }
       }
-      return res.status(201).json(checkout);
+      return res.status(200).json(checkout);
     } catch (e: any) {
       console.log(e);
       return res

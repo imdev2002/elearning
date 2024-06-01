@@ -1,9 +1,10 @@
 import http from '@/lib/http'
 
 export const BookmarkApiRequest = {
-  getList: () => http.get('/bookmarks'),
+  getList: () => http.get('-public/bookmarks', { cache: 'no-store' }),
 
-  create: (body: any) => http.post('/bookmarks', body),
+  create: (body: any) => http.post('-public/bookmarks', body),
 
-  delete: (bookmarkId: number) => http.delete(`/bookmarks/${bookmarkId}`),
+  delete: (bookmarkId: number) =>
+    http.delete(`-public/bookmarks/${bookmarkId}`),
 }

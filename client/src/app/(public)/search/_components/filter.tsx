@@ -27,7 +27,6 @@ const Filter = ({ data }: Props) => {
   const [sortBy, setSortBy] = useState<string>('newest')
   let keyword = searchParams.get('keyword')
   let categories = searchParams.get('categories')
-  console.log('Filter  categories:', categories)
   const [selected, setSelected] = useState(categories?.split(',') ?? [])
   params.append('keyword', keyword as string)
   params.append('orderby', sortBy)

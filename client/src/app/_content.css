@@ -110,3 +110,6 @@
     padding: 0 24px;
   }
 }
+.ql-syntax {
+  @apply text-wrap bg-default-600/85 py-2 px-8 rounded-md text-default my-2 select-all;
+}

@@ -1,3 +1,4 @@
+import { OrderApprove } from '@/components/icons/order-approve-icon'
 import { AccountsIcon } from '@/components/icons/sidebar/accounts-icon'
 import { SmileIcon } from '@/components/icons/sidebar/smile-icon'
 import { UpgradeRole } from '@/components/icons/sidebar/updarade-role'
@@ -37,6 +38,11 @@ export const dashboardNavigation = [
     title: 'My courses',
     icon: <ViewIcon />,
     pathname: '/my-courses',
+  },
+  {
+    title: 'Approves',
+    icon: <OrderApprove />,
+    pathname: '/approves',
   },
   {
     title: 'Users',

@@ -41,6 +41,14 @@ const CourseCard = ({ data, isAuth = false }: CourseType) => {
     coursesPaid,
     avgRating,
   } = data
+  const amountBought = coursesPaid.reduce((acc: any, current: any) => {
+    const x = acc.find((item: any) => item.userId === current.userId)
+    if (!x) {
+      return acc.concat([current])
+    } else {
+      return acc
+    }
+  }, [])
   const categoryName = CATEGORIES.find((cat) => cat.value === category)?.name
   const deleteCourse = async () => {
     try {
@@ -117,7 +125,7 @@ const CourseCard = ({ data, isAuth = false }: CourseType) => {
           <div className="flex gap-2 items-center">
             <UsersRound size={14} />
             <span>
-              {coursesPaid?.filter((item: any) => item.status === 'SUCCESS')
+              {amountBought?.filter((item: any) => item.status === 'SUCCESS')
                 ?.length ?? 0}
             </span>
           </div>

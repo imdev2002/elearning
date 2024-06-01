@@ -72,7 +72,6 @@ const ProfileForm = ({ data }: Props) => {
       if (res.status === 200) {
         toast.success(`Updated information of ${fullname}!`)
 
-        console.log(res.payload)
         if (user?.id === profileData?.id) {
           setUser(res.payload)
           setItem('user', { ...user, ...res.payload })

@@ -19,7 +19,6 @@ const CommentSection = ({ data, postId }: Props) => {
   const searchParams = useSearchParams()
   const lessonId = searchParams.get('lesson')
   const type = lessonId ? 'lesson' : 'course'
-  console.log('CommentSection  lessonId:', lessonId)
   const dataSorted = [...data].sort(
     (a: CommentType, b: CommentType) =>
       new Date(b.timestamp as string).getTime() -

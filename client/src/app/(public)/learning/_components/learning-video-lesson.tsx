@@ -1,10 +1,12 @@
 'use client'
 
+import BookmarkLesson from '@/app/(public)/learning/_components/bookmark-lesson'
 import { Heading } from '@/components/heading'
+import { useCourse } from '@/contexts/course'
 import { clientTokens } from '@/lib/http'
 import { generateMediaLink } from '@/lib/utils'
 import { lessonPublicApiRequest } from '@/services/lesson.service'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 import { toast } from 'react-toastify'
 
@@ -13,8 +15,14 @@ type Props = {
 }
 
 const LearningVideoLesson = ({ data }: Props) => {
+  const { setCourseRefresh, progress } = useCourse()
   const { refresh } = useRouter()
+  const { courseId } = useParams()
   const [videoURL, setVideoURL] = React.useState('')
+  const courseProgress = progress?.find(
+    (course: any) => course.courseId === Number(courseId)
+  )
+
   useEffect(() => {
     ;(async function fetchLesson() {
       try {
@@ -36,10 +44,12 @@ const LearningVideoLesson = ({ data }: Props) => {
   }, [JSON.stringify(data)])
   const finishedLesson = async () => {
     try {
+      if (courseProgress?.lessons.some((l: any) => l.lessonId === data.id))
+        return
       const res = await lessonPublicApiRequest.finish(data.id)
       if (res.status === 200) {
         toast.success('Lesson finished', { hideProgressBar: true })
-        refresh()
+        setCourseRefresh((prev: boolean) => !prev)
       }
     } catch (error) {}
   }
@@ -53,7 +63,10 @@ const LearningVideoLesson = ({ data }: Props) => {
         src={videoURL}
         onEnded={finishedLesson}
       />
-      <Heading title={data.lessonName} className="text-2xl" />
+      <div className="flex gap-2 items-center">
+        <Heading title={data.lessonName} className="text-2xl" />
+        <BookmarkLesson />
+      </div>
       <p>{data.descriptionMD}</p>
     </div>
   )

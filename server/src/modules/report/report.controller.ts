@@ -74,7 +74,14 @@ export default class ReportController extends BaseController {
           acc[date].revenue += length * course.priceAmount;
           return acc;
         }, {});
-        return res.status(200).json(result);
+
+        const sortedData = Object.keys(result)
+          .sort()
+          .reduce((obj: any, key: any) => {
+            obj[key] = result[key];
+            return obj;
+          }, {});
+        return res.status(200).json(sortedData);
       }
       if (groupBy === 'month') {
         const result = courses.reduce((acc: any, course) => {
@@ -93,7 +100,13 @@ export default class ReportController extends BaseController {
           acc[date].revenue += length * course.priceAmount;
           return acc;
         }, {});
-        return res.status(200).json(result);
+        const sortedData = Object.keys(result)
+          .sort()
+          .reduce((obj: any, key: any) => {
+            obj[key] = result[key];
+            return obj;
+          }, {});
+        return res.status(200).json(sortedData);
       }
       if (groupBy === 'year') {
         const result = courses.reduce((acc: any, course) => {
@@ -112,7 +125,13 @@ export default class ReportController extends BaseController {
           acc[date].revenue += length * course.priceAmount;
           return acc;
         }, {});
-        return res.status(200).json(result);
+        const sortedData = Object.keys(result)
+          .sort()
+          .reduce((obj: any, key: any) => {
+            obj[key] = result[key];
+            return obj;
+          }, {});
+        return res.status(200).json(sortedData);
       }
       return res.status(200).json({});
     } catch (e: any) {

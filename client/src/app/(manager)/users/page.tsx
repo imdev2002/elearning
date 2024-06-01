@@ -6,10 +6,7 @@ import { UserRoundCog } from 'lucide-react'
 import { cookies } from 'next/headers'
 import React from 'react'
 
-const defaultParams = {
-  limit: 20,
-  offset: 0,
-}
+const defaultParams = 'limit=10&offset=0'
 
 const page = async () => {
   const cookieStore = cookies()
@@ -18,12 +15,11 @@ const page = async () => {
     defaultParams,
     accessToken
   )
-  console.log(listUser)
   return (
     <>
       <Heading icon={<AccountsIcon />} title="Users" />
       <div className="p-5">
-        <UsersTable data={listUser} />
+        <UsersTable data={listUser.users} />
       </div>
     </>
   )

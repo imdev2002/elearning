@@ -6,7 +6,6 @@ export async function POST(request: Request) {
   const { exp: expAT } = decodeJWT(body.accessToken)
   const { exp: expRT } = decodeJWT(body.refreshToken)
   const expiresAT = convertExpiresJWT(expAT)
-  console.log('POST  expiresAT:', expiresAT)
   const expiresRT = convertExpiresJWT(expRT)
   headers.append(
     'Set-Cookie',

@@ -12,9 +12,10 @@ type Props = {
   data?: any
   content?: string
   setContent?: any
+  disabled?: boolean
 }
 
-const QuillEditor = ({ content, setContent }: Props) => {
+const QuillEditor = ({ content, setContent, disabled = false }: Props) => {
   const modules = useMemo(
     () => ({
       toolbar: [
@@ -31,7 +32,6 @@ const QuillEditor = ({ content, setContent }: Props) => {
           const bodyFormData = new FormData()
           bodyFormData.append('image', file)
           const response = await fileApiRequest.upload(bodyFormData)
-          console.log('upload:  response:', response)
           return generateMediaLink(response.payload.path)
         },
       },
@@ -40,6 +40,7 @@ const QuillEditor = ({ content, setContent }: Props) => {
   )
   return (
     <ReactQuill
+      className={disabled ? 'opacity-75 pointer-events-none' : ''}
       modules={modules}
       theme="snow"
       value={content}

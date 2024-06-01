@@ -142,14 +142,18 @@ export default class CourseController extends BaseController {
       const reqUser = req.user as ReqUser;
       const limit = Number(req.query.limit) || 12;
       const offset = Number(req.query.offset) || 0;
-      const courses = await courseUtil.getCourses(
+      const orderBy = (req.query.orderBy as string) || 'timestamp';
+      const direction = (req.query.direction as 'asc' | 'desc') || 'desc';
+      const { courses, total } = await courseUtil.getCourses(
         this.prisma,
         reqUser.id,
         limit,
         offset,
         !!reqUser.roles.find((role) => role.role.name === RoleEnum.ADMIN),
+        orderBy,
+        direction,
       );
-      return res.status(200).json(courses);
+      return res.status(200).json({ courses, total, page: offset / limit + 1 });
     } catch (e: any) {
       console.log(e);
       return res

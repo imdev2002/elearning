@@ -9,7 +9,6 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   Select,
   SelectItem,
@@ -28,6 +27,12 @@ const CreateLessonModal = ({ data }: Props) => {
   const [lessonType, setLessonType] = React.useState('video')
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLessonType(e.target.value)
+  }
+  const defaultData = {
+    lessonType: lessonType.toUpperCase(),
+    courseId: data.courseId,
+    partId: data.id,
+    lessonNumber: data.lessons.length + 1,
   }
   const createLessonText = async (values: any) => {
     try {
@@ -51,12 +56,7 @@ const CreateLessonModal = ({ data }: Props) => {
       onClose()
     } catch (error) {}
   }
-  const defaultData = {
-    lessonType: lessonType.toUpperCase(),
-    courseId: data.courseId,
-    partId: data.id,
-    lessonNumber: data.lessons.length + 1,
-  }
+
   return (
     <>
       <Modal
@@ -89,9 +89,9 @@ const CreateLessonModal = ({ data }: Props) => {
                   </SelectItem>
                 </Select>
                 {lessonType === 'video' ? (
-                  <VideoLessonForm onSubmit={createLessonVideo} />
+                  <VideoLessonForm data={data} onSubmit={createLessonVideo} />
                 ) : (
-                  <TextLessonForm onSubmit={createLessonText} />
+                  <TextLessonForm data={data} onSubmit={createLessonText} />
                 )}
               </ModalBody>
             </>

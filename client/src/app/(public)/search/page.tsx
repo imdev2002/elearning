@@ -8,7 +8,6 @@ type Props = {
 
 const page = async ({ searchParams }: Props) => {
   const { categories, keyword } = searchParams
-  console.log('page  categories:', categories)
   const { payload } = await coursePublicApiRequests.getList(
     `?search=${keyword}&categories=${categories ?? ''}`
   )
